@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="license_numbers">medicine_license_numbers
+        <item>衛署藥製</item>
+        <item>衛部藥製</item>
+        <item>衛署藥輸</item>
+        <item>衛部藥輸</item>
+        <item>衛署成製</item>
+        <item>衛部成製</item>
+        <item>衛署菌疫製</item>
+        <item>衛部菌疫製</item>
+        <item>衛署菌疫輸</item>
+        <item>衛部菌疫輸</item>
+        <item>衛署成輸</item>
+        <item>衛部成輸</item>
+        <item>衛署罕藥輸</item>
+        <item>衛部罕藥輸</item>
+        <item>衛署罕藥製</item>
+        <item>衛部罕藥製</item>
+        <item>衛署罕菌疫製</item>
+        <item>衛部罕菌疫製</item>
+        <item>衛部罕菌疫輸</item>
+        <item>衛署罕菌疫輸</item>
+        <item>衛署藥陸輸</item>
+        <item>衛部藥陸輸</item>
+        <item>內衛藥製</item>
+        <item>內衛藥輸</item>
+        <item>內衛成製</item>
+        <item>內衛菌疫製</item>
+        <item>內衛菌疫輸</item>
+    </string-array>
+</resources>

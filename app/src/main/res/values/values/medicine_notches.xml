@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="notches">notches
+        <item>請選擇</item>
+        <item>無</item>
+        <item>直線</item>
+        <item>十字</item>
+    </string-array>
+</resources>

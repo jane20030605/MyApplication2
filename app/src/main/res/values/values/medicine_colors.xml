@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="colors">colors
+        <item>請選擇</item>
+        <item>黑</item>
+        <item>藍</item>
+        <item>棕</item>
+        <item>灰</item>
+        <item>綠</item>
+        <item>橘</item>
+        <item>粉</item>
+        <item>紫</item>
+        <item>紅</item>
+        <item>藍綠</item>
+        <item>白</item>
+        <item>黃</item>
+        <item>透明</item>
+    </string-array>
+</resources>
+

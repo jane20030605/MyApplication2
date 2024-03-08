@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="shapes">shapes
+            <item>請選擇</item>
+            <item>膠囊</item>
+            <item>圓形</item>
+            <item>橢圓形</item>
+            <item>水滴形</item>
+            <item>雙圓形</item>
+            <item>三角形</item>
+            <item>四邊形</item>
+            <item>五邊形</item>
+            <item>六邊形</item>
+            <item>八邊形</item>
+            <item>液劑(包含糖漿用粉劑)</item>
+            <item>顆粒劑、粉劑或散劑</item>
+            <item>其他</item>
+    </string-array>
+</resources>
