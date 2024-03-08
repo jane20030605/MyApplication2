@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_login">登入系統\n</string>
+    <string name="menu_medicine_box">個人藥物資料庫</string>
+    <string name="menu_medicine">藥物資料查詢</string>
+    <string name="menu_memory">跌倒記錄查詢\n</string>
+    <string name="menu_calender">行事曆紀錄</string>
+    <string name="menu_user">使用者資料</string>
+</resources>
