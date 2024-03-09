@@ -24,7 +24,7 @@ public class MedicineFragment extends Fragment {
         binding = FragmentMedicineBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textMedicine;
+        final TextView textView = binding.textView;
         medicineViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

@@ -7,17 +7,213 @@
     android:layout_height="match_parent"
     tools:context=".ui.Medicine.MedicineFragment" >
 
-    <TextView
-        android:id="@+id/text_medicine"
+
+
+    <!-- 許可證查詢輸入框 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="RedundantNamespace">
+
+        <!-- 許可證下拉式選單 -->
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="373dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="藥物外觀資料查詢"
+            android:textSize="45sp"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="82dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="16dp"
+                    android:text="許可證字號查詢"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText,InefficientWeight" />
+
+                <Spinner
+                    android:id="@+id/spinner_licenseNumber"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="許可證號碼"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/editText_licenseNumber"
+                android:layout_width="278dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:hint="字號輸入"
+                tools:ignore="Autofill,HardcodedText,TextFields" />
+
+        </LinearLayout>
+        <!-- 中文品名查詢輸入框 -->
+        <EditText
+            android:id="@+id/editText_chineseName"
+            android:layout_width="366dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="中文品名查詢"
+            tools:ignore="Autofill,HardcodedText,TextFields" />
+
+        <!-- 英文品名查詢輸入框 -->
+        <EditText
+            android:id="@+id/editText_englishName"
+            android:layout_width="369dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="英文品名查詢"
+            tools:ignore="Autofill,HardcodedText,TextFields" />
+        <!-- 形狀下拉式選單 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:textSize="18sp"
+                android:text="形狀"
+                android:layout_marginStart="10dp"
+                tools:ignore="HardcodedText" />
+
+            <Spinner
+                android:id="@+id/spinner_shape"
+                android:layout_width="285dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="16dp" />
+        </LinearLayout>
+        <!-- 刻痕下拉式選單 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:textSize="18sp"
+                android:text="刻痕"
+                android:layout_marginStart="10dp"
+                tools:ignore="HardcodedText" />
+
+            <Spinner
+                android:id="@+id/spinner_notch"
+                android:layout_width="285dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="16dp"
+                />
+        </LinearLayout>
+        <!-- 顏色下拉式選單 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:textSize="18sp"
+                android:text="顏色"
+                android:layout_marginStart="10dp"
+                tools:ignore="HardcodedText" />
+
+            <Spinner
+                android:id="@+id/spinner_color"
+                android:layout_width="285dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="16dp"  />
+        </LinearLayout>
+        <!-- 符號下拉式選單 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:textSize="18sp"
+                android:text="符號"
+                android:layout_marginStart="10dp"
+                tools:ignore="HardcodedText" />
+
+            <Spinner
+                android:id="@+id/spinner_symbol"
+                android:layout_width="285dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="16dp"  />
+        </LinearLayout>
+        <!-- 標記下拉式選單 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:textSize="18sp"
+                android:text="標記"
+                android:layout_marginStart="10dp"
+                tools:ignore="HardcodedText" />
+
+            <Spinner
+                android:id="@+id/spinner_markings"
+                android:layout_width="285dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="16dp"  />
+        </LinearLayout>
+        <!-- 查詢按鈕 -->
+        <Button
+            android:id="@+id/button_query"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="查詢"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
