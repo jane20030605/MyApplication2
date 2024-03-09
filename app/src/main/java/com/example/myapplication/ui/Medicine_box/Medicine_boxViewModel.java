@@ -10,7 +10,7 @@ public class Medicine_boxViewModel extends ViewModel {
 
     public Medicine_boxViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
+        mText.setValue("This is Medicine_box fragment");
     }
 
     public LiveData<String> getText() {
