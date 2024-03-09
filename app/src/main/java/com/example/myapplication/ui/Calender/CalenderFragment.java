@@ -24,7 +24,7 @@ public class CalenderFragment extends Fragment {
         binding = FragmentCalenderBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textSlideshow;
+        final TextView textView = binding.textCalender;
         medicineboxViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

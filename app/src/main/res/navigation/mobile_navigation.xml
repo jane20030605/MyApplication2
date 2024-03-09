@@ -9,26 +9,7 @@
         android:id="@+id/nav_home"
         android:name="com.example.myapplication.ui.Home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_nav_home_to_nav_medicine"
-            app:destination="@id/nav_medicine" />
-        <action
-            android:id="@+id/action_nav_home_to_nav_memory"
-            app:destination="@id/nav_memory" />
-        <action
-            android:id="@+id/action_nav_home_to_nav_medicine_box"
-            app:destination="@id/nav_medicine_box" />
-        <action
-            android:id="@+id/action_nav_home_to_nav_login"
-            app:destination="@id/nav_login" />
-        <action
-            android:id="@+id/action_nav_home_to_nav_calender"
-            app:destination="@id/nav_calender" />
-        <action
-            android:id="@+id/action_nav_home_to_nav_user"
-            app:destination="@id/nav_user" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_medicine_box"

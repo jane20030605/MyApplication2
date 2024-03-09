@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myapplication.databinding.FragmentUserBinding;
+
 
 public class UserFragment extends Fragment {
 
@@ -20,10 +22,10 @@ public class UserFragment extends Fragment {
         UserViewModel medicineboxViewModel =
                 new ViewModelProvider(this).get(UserViewModel.class);
 
-        binding = com.example.myapplication.databinding.FragmentUserBinding.inflate(inflater, container, false);
+        binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textSlideshow;
+        final TextView textView = binding.textUser;
         medicineboxViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

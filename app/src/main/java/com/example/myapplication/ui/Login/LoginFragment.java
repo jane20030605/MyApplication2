@@ -24,7 +24,7 @@ public class LoginFragment extends Fragment {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.button14;
+        final TextView textView = binding.textLogin;
         loginViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
