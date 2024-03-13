@@ -7,17 +7,86 @@
     android:layout_height="match_parent"
     tools:context=".ui.Home.HomeFragment" >
 
-    <TextView
-        android:id="@+id/text_home"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways"
+            tools:ignore="MissingConstraints" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="353dp"
+            android:columnCount="2"
+            android:padding="16dp"
+            android:rowCount="3"
+            tools:ignore="MissingConstraints,RedundantNamespace">
+
+            <!-- 藥物查詢按鈕 -->
+            <Button
+                android:id="@+id/radioButton7"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:background="@drawable/color_3"
+                android:text="藥物查詢"
+                android:textSize="20sp"
+                android:visibility="visible"
+                tools:ignore="HardcodedText,UnusedAttribute" />
+
+            <!-- 跌倒辨識紀錄按鈕 -->
+            <Button
+                android:id="@+id/radioButton8"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:background="@drawable/color_3"
+                android:text="跌倒辨識紀錄"
+                android:textSize="20sp"
+                android:visibility="visible"
+                tools:ignore="HardcodedText,UnusedAttribute" />
+
+            <!-- 使用者資料功能按鈕 -->
+            <Button
+                android:id="@+id/radioButton9"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:background="@drawable/color_3"
+                android:text="使用者資料"
+                android:textSize="18sp"
+                android:visibility="visible"
+                tools:ignore="HardcodedText,UnusedAttribute" />
+
+            <!-- 藥物庫按鈕 -->
+            <Button
+                android:id="@+id/radioButton10"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:background="@drawable/color_3"
+                android:text="個人藥盒"
+                android:textSize="20sp"
+                tools:ignore="HardcodedText,UnusedAttribute" />
+
+        </GridLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,26 @@
         android:id="@+id/nav_home"
         android:name="com.example.myapplication.ui.Home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_login"
+            app:destination="@id/nav_login" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_medicine_box"
+            app:destination="@id/nav_medicine_box" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_medicine"
+            app:destination="@id/nav_medicine" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_memory"
+            app:destination="@id/nav_memory" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_calender"
+            app:destination="@id/nav_calender" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_user"
+            app:destination="@id/nav_user" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_medicine_box"
@@ -21,12 +40,20 @@
         android:id="@+id/nav_medicine"
         android:name="com.example.myapplication.ui.Medicine.MedicineFragment"
         android:label="@string/menu_medicine"
-        tools:layout="@layout/fragment_medicine" />
+        tools:layout="@layout/fragment_medicine" >
+        <action
+            android:id="@+id/nav_medicine_allbox"
+            app:destination="@id/medicine_allboxFragment" />
+    </fragment>
     <fragment
         android:id="@+id/nav_login"
         android:name="com.example.myapplication.ui.Login.LoginFragment"
         android:label="@string/menu_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_nav_login_to_nav_registration"
+            app:destination="@id/nav_registration" />
+    </fragment>
     <fragment
         android:id="@+id/nav_memory"
         android:name="com.example.myapplication.ui.Memory.MemoryFragment"
@@ -36,10 +63,59 @@
         android:id="@+id/nav_calender"
         android:name="com.example.myapplication.ui.Calender.CalenderFragment"
         android:label="@string/menu_calender"
-        tools:layout="@layout/fragment_calender" />
+        tools:layout="@layout/fragment_calender" >
+        <action
+            android:id="@+id/action_nav_calender_to_nav_calender_thing"
+            app:destination="@id/nav_calender_thing" />
+    </fragment>
     <fragment
         android:id="@+id/nav_user"
         android:name="com.example.myapplication.ui.User.UserFragment"
         android:label="@string/menu_user"
-        tools:layout="@layout/fragment_user" />
+        tools:layout="@layout/fragment_user" >
+        <action
+            android:id="@+id/action_nav_user_to_nav_user_data"
+            app:destination="@id/nav_user_data" />
+        <action
+            android:id="@+id/action_nav_user_to_nav_user_like"
+            app:destination="@id/nav_user_like" />
+        <action
+            android:id="@+id/action_nav_user_to_nav_user_set"
+            app:destination="@id/nav_user_set" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.myapplication.MainActivity"
+        android:label="app_bar_main"
+        tools:layout="@layout/app_bar_main" />
+    <fragment
+        android:id="@+id/nav_registration"
+        android:name="com.example.myapplication.ui.registration.RegistrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration" />
+    <fragment
+        android:id="@+id/nav_calender_thing"
+        android:name="com.example.myapplication.ui.calender_thing.calender_thingFragment"
+        android:label="fragment_calender_thing"
+        tools:layout="@layout/fragment_calender_thing" />
+    <fragment
+        android:id="@+id/nav_user_data"
+        android:name="com.example.myapplication.ui.user_data.user_dataFragment"
+        android:label="fragment_user_data"
+        tools:layout="@layout/fragment_user_data" />
+    <fragment
+        android:id="@+id/nav_user_like"
+        android:name="com.example.myapplication.ui.user_like.user_likeFragment"
+        android:label="fragment_user_like"
+        tools:layout="@layout/fragment_user_like" />
+    <fragment
+        android:id="@+id/nav_user_set"
+        android:name="com.example.myapplication.ui.user_set.user_setFragment"
+        android:label="fragment_user_set"
+        tools:layout="@layout/fragment_user_set" />
+    <fragment
+        android:id="@+id/medicine_allboxFragment"
+        android:name="com.example.myapplication.ui.medicine_allbox.medicine_allboxFragment"
+        android:label="fragment_medicine_allbox"
+        tools:layout="@layout/fragment_medicine_allbox" />
 </navigation>
