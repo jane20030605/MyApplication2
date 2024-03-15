@@ -3,10 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.user_set.user_setFragment">
+    tools:context=".ui.user_memory.user_memoryFragment">
 
     <TextView
-        android:id="@+id/textUserset"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Hello" />

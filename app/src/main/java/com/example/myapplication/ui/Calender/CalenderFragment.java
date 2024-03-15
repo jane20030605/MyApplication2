@@ -11,7 +11,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
+import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCalenderBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -41,6 +43,8 @@ public class CalenderFragment extends Fragment {
                 // 在這裡添加加號按鈕的點擊事件處理邏輯
                 // 範例中只是顯示一個Toast消息
                 Toast.makeText(requireContext(), "加號按鈕被點擊了", Toast.LENGTH_SHORT).show();
+                // 跳轉至藥物總覽頁面
+                Navigation.findNavController(v).navigate(R.id.nav_calender_thing);
             }
         });
 
