@@ -5,9 +5,166 @@
     android:layout_height="match_parent"
     tools:context=".ui.calender_thing.calender_thingFragment">
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        tools:ignore="UselessParent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="50dp"
+                android:textSize="45sp"
+                android:text="@string/Calender_thing" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                tools:ignore="MissingConstraints">
+
+                <!-- 事件名稱 -->
+                <EditText
+                    android:id="@+id/editTextthing"
+                    android:layout_width="390dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="20sp"
+                    android:hint="事件名稱"
+                    tools:ignore="Autofill,TextFields" />
+
+                <!-- 選擇事件起始日期的 Spinner -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:textSize="20sp"
+                        android:text="@string/start_day"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <DatePicker
+                        android:id="@+id/datePickerStartDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:calendarViewShown="false"
+                        android:datePickerMode="spinner" />
+                </LinearLayout>
+
+                <!-- 選擇事件結束日期的 Spinner -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:textSize="20sp"
+                        android:text="@string/end_day"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <DatePicker
+                        android:id="@+id/datePickerEndDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:calendarViewShown="false"
+                        android:datePickerMode="spinner" />
+                </LinearLayout>
+
+                <!-- 選擇事件起始時間的 Spinner -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:textSize="20sp"
+                        android:text="@string/start_time"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <TimePicker
+                        android:id="@+id/timePickerStartTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- 選擇事件結束時間的 Spinner -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:textSize="20sp"
+                        android:text="@string/end_time"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <TimePicker
+                        android:id="@+id/timePickerEndTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- 事件對象 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="40dp"
+                        android:textSize="20sp"
+                        android:text="@string/thing_people" />
+
+                    <Spinner
+                        android:id="@+id/spinnerCompanions"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" />
+                </LinearLayout>
+
+                <!-- 事件輸入 -->
+                <EditText
+                    android:id="@+id/editTextEventDescription"
+                    android:layout_width="390dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="20sp"
+                    android:hint="@string/thing_illustrate" />
+
+                <Button
+                    android:id="@+id/button3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/thing_save" />
+
+                <Button
+                    android:id="@+id/editButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/thing_edit" />
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </FrameLayout>

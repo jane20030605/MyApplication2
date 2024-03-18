@@ -1,16 +1,14 @@
 package com.example.myapplication.ui.calender_thing;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.R;
 
@@ -34,5 +32,4 @@ public class calender_thingFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(CalenderThingViewModel.class);
         // TODO: Use the ViewModel
     }
-
 }

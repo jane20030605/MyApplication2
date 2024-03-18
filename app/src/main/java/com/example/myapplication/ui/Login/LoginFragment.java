@@ -12,7 +12,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
+import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentLoginBinding;
 
 public class LoginFragment extends Fragment {
@@ -54,6 +56,7 @@ public class LoginFragment extends Fragment {
                 // 在這裡添加註冊邏輯
                 // 範例中只是顯示一個Toast消息
                 Toast.makeText(requireContext(), "註冊功能尚未實現", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(v).navigate(R.id.nav_registration);
             }
         });
 

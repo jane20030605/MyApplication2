@@ -5,9 +5,104 @@
     android:layout_height="match_parent"
     tools:context=".ui.registration.RegistrationFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:orientation="vertical"
+        android:padding="5dp"
+        tools:ignore="ExtraText,RedundantNamespace,UselessParent">
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginStart="100dp"
+            android:text="@string/registration_form"
+            android:textSize="45sp" />
+
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/user_name"
+            android:textSize="20sp"
+            tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat,TextFields" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="19dp"
+            android:hint="@string/password"
+            android:textSize="20sp"
+            android:inputType="textPassword"
+            tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat" />
+
+        <EditText
+            android:id="@+id/real_name"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="19dp"
+            android:hint="@string/real_name"
+            android:textSize="20sp"
+            tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat,TextFields" />
+        <EditText
+            android:id="@+id/phone"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="19dp"
+            android:hint="@string/phone"
+            android:textSize="20sp"
+            tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat,TextFields" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="19dp"
+            android:hint="@string/mail"
+            android:textSize="20sp"
+            android:inputType="textEmailAddress"
+            tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat" />
+        <EditText
+            android:id="@+id/home"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="19dp"
+            android:hint="@string/address"
+            android:textSize="20sp"
+            android:inputType="date"
+            tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat" />
+
+        <EditText
+            android:id="@+id/birthday"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="19dp"
+            android:hint="@string/birthday_vid"
+            android:textSize="20sp"
+            android:inputType="date"
+            tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat" />
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="19dp"
+            android:text="註冊"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/registerButton"
+            tools:ignore="HardcodedText,RtlCompat" />
+
+    </LinearLayout>
 </FrameLayout>
