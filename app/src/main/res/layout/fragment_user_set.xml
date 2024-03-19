@@ -1,14 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.user_set.user_setFragment">
 
-    <TextView
-        android:id="@+id/textUserset"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/Text_function_set"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="100dp"
+            android:textSize="45sp"
+            android:text="@string/function_set" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Text_message_reminder"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:layout_marginStart="0dp"
+                android:text="@string/Message_reminder_set"
+                android:textSize="18sp"
+                tools:ignore="HardcodedText,InvalidId" />
+
+            <Switch
+                android:id="@+id/Switch_notification"
+                android:layout_width="291dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="@string/Enable_notification_reminder"
+                android:textSize="18sp"
+                tools:ignore="HardcodedText,UseSwitchCompatOrMaterialXml" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Text_theme_color"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="@string/Theme_color_set"
+                android:textSize="18sp"
+                tools:ignore="HardcodedText" />
+
+            <Spinner
+                android:id="@+id/spinner_color"
+                android:layout_width="291dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                tools:ignore="InvalidId" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Text_system_language"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="@string/System_language_conversion"
+                android:textSize="18sp"
+                tools:ignore="HardcodedText" />
+
+            <Spinner
+                android:id="@+id/Spinner_system_language"
+                android:layout_width="291dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                tools:ignore="InvalidId" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Text_day_and_night_model"
+                android:layout_width="112dp"
+                android:layout_height="50dp"
+                android:text="@string/Day_and_night_mode"
+                android:textSize="18sp"
+                tools:ignore="HardcodedText" />
+
+            <RadioGroup
+                android:id="@+id/themeRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/RadioButton_dayMode"
+                    android:layout_width="137dp"
+                    android:layout_height="50dp"
+                    android:text="@string/Day_mode"
+                    android:textSize="18sp"
+                    tools:ignore="HardcodedText" />
+
+                <RadioButton
+                    android:id="@+id/RadioButton_nightMode"
+                    android:layout_width="137dp"
+                    android:layout_height="50dp"
+                    android:text="@string/night_mode"
+                    android:textSize="18sp"
+                    tools:ignore="HardcodedText" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/Button_feedback"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/color"
+            android:text="@string/User_feedback"
+            android:textSize="25sp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:backgroundTint="@null"
+            tools:ignore="ButtonStyle,HardcodedText" />
+
+        <Button
+            android:id="@+id/Button_guidedTour"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/color"
+            android:textSize="25sp"
+            android:text="@string/User_Manual"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:backgroundTint="@null"
+            tools:ignore="ButtonStyle,HardcodedText" />
+
+    </LinearLayout>
 
 </FrameLayout>

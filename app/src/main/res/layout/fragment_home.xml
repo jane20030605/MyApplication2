@@ -29,7 +29,7 @@
 
             <!-- 藥物查詢按鈕 -->
             <Button
-                android:id="@+id/radioButton7"
+                android:id="@+id/Button_medicine"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -44,7 +44,7 @@
 
             <!-- 跌倒辨識紀錄按鈕 -->
             <Button
-                android:id="@+id/radioButton8"
+                android:id="@+id/Button_memory"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -59,7 +59,7 @@
 
             <!-- 使用者資料功能按鈕 -->
             <Button
-                android:id="@+id/radioButton9"
+                android:id="@+id/Button_userdata"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -74,7 +74,7 @@
 
             <!-- 藥物庫按鈕 -->
             <Button
-                android:id="@+id/radioButton10"
+                android:id="@+id/Button_medicine_box"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="0dp"

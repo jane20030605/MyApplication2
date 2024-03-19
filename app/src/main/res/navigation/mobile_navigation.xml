@@ -115,7 +115,14 @@
         android:id="@+id/nav_user_set"
         android:name="com.example.myapplication.ui.user_set.user_setFragment"
         android:label="@string/menu_user_set"
-        tools:layout="@layout/fragment_user_set" />
+        tools:layout="@layout/fragment_user_set" >
+        <action
+            android:id="@+id/action_nav_user_set_to_feedback"
+            app:destination="@id/feedback" />
+        <action
+            android:id="@+id/action_nav_user_set_to_guidedTour"
+            app:destination="@id/guidedTour" />
+    </fragment>
     <fragment
         android:id="@+id/medicine_allboxFragment"
         android:name="com.example.myapplication.ui.medicine_allbox.medicine_allboxFragment"
@@ -126,4 +133,14 @@
         android:name="com.example.myapplication.ui.user_memory.user_memoryFragment"
         android:label="@string/menu_user_memory"
         tools:layout="@layout/fragment_user_memory" />
+    <fragment
+        android:id="@+id/guidedTour"
+        android:name="com.example.myapplication.ui.guidedtour.GuidedTour"
+        android:label="fragment_guided_tour"
+        tools:layout="@layout/fragment_guided_tour" />
+    <fragment
+        android:id="@+id/feedback"
+        android:name="com.example.myapplication.ui.feedback.feedback"
+        android:label="fragment_feedback"
+        tools:layout="@layout/fragment_feedback" />
 </navigation>

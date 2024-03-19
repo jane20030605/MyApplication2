@@ -44,7 +44,15 @@
     <string name="mail">信箱</string>
     <string name="birthday_vid">生日(西元)</string>
 
-
-
+    <string name="function_set">功能設定</string>
+    <string name="Message_reminder_set">消息提醒設置</string>
+    <string name="Enable_notification_reminder">啟用通知提醒</string>
+    <string name="Theme_color_set">主題顏色設定</string>
+    <string name="System_language_conversion">系統語言轉換</string>
+    <string name="Day_and_night_mode">日夜模式</string>
+    <string name="Day_mode">日間模式</string>
+    <string name="night_mode">夜間模式</string>
+    <string name="User_feedback">用戶反饋</string>
+    <string name="User_Manual">使用手冊</string>
 
 </resources>
