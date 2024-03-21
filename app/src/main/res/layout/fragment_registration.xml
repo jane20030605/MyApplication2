@@ -94,15 +94,17 @@
 
 
         <Button
+            android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/color_3"
             android:layout_marginStart="10dp"
             android:layout_marginTop="19dp"
-            android:text="註冊"
+            android:text="@string/registration"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:id="@+id/registerButton"
-            tools:ignore="HardcodedText,RtlCompat" />
+            tools:ignore="ButtonStyle,HardcodedText" />
+
 
     </LinearLayout>
 </FrameLayout>

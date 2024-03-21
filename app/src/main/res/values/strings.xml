@@ -43,6 +43,7 @@
     <string name="address">住址</string>
     <string name="mail">信箱</string>
     <string name="birthday_vid">生日(西元)</string>
+    <string name="registration">註冊</string>
 
     <string name="function_set">功能設定</string>
     <string name="Message_reminder_set">消息提醒設置</string>
@@ -55,4 +56,7 @@
     <string name="User_feedback">用戶反饋</string>
     <string name="User_Manual">使用手冊</string>
 
+    <string name="medicine_name">藥品名稱</string>
+    <string name="Dosage">用量</string>
+    <string name="Taking_time">服用時間</string>
 </resources>

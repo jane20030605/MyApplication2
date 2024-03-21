@@ -34,7 +34,6 @@ public class LoginFragment extends Fragment {
         final CheckBox rememberPasswordCheckBox = binding.rememberPassword;
         final Button loginButton = binding.button11;
         final Button registerButton = binding.button12;
-        final Button googleButton = binding.button14;
 
 
         // 登錄按鈕的點擊事件
@@ -57,16 +56,6 @@ public class LoginFragment extends Fragment {
                 // 範例中只是顯示一個Toast消息
                 Toast.makeText(requireContext(), "註冊功能尚未實現", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(v).navigate(R.id.nav_registration);
-            }
-        });
-
-        // Google按鈕的點擊事件
-        googleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 在這裡添加Google登錄邏輯
-                // 範例中只是顯示一個Toast消息
-                Toast.makeText(requireContext(), "Google 登錄功能尚未實現", Toast.LENGTH_SHORT).show();
             }
         });
 

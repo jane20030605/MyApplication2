@@ -99,23 +99,6 @@
             android:layout_height="wrap_content"
             android:text="記住密碼"
             tools:ignore="HardcodedText" />
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <!-- Google帳戶連動按鈕 -->
-            <Button
-                android:id="@+id/button14"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="10dp"
-                android:text="Google"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:background="@drawable/color_3"
-                app:backgroundTint="@null"
-                tools:ignore="ButtonStyle,HardcodedText" />
 
-        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
