@@ -1,36 +1,70 @@
 package com.example.myapplication.ui.registration;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
+import com.example.myapplication.databinding.FragmentRegistrationBinding;
+import com.example.myapplication.models.User;
+import com.example.myapplication.utils.UserManager;
 
 public class RegistrationFragment extends Fragment {
 
-    private RegistrationViewModel mViewModel;
+    private FragmentRegistrationBinding binding;
 
-    public static RegistrationFragment newInstance() {
-        return new RegistrationFragment();
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        RegistrationViewModel registrationViewModel =
+                new ViewModelProvider(this).get(RegistrationViewModel.class);
+
+        binding = FragmentRegistrationBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        final EditText username = binding.username;
+        final EditText password = binding.password;
+        final Button registerButton = binding.registerButton;
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String enteredUsername = username.getText().toString().trim();
+                String enteredPassword = password.getText().toString().trim();
+
+                if (TextUtils.isEmpty(enteredUsername) || TextUtils.isEmpty(enteredPassword)) {
+                    Toast.makeText(requireContext(), "用戶名和密碼不能為空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (UserManager.getInstance().getUser(enteredUsername) != null) {
+                    Toast.makeText(requireContext(), "用戶名已存在，請輸入其他用戶名", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                User newUser = new User(enteredUsername, enteredPassword);
+                UserManager.getInstance().addUser(newUser);
+
+                Toast.makeText(requireContext(), "註冊成功，請重新登入", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(v).navigate(R.id.nav_login);
+            }
+        });
+
+        return root;
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_registration, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(RegistrationViewModel.class);
-        // TODO: Use the ViewModel
-    }
-
 }

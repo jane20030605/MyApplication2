@@ -28,8 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine,R.id.nav_user,
                 R.id.nav_calender,R.id.nav_login,R.id.nav_memory,R.id.nav_memory)
@@ -55,3 +54,4 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 }
+

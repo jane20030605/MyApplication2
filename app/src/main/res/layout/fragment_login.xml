@@ -52,7 +52,7 @@
             android:layout_marginTop="10dp"
             android:hint="密碼:"
             android:ems="10"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:textAlignment="textStart"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -68,7 +68,7 @@
 
             <Button
                 android:id="@+id/button11"
-                android:layout_width="170dp"
+                android:layout_width="175dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/color_3"
@@ -82,7 +82,7 @@
                 android:id="@+id/button12"
                 android:background="@drawable/color_3"
                 app:backgroundTint="@null"
-                android:layout_width="170dp"
+                android:layout_width="175dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
                 android:text="註冊"
