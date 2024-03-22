@@ -10,7 +10,7 @@ public class Medicine_boxViewModel extends ViewModel {
 
     public Medicine_boxViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("個人藥盒使用");
+        mText.setValue("我的藥盒");
     }
 
     public LiveData<String> getText() {

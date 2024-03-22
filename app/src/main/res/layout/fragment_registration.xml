@@ -92,18 +92,16 @@
             android:inputType="date"
             tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat" />
 
-
         <Button
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/color_3"
+            android:layout_height="60dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="19dp"
+            android:background="@drawable/color_3"
+            android:layout_marginTop="10dp"
             android:text="@string/registration"
             android:textSize="20sp"
-            android:textStyle="bold"
-            tools:ignore="ButtonStyle,HardcodedText" />
+            tools:ignore="HardcodedText" />
 
 
     </LinearLayout>

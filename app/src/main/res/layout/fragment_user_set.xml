@@ -121,6 +121,7 @@
                     android:id="@+id/RadioButton_dayMode"
                     android:layout_width="137dp"
                     android:layout_height="50dp"
+                    android:layout_marginEnd="0dp"
                     android:text="@string/Day_mode"
                     android:textSize="18sp"
                     tools:ignore="HardcodedText" />
@@ -129,6 +130,7 @@
                     android:id="@+id/RadioButton_nightMode"
                     android:layout_width="137dp"
                     android:layout_height="50dp"
+                    android:layout_marginEnd="0dp"
                     android:text="@string/night_mode"
                     android:textSize="18sp"
                     tools:ignore="HardcodedText" />

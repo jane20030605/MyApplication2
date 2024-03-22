@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="contact">contact
+        <item>請選擇</item>
+        <item>兒女</item>
+        <item>親戚</item>
+        <item>配偶</item>
+        <item>朋友</item>
+        <item>其他</item>
+
+    </string-array>
+</resources>

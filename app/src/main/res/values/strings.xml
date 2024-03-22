@@ -10,15 +10,15 @@
     <string name="menu_home">主畫面</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_login">登入系統\n</string>
+    <string name="menu_login">登入系統</string>
     <string name="menu_medicine_box">個人藥物資料庫</string>
     <string name="menu_medicine">藥物資料查詢</string>
-    <string name="menu_memory">跌倒記錄查詢\n</string>
+    <string name="menu_memory">跌倒記錄查詢</string>
     <string name="menu_calender">行事曆紀錄</string>
     <string name="menu_user">使用者資料</string>
     <string name="menu_registration">註冊介面</string>
     <string name="menu_calender_thing">行事曆事件</string>
-    <string name="menu_medicine_allbox">藥物總攬查詢</string>
+    <string name="menu_medicine_allbox">藥物總覽查詢</string>
     <string name="menu_user_like">最愛收藏</string>
     <string name="menu_user_memory">活動紀錄</string>
     <string name="menu_user_data">個人檔案</string>
@@ -59,4 +59,18 @@
     <string name="medicine_name">藥品名稱</string>
     <string name="Dosage">用量</string>
     <string name="Taking_time">服用時間</string>
+
+    <string name="Feedback">意見回饋</string>
+    <string name="Enter_comments">在此輸入您的意見</string>
+    <string name="Submit_comments">提交意見</string>
+
+    <string name="Emergency_contact_information">緊急聯絡人資料</string>
+    <string name="Name">姓名:</string>
+    <string name="Enter_name">輸入聯絡人姓名</string>
+    <string name="phone_number">電話號碼:</string>
+    <string name="Enter_phone_number">輸入電話號碼</string>
+    <string name="relation">關係選擇:</string>
+    <string name="save">保存</string>
+    <string name="delete">取消</string>
+
 </resources>
