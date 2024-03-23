@@ -33,6 +33,10 @@ public class RegistrationFragment extends Fragment {
 
         final EditText username = binding.username;
         final EditText password = binding.password;
+        final EditText real_name = binding.realName;
+        final EditText phone = binding.phone;
+        final EditText email = binding.email;
+        final EditText home = binding.home;
         final Button registerButton = binding.registerButton;
 
         registerButton.setOnClickListener(new View.OnClickListener() {
