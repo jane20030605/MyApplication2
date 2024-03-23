@@ -151,7 +151,7 @@
                     android:hint="@string/thing_illustrate" />
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/save_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
