@@ -1,3 +1,4 @@
+// MainActivity.java
 package com.example.myapplication;
 
 import android.os.Bundle;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        com.example.myapplication.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -30,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = binding.navView;
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine,R.id.nav_user,
-                R.id.nav_calender,R.id.nav_login,R.id.nav_memory,R.id.nav_memory)
+                R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine, R.id.nav_user,
+                R.id.nav_calender, R.id.nav_login, R.id.nav_memory, R.id.nav_memory)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -54,4 +54,3 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 }
-

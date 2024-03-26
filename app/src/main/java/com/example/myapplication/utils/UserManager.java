@@ -1,8 +1,6 @@
-// UserManager.java
 package com.example.myapplication.utils;
 
 import com.example.myapplication.models.User;
-
 import java.util.HashMap;
 import java.util.Map;
 

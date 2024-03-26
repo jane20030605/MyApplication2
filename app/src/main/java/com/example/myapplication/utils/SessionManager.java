@@ -1,4 +1,3 @@
-// SessionManager.java
 package com.example.myapplication.utils;
 
 import android.content.Context;

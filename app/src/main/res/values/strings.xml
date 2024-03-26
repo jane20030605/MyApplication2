@@ -19,10 +19,10 @@
     <string name="menu_registration">註冊介面</string>
     <string name="menu_calender_thing">行事曆事件</string>
     <string name="menu_medicine_allbox">藥物總覽查詢</string>
-    <string name="menu_user_like">最愛收藏</string>
-    <string name="menu_user_memory">活動紀錄</string>
     <string name="menu_user_data">個人檔案</string>
     <string name="menu_user_set">系統設定</string>
+    <string name="menu_emergency_contact">緊急連絡人</string>
+    <string name="menu_forget_password">忘記密碼</string>
 
     <string name="Calender_thing">行事曆事件輸入</string>
     <string name="thing_name">事件名稱</string>

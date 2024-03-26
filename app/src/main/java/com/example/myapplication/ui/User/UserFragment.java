@@ -30,8 +30,6 @@ public class UserFragment extends Fragment {
         // 布局設計
         final TextView textView = binding.textUser;
         final Button settingsButton = binding.settingsButton;
-        final Button activityButton = binding.activityButton;
-        final Button favoritesButton = binding.favoritesButton;
         final Button profileButton = binding.profileButton;
 
         // 設置按鈕點擊監聽器
@@ -40,22 +38,6 @@ public class UserFragment extends Fragment {
             public void onClick(View v) {
                 // 跳轉至系統設定頁面
                 Navigation.findNavController(root).navigate(R.id.nav_user_set);
-            }
-        });
-
-        activityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 跳轉至活動紀錄頁面
-                Navigation.findNavController(root).navigate(R.id.nav_user_memory);
-            }
-        });
-
-        favoritesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 跳轉至最愛收藏頁面
-                Navigation.findNavController(root).navigate(R.id.nav_user_like);
             }
         });
 

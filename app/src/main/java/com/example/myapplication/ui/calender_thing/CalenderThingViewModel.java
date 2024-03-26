@@ -19,5 +19,8 @@ public class CalenderThingViewModel extends ViewModel {
                           int endMinute) {
         this.eventName = eventName;
     }
+
+    public void editEvent(String eventName, String eventDescription, int startYear, int startMonth, int startDay, int startHour, int startMinute, int endYear, int endMonth, int endDay, int endHour, int endMinute) {
+    }
     // TODO: Implement the ViewModel
 }

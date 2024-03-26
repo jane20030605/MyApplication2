@@ -8,12 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentRegistrationBinding;
 import com.example.myapplication.models.User;
@@ -44,9 +42,15 @@ public class RegistrationFragment extends Fragment {
             public void onClick(View v) {
                 String enteredUsername = username.getText().toString().trim();
                 String enteredPassword = password.getText().toString().trim();
+                String enteredRealName = real_name.getText().toString().trim();
+                String enteredPhone = phone.getText().toString().trim();
+                String enteredEmail = email.getText().toString().trim();
+                String enteredHome = home.getText().toString().trim();
 
-                if (TextUtils.isEmpty(enteredUsername) || TextUtils.isEmpty(enteredPassword)) {
-                    Toast.makeText(requireContext(), "用戶名和密碼不能為空", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(enteredUsername) || TextUtils.isEmpty(enteredPassword) ||
+                        TextUtils.isEmpty(enteredRealName) || TextUtils.isEmpty(enteredPhone) ||
+                        TextUtils.isEmpty(enteredEmail) || TextUtils.isEmpty(enteredHome)) {
+                    Toast.makeText(requireContext(), "有資料未填寫，無法註冊", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
