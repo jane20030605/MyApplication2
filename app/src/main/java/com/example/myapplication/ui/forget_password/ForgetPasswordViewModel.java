@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.ui.forget_password;
 
 import androidx.lifecycle.ViewModel;
 

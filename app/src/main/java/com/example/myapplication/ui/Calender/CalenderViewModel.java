@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.Calendar;
+
 public class CalenderViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
@@ -15,5 +17,17 @@ public class CalenderViewModel extends ViewModel {
 
     public LiveData<String> getText() {
         return mText;
+    }
+
+    public String getEventName() {
+        return null;
+    }
+
+    public String getEventDescription() {
+        return null;
+    }
+
+    public Calendar getEventDate() {
+        return null;
     }
 }

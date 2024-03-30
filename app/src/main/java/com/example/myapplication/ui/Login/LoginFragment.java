@@ -1,4 +1,3 @@
-// LoginFragment.java
 package com.example.myapplication.ui.Login;
 
 import android.os.Bundle;
@@ -35,6 +34,7 @@ public class LoginFragment extends Fragment {
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.button11;
         final Button registerButton = binding.button12;
+        final Button forgotPasswordButton = binding.forgotPassword; // 新增忘記密碼按鈕
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +61,16 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 Toast.makeText(requireContext(), "進行註冊", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(v).navigate(R.id.nav_registration);
+            }
+        });
+
+        forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 在此處理忘記密碼按鈕的點擊事件
+                Toast.makeText(requireContext(), "忘記密碼", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(v).navigate(R.id.nav_forget_password);
+                // 添加您的處理邏輯，例如導航到忘記密碼頁面或顯示重設密碼對話框等
             }
         });
 

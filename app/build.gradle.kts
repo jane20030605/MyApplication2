@@ -35,6 +35,8 @@ android {
 }
 
 dependencies {
+    //noinspection UseTomlInstead,GradleDependency
+    implementation("com.google.android.material:material:1.4.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -45,6 +47,7 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.mediarouter)
     implementation(libs.legacy.support.v4)
+    implementation(libs.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

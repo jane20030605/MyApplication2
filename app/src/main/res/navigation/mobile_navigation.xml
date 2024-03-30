@@ -53,6 +53,9 @@
         <action
             android:id="@+id/action_nav_login_to_nav_registration"
             app:destination="@id/nav_registration" />
+        <action
+            android:id="@+id/action_nav_login_to_forget_password2"
+            app:destination="@id/nav_forget_password" />
     </fragment>
     <fragment
         android:id="@+id/nav_memory"
@@ -89,7 +92,11 @@
         android:id="@+id/nav_registration"
         android:name="com.example.myapplication.ui.registration.RegistrationFragment"
         android:label="@string/menu_registration"
-        tools:layout="@layout/fragment_registration" />
+        tools:layout="@layout/fragment_registration" >
+        <action
+            android:id="@+id/action_nav_registration_to_nav_user_data3"
+            app:destination="@id/nav_user_data" />
+    </fragment>
     <fragment
         android:id="@+id/nav_calender_thing"
         android:name="com.example.myapplication.ui.calender_thing.calender_thingFragment"
@@ -105,7 +112,7 @@
             app:destination="@id/nav_emergency_contact" />
         <action
             android:id="@+id/action_nav_user_data_to_forget_password"
-            app:destination="@id/forget_password" />
+            app:destination="@id/nav_forget_password" />
     </fragment>
     <fragment
         android:id="@+id/nav_user_set"
@@ -140,8 +147,8 @@
         android:label="@string/menu_emergency_contact"
         tools:layout="@layout/fragment_emergency_contact" />
     <fragment
-        android:id="@+id/forget_password"
-        android:name="com.example.myapplication.forget_password"
+        android:id="@+id/nav_forget_password"
+        android:name="com.example.myapplication.ui.forget_password.forget_password"
         android:label="@string/menu_forget_password"
         tools:layout="@layout/fragment_forget_password" />
 </navigation>

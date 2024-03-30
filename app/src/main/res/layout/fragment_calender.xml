@@ -7,24 +7,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.Calender.CalenderFragment" >
 
+    <!-- DatePicker -->
     <DatePicker
         android:id="@+id/datePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:headerBackground="#123456"
         android:padding="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints,RtlCompat" />
 
-    <!-- 圓形加號按鈕 -->
 
+    <!-- 加號按鈕 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
+        android:backgroundTint="#123456"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="12dp"
         android:src="@android:drawable/ic_input_add"
@@ -32,17 +35,19 @@
         app:layout_constraintTop_toBottomOf="@+id/datePicker"
         tools:ignore="ContentDescription,MissingConstraints" />
 
+    <!-- 事件列表 -->
     <ScrollView
-        android:layout_width="380dp"
-        android:layout_height="200dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/fabAddEvent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fabAddEvent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/eventTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
             android:textSize="16sp"
