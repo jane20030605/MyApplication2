@@ -63,7 +63,7 @@ public class MedicineFragment extends Fragment {
             @Override
             public void onClick(View v) {
             // 跳轉至藥物總覽頁面
-                Navigation.findNavController(v).navigate(R.id.medicine_allboxFragment);
+                Navigation.findNavController(v).navigate(R.id.nav_medicine_allbox);
 
             }
         });

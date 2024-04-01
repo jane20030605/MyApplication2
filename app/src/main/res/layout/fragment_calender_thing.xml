@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.calender_thing.CalenderThingFragment">
+    tools:context=".ui.calender_thing.calender_thingFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -30,13 +30,13 @@
 
                 <!-- 事件名稱 -->
                 <EditText
-                    android:id="@+id/editTextthing"
+                    android:id="@+id/editText_thing"
                     android:layout_width="390dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="50dp"
                     android:layout_marginBottom="8dp"
                     android:textSize="20sp"
-                    android:hint="事件名稱"
+                    android:hint="@string/thing_name"
                     tools:ignore="Autofill,TextFields" />
 
                 <!-- 選擇事件起始日期的 Spinner -->
@@ -148,10 +148,11 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:textSize="20sp"
-                    android:hint="@string/thing_illustrate" />
+                    android:hint="@string/thing_illustrate"
+                    tools:ignore="Autofill,TextFields" />
 
                 <Button
-                    android:id="@+id/savebutton"
+                    android:id="@+id/saveButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"

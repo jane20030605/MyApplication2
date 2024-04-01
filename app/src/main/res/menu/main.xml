@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
+<menu
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/nav_setting"
         android:orderInCategory="100"
-        android:textsize="30sp"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/menu_user_set"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="設定"
+        tools:ignore="HardcodedText"
+        app:destination="@id/nav_user_set"/>
 </menu>

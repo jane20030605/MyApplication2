@@ -28,13 +28,13 @@ public class calender_thingFragment extends Fragment {
         binding = FragmentCalenderThingBinding.inflate(inflater, container, false);
         View root = binding.getRoot(); // 获取根视图
         // 初始化界面元素
-        final EditText editTextthing = binding.editTextthing;
+        final EditText editText_thing = binding.editTextThing;
         final EditText editTextEventDescription = binding.editTextEventDescription;
         final DatePicker datePickerStartDate = binding.datePickerStartDate;
         final DatePicker datePickerEndDate = binding.datePickerEndDate;
         final TimePicker timePickerStartTime = binding.timePickerStartTime;
         final TimePicker timePickerEndTime = binding.timePickerEndTime;
-        final Button saveButton = binding.savebutton;
+        final Button saveButton = binding.saveButton;
         final Button editButton = binding.editButton;
 
 
@@ -43,7 +43,7 @@ public class calender_thingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // 获取用户输入的事件信息
-                String eventName = editTextthing.getText().toString();
+                String eventName = editText_thing.getText().toString();
                 String eventDescription = editTextEventDescription.getText().toString();
                 int startYear = datePickerStartDate.getYear();
                 int startMonth = datePickerStartDate.getMonth();
@@ -66,7 +66,7 @@ public class calender_thingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // 获取用户输入的事件信息
-                String eventName = editTextthing.getText().toString();
+                String eventName = editText_thing.getText().toString();
                 String eventDescription = editTextEventDescription.getText().toString();
                 int startYear = datePickerStartDate.getYear();
                 int startMonth = datePickerStartDate.getMonth();
