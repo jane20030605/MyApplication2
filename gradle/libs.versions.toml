@@ -13,6 +13,7 @@ navigationUi = "2.6.0"
 mediarouter = "1.6.0"
 legacySupportV4 = "1.0.0"
 activity = "1.8.0"
+transportApi = "3.2.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,6 +29,7 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version
 mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "mediarouter" }
 legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+transport-api = { group = "com.google.android.datatransport", name = "transport-api", version.ref = "transportApi" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

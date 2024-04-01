@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.calender_thing.calender_thingFragment">
+    tools:context=".ui.calender_thing.CalenderThingFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -151,7 +151,7 @@
                     android:hint="@string/thing_illustrate" />
 
                 <Button
-                    android:id="@+id/save_button"
+                    android:id="@+id/savebutton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"

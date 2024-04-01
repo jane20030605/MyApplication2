@@ -19,15 +19,4 @@ public class CalenderViewModel extends ViewModel {
         return mText;
     }
 
-    public String getEventName() {
-        return null;
-    }
-
-    public String getEventDescription() {
-        return null;
-    }
-
-    public Calendar getEventDate() {
-        return null;
-    }
 }
