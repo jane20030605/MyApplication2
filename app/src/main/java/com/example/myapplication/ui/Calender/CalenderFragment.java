@@ -61,7 +61,8 @@ public class CalenderFragment extends Fragment {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String eventDateString = dateFormat.format(eventDate.getTime());
         @SuppressLint("RestrictedApi") String eventText = eventTextView.getText().toString();
-        eventText += "\n" + "事件名稱：" + eventName + "\n" + "描述：" + eventDescription + "\n" + "日期：" + eventDateString + "\n";
+        eventText += "\n" + "事件名稱：" + eventName + "\n" + "描述：" +
+                eventDescription + "\n" + "日期：" + eventDateString + "\n";
         eventTextView.setText(eventText);
     }
 

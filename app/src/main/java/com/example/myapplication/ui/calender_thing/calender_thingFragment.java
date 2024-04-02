@@ -18,15 +18,15 @@ import com.example.myapplication.databinding.FragmentCalenderThingBinding;
 
 public class calender_thingFragment extends Fragment {
 
-    private CalenderThingViewModel mViewModel; // 声明 ViewModel 对象
-    private FragmentCalenderThingBinding binding; // 声明 Binding 对象
+    private CalenderThingViewModel mViewModel; // 宣告 ViewModel 物件
+    private FragmentCalenderThingBinding binding; // 宣告 Binding 物件
 
-    // 创建视图时调用
+    // 創建視圖時呼叫
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        // 使用 Binding 对象将布局与 Fragment 绑定
+        // 使用 Binding 物件將佈局與 Fragment 綁定
         binding = FragmentCalenderThingBinding.inflate(inflater, container, false);
-        View root = binding.getRoot(); // 获取根视图
+        View root = binding.getRoot(); // 獲取根視圖
         // 初始化界面元素
         final EditText editText_thing = binding.editTextThing;
         final EditText editTextEventDescription = binding.editTextEventDescription;
@@ -38,11 +38,11 @@ public class calender_thingFragment extends Fragment {
         final Button editButton = binding.editButton;
 
 
-        // 保存按钮点击事件处理
+        // 保存按鈕點擊事件處理
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 获取用户输入的事件信息
+                // 獲取用戶輸入的事件信息
                 String eventName = editText_thing.getText().toString();
                 String eventDescription = editTextEventDescription.getText().toString();
                 int startYear = datePickerStartDate.getYear();
@@ -55,17 +55,18 @@ public class calender_thingFragment extends Fragment {
                 int startMinute = timePickerStartTime.getCurrentMinute();
                 int endHour = timePickerEndTime.getCurrentHour();
                 int endMinute = timePickerEndTime.getCurrentMinute();
-                // 调用 ViewModel 的方法保存事件
+                // 調用 ViewModel 的方法保存事件
                 mViewModel.saveEvent(eventName, eventDescription,
-                        startYear, startMonth, startDay, startHour, startMinute, endYear, endMonth, endDay, endHour, endMinute);
+                        startYear, startMonth, startDay, startHour, startMinute,
+                        endYear, endMonth, endDay, endHour, endMinute);
             }
         });
 
-        // 编辑按钮点击事件处理
+        // 編輯按鈕點擊事件處理
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 获取用户输入的事件信息
+                // 獲取用戶輸入的事件信息
                 String eventName = editText_thing.getText().toString();
                 String eventDescription = editTextEventDescription.getText().toString();
                 int startYear = datePickerStartDate.getYear();
@@ -78,19 +79,20 @@ public class calender_thingFragment extends Fragment {
                 int startMinute = timePickerStartTime.getCurrentMinute();
                 int endHour = timePickerEndTime.getCurrentHour();
                 int endMinute = timePickerEndTime.getCurrentMinute();
-                // 调用 ViewModel 的方法编辑事件
+                // 調用 ViewModel 的方法編輯事件
                 mViewModel.editEvent(eventName, eventDescription,
-                        startYear, startMonth, startDay, startHour, startMinute, endYear, endMonth, endDay, endHour, endMinute);
+                        startYear, startMonth, startDay, startHour, startMinute,
+                        endYear, endMonth, endDay, endHour, endMinute);
             }
         });
 
-        return root; // 返回根视图
+        return root; // 返回根視圖
     }
 
-    // 当 Activity 创建时调用
+    // 當 Activity 創建時呼叫
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(CalenderThingViewModel.class); // 获取 ViewModel 对象
+        mViewModel = new ViewModelProvider(this).get(CalenderThingViewModel.class); // 獲取 ViewModel 物件
     }
 }

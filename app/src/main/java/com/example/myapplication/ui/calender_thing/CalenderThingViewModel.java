@@ -9,20 +9,18 @@ public class CalenderThingViewModel extends ViewModel {
 
     public void saveEvent(String eventName,
                           String eventDescription,
-                          int startYear,
-                          int startMonth,
-                          int startDay,
-                          int startHour,
-                          int startMinute,
-                          int endYear,
-                          int endMonth,
-                          int endDay,
-                          int endHour,
-                          int endMinute) {
+                          int startYear, int startMonth, int startDay,
+                          int startHour, int startMinute,
+                          int endYear, int endMonth, int endDay,
+                          int endHour, int endMinute) {
         this.eventName = eventName;
     }
 
-    public void editEvent(String eventName, String eventDescription, int startYear, int startMonth, int startDay, int startHour, int startMinute, int endYear, int endMonth, int endDay, int endHour, int endMinute) {
+    public void editEvent(String eventName, String eventDescription,
+                          int startYear, int startMonth, int startDay,
+                          int startHour, int startMinute,
+                          int endYear, int endMonth, int endDay,
+                          int endHour, int endMinute) {
     }
 
     public CalenderThingViewModel get(Class<CalenderThingViewModel> calenderThingViewModelClass) {

@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.nav_setting) {
-            // 导航到设置页面的逻辑
+            // 導航到設定邏輯
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.nav_user_set);
             return true;
