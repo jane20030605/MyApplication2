@@ -14,6 +14,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig = signingConfigs.getByName("debug")
     }
 
     buildTypes {
@@ -37,7 +38,6 @@ android {
 dependencies {
     //noinspection UseTomlInstead,GradleDependency
     implementation("com.google.android.material:material:1.4.0")
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

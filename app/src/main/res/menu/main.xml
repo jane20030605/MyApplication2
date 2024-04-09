@@ -13,4 +13,14 @@
         android:text="設定"
         tools:ignore="HardcodedText"
         app:destination="@id/nav_user_set"/>
+
+    <item
+        android:id="@+id/nav_mail_for_developer"
+        android:orderInCategory="100"
+        android:title="@string/mail_for_developer"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="寄信給開發者"
+        tools:ignore="HardcodedText"
+        app:destination="@id/nav_user_set"/>
 </menu>

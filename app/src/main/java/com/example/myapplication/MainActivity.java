@@ -1,9 +1,11 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,9 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.myapplication.R;
 import com.example.myapplication.databinding.ActivityMainBinding;
-import com.example.myapplication.ui.user_set.user_setFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -60,11 +60,34 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.nav_user_set);
             return true;
+        } else if (id == R.id.nav_mail_for_developer) {
+            sendEmailToDeveloper();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void sendEmailToDeveloper() {
+        String[] addresses = {"yijanelin2@gmail.com"}; // 開發者的電子郵件地址
+        String subject = "反饋/問題報告"; // 郵件主題
+        String body = ""; // 郵件正文
+
+        // 創建一個意圖來啟動郵件應用程序
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // 只發送到郵件應用程序
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses); // 設置收件人
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject); // 設置主題
+        intent.putExtra(Intent.EXTRA_TEXT, body); // 設置正文
+
+        // 檢查是否有可處理此意圖的應用程序
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "沒有可用的郵件應用程序", Toast.LENGTH_SHORT).show();
+            // 可以根據需要添加邏輯
+        }
+    }
 
     @Override
     public boolean onSupportNavigateUp() {
