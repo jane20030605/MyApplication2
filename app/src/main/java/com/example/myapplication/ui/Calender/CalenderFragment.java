@@ -43,7 +43,8 @@ public class CalenderFragment extends Fragment {
         DatePicker datePicker = binding.datePicker; // 日曆日期選擇器
 
         // 設置日期選擇器的選擇監聽器
-        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), (view, year, monthOfYear, dayOfMonth) -> {
+        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
+                (view, year, monthOfYear, dayOfMonth) -> {
             selectedYear = year; // 更新選擇的年份
             selectedMonth = monthOfYear; // 更新選擇的月份
             selectedDay = dayOfMonth; // 更新選擇的日期
