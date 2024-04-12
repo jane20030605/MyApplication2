@@ -41,6 +41,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 String username = editText.getText().toString();
                 String password = passwordEditText.getText().toString();
+
                 if (username.isEmpty() || password.isEmpty()) {
                     Toast.makeText(requireContext(), "請輸入使用者名稱和密碼", Toast.LENGTH_SHORT).show();
                 } else {

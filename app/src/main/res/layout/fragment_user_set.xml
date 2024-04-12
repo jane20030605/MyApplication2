@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.user_set.user_setFragment">
-
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:ignore="UselessParent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,7 +17,7 @@
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UselessParent">
+        tools:ignore="ScrollViewSize,UselessParent">
 
         <TextView
             android:id="@+id/Text_function_set"
@@ -24,7 +27,16 @@
             android:textSize="45sp"
             android:text="@string/function_set" />
 
-        <LinearLayout
+	    <ImageView
+		    android:id="@+id/image_set"
+		    android:layout_width="match_parent"
+		    android:layout_height="188dp"
+		    android:layout_centerHorizontal="true"
+		    android:layout_marginBottom="24dp"
+		    android:src="@drawable/set"
+		    tools:ignore="ContentDescription,ObsoleteLayoutParam" />
+
+	    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal">
@@ -164,5 +176,5 @@
             tools:ignore="ButtonStyle,HardcodedText" />
 
     </LinearLayout>
-
+	</ScrollView>
 </FrameLayout>

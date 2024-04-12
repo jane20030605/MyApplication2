@@ -50,6 +50,7 @@ public class RegistrationFragment extends Fragment {
                 if (TextUtils.isEmpty(enteredUsername) || TextUtils.isEmpty(enteredPassword) ||
                         TextUtils.isEmpty(enteredRealName) || TextUtils.isEmpty(enteredPhone) ||
                         TextUtils.isEmpty(enteredEmail) || TextUtils.isEmpty(enteredHome)) {
+
                     Toast.makeText(requireContext(), "有資料未填寫，無法註冊", Toast.LENGTH_SHORT).show();
                     return;
                 }

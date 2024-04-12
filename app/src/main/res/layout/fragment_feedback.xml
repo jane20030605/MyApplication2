@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.feedback.feedback">
-
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:ignore="UselessParent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,6 +25,15 @@
             android:layout_marginBottom="16dp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
+
+	    <ImageView
+		    android:id="@+id/image_user"
+		    android:layout_width="380dp"
+		    android:layout_height="wrap_content"
+		    android:layout_centerHorizontal="true"
+		    android:layout_marginBottom="24dp"
+		    android:src="@drawable/message"
+		    tools:ignore="ContentDescription,ObsoleteLayoutParam" />
 
         <EditText
             android:id="@+id/editTextFeedback"
@@ -44,4 +56,5 @@
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
+	</ScrollView>
 </FrameLayout>

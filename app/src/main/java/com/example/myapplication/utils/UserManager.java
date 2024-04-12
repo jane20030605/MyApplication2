@@ -9,7 +9,7 @@ public class UserManager {
     private Map<String, User> users;
 
     private UserManager() {
-        // 初始化用户数据
+        // 初始化用戶數據
         users = new HashMap<>();
         users.put("LYJ", new User("LYJ", "LYJane"));
     }
@@ -26,5 +26,4 @@ public class UserManager {
         users.put(newUser.getUsername(), newUser);
     }
 
-    // 可以添加其他管理用户数据的方法，如添加用户、删除用户等
 }
