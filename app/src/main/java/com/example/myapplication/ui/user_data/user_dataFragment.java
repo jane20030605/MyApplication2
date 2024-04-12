@@ -12,14 +12,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentUserDataBinding;
+import com.example.myapplication.ui.emergency.EmergencyContactViewModel;
+
+import java.text.BreakIterator;
 
 public class user_dataFragment extends Fragment {
     private FragmentUserDataBinding binding;
+
+    public user_dataFragment() {
+    }
+
     public static user_dataFragment newInstance() {
         return new user_dataFragment();
     }
@@ -54,6 +62,34 @@ public class user_dataFragment extends Fragment {
                 // 範例中只是顯示一個Toast消息
                 Toast.makeText(requireContext(), "新增緊急連絡人", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(v).navigate(R.id.nav_emergency_contact);
+            }
+        });
+        // 觀察緊急聯絡人信息的變化
+        EmergencyContactViewModel.getEmergencyName().observe(
+                getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String name) {
+                // 更新界面以顯示新的緊急聯絡人姓名
+                textViewEmergencyContact.setText(name);
+            }
+        });
+
+        // 同樣觀察電話號碼和關係的變化並更新界面
+        EmergencyContactViewModel.getPhoneNumber().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String phoneNumber) {
+                // 更新界面以顯示新的電話號碼
+                textViewPhone.setText(phoneNumber);
+            }
+        });
+
+        EmergencyContactViewModel.getRelationship().observe(getViewLifecycleOwner(), new Observer<String>() {
+
+
+            @Override
+            public void onChanged(String relationship) {
+                // 更新界面以顯示新的關係
+                textViewrelationship.setText(relationship);
             }
         });
 

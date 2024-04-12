@@ -5,19 +5,19 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class EmergencyContactViewModel extends ViewModel {
-    private MutableLiveData<String> emergencyName = new MutableLiveData<>();
-    private MutableLiveData<String> phoneNumber = new MutableLiveData<>();
-    private MutableLiveData<String> relationship = new MutableLiveData<>();
+    private static final MutableLiveData<String> emergencyName = new MutableLiveData<>();
+    private static final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
+    private static final MutableLiveData<String> relationship = new MutableLiveData<>();
 
-    public LiveData<String> getEmergencyName() {
+    public static LiveData<String> getEmergencyName() {
         return emergencyName;
     }
 
-    public LiveData<String> getPhoneNumber() {
+    public static LiveData<String> getPhoneNumber() {
         return phoneNumber;
     }
 
-    public LiveData<String> getRelationship() {
+    public static LiveData<String> getRelationship() {
         return relationship;
     }
 
