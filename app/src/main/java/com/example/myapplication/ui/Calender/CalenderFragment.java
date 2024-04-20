@@ -32,7 +32,7 @@ public class CalenderFragment extends Fragment {
     private int selectedDay; // 選擇的日期
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FragmentCalenderBinding binding = FragmentCalenderBinding.inflate(inflater, container, false);
@@ -45,16 +45,22 @@ public class CalenderFragment extends Fragment {
         // 設置日期選擇器的選擇監聽器
         datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
                 (view, year, monthOfYear, dayOfMonth) -> {
-            selectedYear = year; // 更新選擇的年份
-            selectedMonth = monthOfYear; // 更新選擇的月份
-            selectedDay = dayOfMonth; // 更新選擇的日期
-            updateAddEventButtonDate(fabAddEvent); // 更新添加事件按鈕的日期
-        });
+                    selectedYear = year; // 更新選擇的年份
+                    selectedMonth = monthOfYear; // 更新選擇的月份
+                    selectedDay = dayOfMonth; // 更新選擇的日期
+                    updateAddEventButtonDate(fabAddEvent); // 更新添加事件按鈕的日期
+                    displayEvents(); // 顯示事件
+                });
 
         // 當按下添加事件按鈕時的操作
         fabAddEvent.setOnClickListener(view -> {
             try {
-                Navigation.findNavController(view).navigate(R.id.nav_calender_thing); // 導航到添加事件的目的地
+                // 導航到添加事件的目的地，並傳遞選擇的日期
+                Bundle bundle = new Bundle();
+                bundle.putInt("selectedYear", selectedYear);
+                bundle.putInt("selectedMonth", selectedMonth);
+                bundle.putInt("selectedDay", selectedDay);
+                Navigation.findNavController(view).navigate(R.id.nav_calender_thing, bundle);
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(requireContext(), "出現錯誤，請再試一次", Toast.LENGTH_SHORT).show(); // 顯示錯誤消息
@@ -96,5 +102,16 @@ public class CalenderFragment extends Fragment {
                     .append("事件說明: ").append(description).append("\n\n");
         }
         eventTextView.setText(eventsText.toString()); // 將事件文字設置到事件TextView中
+
+        // 為每個事件文本視圖添加點擊監聽器，以實現編輯和刪除功能
+        eventTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 在這裡處理編輯事件的邏輯
+                // 可以獲取事件詳細信息並進行編輯操作
+                Toast.makeText(requireContext(), "編輯事件", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

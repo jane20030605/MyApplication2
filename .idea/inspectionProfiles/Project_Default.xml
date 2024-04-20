@@ -5,7 +5,7 @@
     <inspection_tool class="ClassEscapesItsScope" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Deprecation" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ExtractMethodRecommender" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="minLength" value="524" />
+      <option name="minLength" value="969" />
     </inspection_tool>
     <inspection_tool class="NavigationFile" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ThrowablePrintStackTrace" enabled="false" level="WARNING" enabled_by_default="false" />
