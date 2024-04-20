@@ -5,22 +5,26 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class EmergencyContactViewModel extends ViewModel {
-    private static final MutableLiveData<String> emergencyName = new MutableLiveData<>();
-    private static final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
-    private static final MutableLiveData<String> relationship = new MutableLiveData<>();
+    private final MutableLiveData<String> emergencyName = new MutableLiveData<>();
+    private final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
+    private final MutableLiveData<String> relationship = new MutableLiveData<>();
 
-    public static LiveData<String> getEmergencyName() {
+    // 返回緊急聯絡人姓名的 LiveData
+    public LiveData<String> getEmergencyName() {
         return emergencyName;
     }
 
-    public static LiveData<String> getPhoneNumber() {
+    // 返回電話號碼的 LiveData
+    public LiveData<String> getPhoneNumber() {
         return phoneNumber;
     }
 
-    public static LiveData<String> getRelationship() {
+    // 返回關係的 LiveData
+    public LiveData<String> getRelationship() {
         return relationship;
     }
 
+    // 設置緊急聯絡人信息
     public void setEmergencyContact(String name, String phone, String relation) {
         emergencyName.setValue(name);
         phoneNumber.setValue(phone);

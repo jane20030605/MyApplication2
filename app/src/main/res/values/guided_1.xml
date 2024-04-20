@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="guided_1">
+		初始進入主畫面，有四個按鈕，分別導向到
+		藥物查詢/跌倒辨識紀錄/使用者資料/個人藥盒 等等介面
+	</string>
+
+	<string name="guided_2">
+		側方點選後會出現，側拉式菜單，
+		可以跟隨側方文字顯示功能，跳轉到相應的功能介面
+	</string>
+
+	<string name="guided_3">
+		登入介面有三個按鍵，分別對應登入/註冊/忘記密碼
+	</string>
+
+	<string name="guided_4">
+		個人藥物資料庫，就是個人藥盒的介面，可以找到自己常吃的藥物簡介
+	</string>
+
+	<string name="guided_5">
+		藥物查詢介面，可以從藥物總覽介面跳轉進入
+	</string>
+
+	<string name="guided_6">
+		藉由跌倒辨識的攝影機記錄，若是拍攝到跌倒畫面即傳輸至此，
+		使用者可以在此找到跌倒瞬間的影片
+	</string>
+
+	<string name="guided_7">
+		行事曆資料，可以在此介面中儲存事件輸入，並到點提醒
+	</string>
+
+	<string name="guided_8">
+		使用者資料，可以修改帳號密碼等基礎資料，與設置緊急連絡人
+	</string>
+
+</resources>

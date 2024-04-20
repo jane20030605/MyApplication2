@@ -1,7 +1,7 @@
 package com.example.myapplication.ui.emergency;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
@@ -32,23 +33,44 @@ public class emergency_contact extends Fragment {
         binding = FragmentEmergencyContactBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // 初始化視圖
-        // 緊急聯絡人姓名輸入框
+        // 初始化視圖元素
         EditText editEmergencyName = binding.editEmergencyName;
-        // 電話號碼輸入框
         EditText editTextPhone = binding.editTextPhone;
-        // 關係下拉選單
         Spinner spinnerContact = binding.spinnerContact;
-        // 儲存按鈕
         Button buttonSave = binding.buttonSave;
-        // 取消按鈕
         Button buttonCancel = binding.buttonCancel;
 
-        setSpinnerItems(spinnerContact, R.array.contact);
-
+        // 初始化 ViewModel
         mViewModel = new ViewModelProvider(requireActivity()).get(EmergencyContactViewModel.class);
 
-        // 設置儲存按鈕點擊監聽器
+        // 從 ViewModel 中獲取緊急聯絡人信息並填充到視圖中
+        mViewModel.getEmergencyName().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String emergencyName) {
+                editEmergencyName.setText(emergencyName);
+            }
+        });
+
+        mViewModel.getPhoneNumber().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String phoneNumber) {
+                editTextPhone.setText(phoneNumber);
+            }
+        });
+
+        mViewModel.getRelationship().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String relationship) {
+                // 選擇 spinner 中的相應項目
+                int position = getPositionByValue(spinnerContact, relationship);
+                spinnerContact.setSelection(position);
+            }
+        });
+
+        // 設置下拉選單項目
+        setSpinnerItems(spinnerContact, R.array.contact);
+
+        // 儲存按鈕的點擊事件
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,11 +81,11 @@ public class emergency_contact extends Fragment {
 
                 // 確保所有字段都已填寫
                 if (emergencyName.isEmpty() || phoneNumber.isEmpty()) {
-                    Toast.makeText(requireContext(), "請填寫所有字段", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "請填寫所有資料", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // 將緊急聯絡人信息保存到ViewModel中
+                // 將緊急聯絡人信息保存到 ViewModel 中
                 mViewModel.setEmergencyContact(emergencyName, phoneNumber, relationship);
 
                 Toast.makeText(requireContext(), "緊急聯絡人已保存", Toast.LENGTH_SHORT).show();
@@ -73,27 +95,35 @@ public class emergency_contact extends Fragment {
             }
         });
 
-        // 設置取消按鈕點擊監聽器
+        // 取消按鈕的點擊事件
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(requireContext(), "取消新增緊急連絡人", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(v).navigate(R.id.nav_user_data);
+                Navigation.findNavController(v).navigateUp();
             }
         });
+
         return root;
+    }
+
+    // 設置下拉選單項目
+    private void setSpinnerItems(Spinner spinner, int arrayId) {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
+                arrayId, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
+    // 根據值獲取 spinner 中對應的位置
+    private int getPositionByValue(Spinner spinner, String value) {
+        ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) spinner.getAdapter();
+        return adapter.getPosition(value);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    private void setSpinnerItems(Spinner spinner, int arrayId) {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
-                arrayId, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
     }
 }

@@ -1,16 +1,15 @@
 package com.example.myapplication.ui.user_data;
-
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,86 +19,156 @@ import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentUserDataBinding;
 import com.example.myapplication.ui.emergency.EmergencyContactViewModel;
 
-import java.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class user_dataFragment extends Fragment {
+
     private FragmentUserDataBinding binding;
-
-    public user_dataFragment() {
-    }
-
-    public static user_dataFragment newInstance() {
-        return new user_dataFragment();
-    }
+    private TextView textViewEmergencyContact;
+    private TextView textViewPhone;
+    private TextView textViewRelationship;
+    private List<TextView> eventTextViews; // 新增一個列表來存儲事件列表中的文本視圖
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,Bundle savedInstanceState) {
-
-        UserDataViewModel userDataViewModel =
-                new ViewModelProvider(this).get(UserDataViewModel.class);
-
+                             ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentUserDataBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final EditText editTextUsername = binding.editTextUsername;
-        final EditText editTextEmail = binding.editTextEmail;
-        final EditText editTextPhone = binding.editTextPhone;
-        final EditText editTextAddress = binding.editTextAddress;
-        final Button button_EmergencyContact = binding.buttonEmergencyContact;
-        final TextView textViewTitle = binding.textViewTitle;
-        final TextView textViewUsername = binding.textViewUsername;
-        final TextView textViewEmail = binding.textViewEmail;
-        final TextView textViewPhone = binding.textViewPhone;
-        final TextView textViewAddress = binding.textViewAddress;
-        final TextView textViewEmergencyContact = binding.textViewEmergencyContact;
+        // 初始化文本視圖元素
+        textViewEmergencyContact = binding.eventTextView0;
+        textViewPhone = binding.eventTextView1;
+        textViewRelationship = binding.eventTextView2;
 
-        // 緊急連絡人按鈕的點擊事件
-        button_EmergencyContact.setOnClickListener(new View.OnClickListener() {
+        // 初始化事件列表中的文本視圖列表
+        eventTextViews = new ArrayList<>();
+        eventTextViews.add(textViewEmergencyContact);
+        eventTextViews.add(textViewPhone);
+        eventTextViews.add(textViewRelationship);
+
+        // 初始化按鈕元素
+        Button buttonEmergencyContact = binding.buttonEmergencyContact;
+        Button buttonSave = binding.buttonDataSave;
+
+        // 點擊保存按钮事件
+        buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 在這裡添加緊急連絡人邏輯
-                // 範例中只是顯示一個Toast消息
+                // 獲取用戶輸入數據
+                String username = binding.editTextUsername.getText().toString();
+                String email = binding.editTextEmail.getText().toString();
+                String phone = binding.editTextPhone.getText().toString();
+                String address = binding.editTextAddress.getText().toString();
+
+                // 確保所有字段都已填寫
+                if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()) {
+                    Toast.makeText(requireContext(), "請填寫所有資料", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // 當使用者輸入的資料保存成功時，可以將資料存儲到資料庫或其他持久化儲存裝置中。
+                // 在這個示例中，我們簡單地顯示一個 Toast 訊息表示保存成功。
+                Toast.makeText(requireContext(), "保存成功", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(v).navigate(R.id.nav_user);
+            }
+        });
+
+        // 點擊緊急連絡人按鈕事件
+        buttonEmergencyContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 顯示提示消息並導航到緊急連絡人 Fragment
                 Toast.makeText(requireContext(), "新增緊急連絡人", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(v).navigate(R.id.nav_emergency_contact);
             }
         });
-        // 觀察緊急聯絡人信息的變化
-        EmergencyContactViewModel.getEmergencyName().observe(
-                getViewLifecycleOwner(), new Observer<String>() {
+
+        // 獲取 EmergencyContactViewModel 的實例
+        EmergencyContactViewModel emergencyContactViewModel = new ViewModelProvider(requireActivity()).get(EmergencyContactViewModel.class);
+
+        // 觀察緊急聯絡人信息的變化並更新界面
+        emergencyContactViewModel.getEmergencyName().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
-            public void onChanged(String name) {
-                // 更新界面以顯示新的緊急聯絡人姓名
-                textViewEmergencyContact.setText(name);
+            public void onChanged(String Name) {
+                textViewEmergencyContact.setText(Name);
             }
         });
 
-        // 同樣觀察電話號碼和關係的變化並更新界面
-        EmergencyContactViewModel.getPhoneNumber().observe(getViewLifecycleOwner(), new Observer<String>() {
+        // 觀察電話信息的變化並更新界面
+        emergencyContactViewModel.getPhoneNumber().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
-            public void onChanged(String phoneNumber) {
-                // 更新界面以顯示新的電話號碼
-                textViewPhone.setText(phoneNumber);
+            public void onChanged(String phone) {
+                textViewPhone.setText(phone);
             }
         });
 
-        EmergencyContactViewModel.getRelationship().observe(getViewLifecycleOwner(), new Observer<String>() {
-
-
+        // 觀察緊急聯絡人關係的變化並更新界面
+        emergencyContactViewModel.getRelationship().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String relationship) {
-                // 更新界面以顯示新的關係
-                textViewrelationship.setText(relationship);
+                textViewRelationship.setText(relationship);
             }
         });
+
+        // 對每個事件文本視圖添加點擊監聽器，以實現修改和刪除功能
+        for (final TextView eventTextView : eventTextViews) {
+            eventTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 顯示對話框，讓用戶選擇編輯或刪除該事件
+                    showEditDeleteDialog(eventTextView.getText().toString(), v);
+                }
+            });
+        }
 
         return root;
     }
+
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        UserDataViewModel mViewModel = new ViewModelProvider(this).get(UserDataViewModel.class);
-        // TODO: Use the ViewModel
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
+    // 顯示編輯刪除對話框
+    private void showEditDeleteDialog(final String eventText, View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("選擇操作")
+                .setMessage("您要編輯還是刪除此事件?")
+                .setPositiveButton("編輯", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 在這裡處理編輯事件的邏輯
+                        // 跳轉為編輯界面，執行其他編輯操作
+                        Toast.makeText(requireContext(), "編輯緊急聯絡人", Toast.LENGTH_SHORT).show();
+
+                        // 創建 Bundle 將文本資料傳遞到目標 fragment
+                        Bundle bundle = new Bundle();
+                        bundle.putString("eventName", eventText);
+                        bundle.putString("eventPhone", eventText);
+                        bundle.putString("eventContact", eventText);
+
+                        // 導航到目標 fragment 並傳遞 Bundle
+                        Navigation.findNavController(v).navigate(R.id.nav_emergency_contact, bundle);
+                    }
+                })
+
+                .setNegativeButton("刪除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 在這裡處理刪除事件的邏輯
+                        // 可以從數據庫中刪除該事件或執行其他刪除操作
+                        Toast.makeText(requireContext(), "刪除緊急聯絡人" , Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 取消操作，不執行任何操作
+                    }
+                })
+                .create()
+                .show();
+    }
 }
