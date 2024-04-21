@@ -19,15 +19,13 @@ import com.example.myapplication.R;
 
 public class feedback extends Fragment {
 
-    private FeedbackViewModel mViewModel;
-
     public static feedback newInstance() {
         return new feedback();
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         // 使用 Data Binding 加載布局文件
         FragmentFeedbackBinding binding = FragmentFeedbackBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
@@ -60,7 +58,7 @@ public class feedback extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // 初始化 ViewModel
-        mViewModel = new ViewModelProvider(this).get(FeedbackViewModel.class);
+        FeedbackViewModel mViewModel = new ViewModelProvider(this).get(FeedbackViewModel.class);
         // TODO: 使用 ViewModel
     }
 
