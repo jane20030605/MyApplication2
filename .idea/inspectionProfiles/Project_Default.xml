@@ -7,6 +7,14 @@
     <inspection_tool class="ExtractMethodRecommender" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="minLength" value="969" />
     </inspection_tool>
+    <inspection_tool class="InnerClassMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignorableAnnotations">
+        <set>
+          <option value="android.annotation.SuppressLint" />
+          <option value="org.junit.jupiter.api.Nested" />
+        </set>
+      </option>
+    </inspection_tool>
     <inspection_tool class="NavigationFile" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ThrowablePrintStackTrace" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UNCHECKED_WARNING" enabled="false" level="WARNING" enabled_by_default="false" />

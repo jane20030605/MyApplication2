@@ -32,12 +32,6 @@ public class feedback extends Fragment {
         FragmentFeedbackBinding binding = FragmentFeedbackBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
 
-        // 設置文本
-        binding.editTextFeedback.setText(getString(R.string.Feedback));
-
-        // 設置用戶圖像
-        binding.imageUser.setImageResource(R.drawable.message); // 這裡需要替換成你想要顯示的用戶圖像
-
         // 設置提交按鈕點擊事件
         binding.buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +41,15 @@ public class feedback extends Fragment {
 
                 // 發送意見文本到指定郵箱
                 sendFeedbackEmail(feedbackText);
+            }
+        });
+
+        // 設置取消按鈕點擊事件
+        binding.buttonNotSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 返回上一個介面
+                requireActivity().onBackPressed();
             }
         });
 
@@ -68,7 +71,7 @@ public class feedback extends Fragment {
                 "mailto", "yijanelin2@gmail.com", null));
         // 設置郵件主題
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "用戶意見反饋");
-        // 設置郵件內容
+        // 設置郵件內容，包括用户输入的意见文本
         emailIntent.putExtra(Intent.EXTRA_TEXT, feedbackText);
         // 啟動郵件客戶端
         startActivity(Intent.createChooser(emailIntent, "選擇郵件客戶端"));

@@ -39,8 +39,10 @@ android {
 }
 
 dependencies {
-    //noinspection UseTomlInstead,GradleDependency
-    implementation("com.google.android.material:material:1.4.0")
+
+    //noinspection UseTomlInstead
+    implementation("com.google.android.material:material:1.11.0")
+    implementation(libs.activation)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

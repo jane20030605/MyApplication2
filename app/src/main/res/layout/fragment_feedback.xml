@@ -1,60 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.feedback.feedback">
-	<ScrollView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.feedback.feedback">
+
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		tools:ignore="UselessParent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp"
-        tools:ignore="ScrollViewSize,UselessParent">
+		android:orientation="vertical"
+		android:padding="16dp"
+		tools:ignore="ScrollViewSize,UselessParent">
 
-        <TextView
-            android:id="@+id/textViewTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Feedback"
-            android:textSize="45sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
+		<TextView
+			android:id="@+id/textViewTitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/Feedback"
+			android:textSize="45sp"
+			android:layout_gravity="center_horizontal"
+			android:layout_marginBottom="16dp"
+			android:textStyle="bold"
+			tools:ignore="HardcodedText" />
 
-	    <ImageView
-		    android:id="@+id/image_user"
-		    android:layout_width="380dp"
-		    android:layout_height="wrap_content"
-		    android:layout_centerHorizontal="true"
-		    android:layout_marginBottom="24dp"
-		    android:src="@drawable/message"
-		    tools:ignore="ContentDescription,ObsoleteLayoutParam" />
+		<ImageView
+			android:id="@+id/image_user"
+			android:layout_width="380dp"
+			android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true"
+			android:layout_marginBottom="24dp"
+			android:src="@drawable/message"
+			tools:ignore="ContentDescription,ObsoleteLayoutParam" />
 
-        <EditText
-            android:id="@+id/editTextFeedback"
-            android:layout_width="match_parent"
-            android:layout_height="251dp"
-            android:layout_marginBottom="16dp"
-            android:hint="@string/Enter_comments"
-            android:maxLines="20"
-            android:textSize="20sp"
-            tools:ignore="Autofill,HardcodedText,TextFields" />
+		<EditText
+			android:id="@+id/editTextFeedback"
+			android:layout_width="match_parent"
+			android:layout_height="254dp"
+			android:layout_marginBottom="16dp"
+			android:hint="@string/Enter_comments"
+			android:maxLines="20"
+			android:textSize="20sp"
+			tools:ignore="Autofill,HardcodedText,TextFields" />
 
-        <Button
-            android:id="@+id/buttonSubmit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Submit_comments"
-            android:background="@drawable/color"
-            android:textSize="20sp"
-            android:layout_gravity="center_horizontal"
-            tools:ignore="HardcodedText" />
+		<Button
+			android:id="@+id/buttonSubmit"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/Submit_comments"
+			android:background="@drawable/color"
+			android:textSize="20sp"
+			android:layout_gravity="center_horizontal"
+			tools:ignore="HardcodedText" />
 
-    </LinearLayout>
-	</ScrollView>
-</FrameLayout>
+		<Button
+			android:id="@+id/button_not_submit"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/Not_submit_comments"
+			android:background="@drawable/color"
+			android:layout_marginTop="10dp"
+			android:textSize="20sp"
+			android:layout_gravity="center_horizontal"
+			tools:ignore="HardcodedText" />
+
+	</LinearLayout>
+</ScrollView>

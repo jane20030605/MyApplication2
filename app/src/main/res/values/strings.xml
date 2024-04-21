@@ -71,6 +71,7 @@
     <string name="Feedback">意見回饋</string>
     <string name="Enter_comments">在此輸入您的意見</string>
     <string name="Submit_comments">提交意見</string>
+	<string name="Not_submit_comments">取消</string>
 
     <string name="Emergency_contact_information">緊急聯絡人資料</string>
     <string name="Name">姓名:</string>

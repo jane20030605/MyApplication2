@@ -61,32 +61,25 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.nav_user_set);
             return true;
         } else if (id == R.id.nav_mail_for_developer) {
-            sendEmailToDeveloper();
+            // 調用寄信功能
+            sendFeedbackEmail();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendEmailToDeveloper() {
-        String[] addresses = {"yijanelin2@gmail.com"}; // 開發者的電子郵件地址
-        String subject = "反饋/問題報告"; // 郵件主題
-        String body = ""; // 郵件正文
-
-        // 創建一個意圖來啟動郵件應用程序
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:")); // 只發送到郵件應用程序
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses); // 設置收件人
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject); // 設置主題
-        intent.putExtra(Intent.EXTRA_TEXT, body); // 設置正文
-
-        // 檢查是否有可處理此意圖的應用程序
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            Toast.makeText(this, "沒有可用的郵件應用程序", Toast.LENGTH_SHORT).show();
-            // 可以根據需要添加邏輯
-        }
+    // 新的寄信功能
+    private void sendFeedbackEmail() {
+        // 創建發送郵件的意圖
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto", "yijanelin2@gmail.com", null));
+        // 設置郵件主題
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "用戶意見反饋");
+        // 設置郵件內容
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+        // 啟動郵件客戶端
+        startActivity(Intent.createChooser(emailIntent, "選擇郵件客戶端"));
     }
 
     @Override
