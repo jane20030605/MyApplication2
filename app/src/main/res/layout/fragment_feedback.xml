@@ -10,6 +10,7 @@
 		android:layout_height="match_parent"
 		android:orientation="vertical"
 		android:padding="16dp"
+		android:gravity="center_horizontal"
 		tools:ignore="ScrollViewSize,UselessParent">
 
 		<TextView
@@ -32,12 +33,13 @@
 			android:src="@drawable/message"
 			tools:ignore="ContentDescription,ObsoleteLayoutParam" />
 
-		<EditText
+		<TextView
 			android:id="@+id/editTextFeedback"
 			android:layout_width="match_parent"
 			android:layout_height="254dp"
 			android:layout_marginBottom="16dp"
 			android:hint="@string/Enter_comments"
+			android:gravity="center"
 			android:maxLines="20"
 			android:textSize="20sp"
 			tools:ignore="Autofill,HardcodedText,TextFields" />
@@ -61,7 +63,7 @@
 			android:layout_marginTop="10dp"
 			android:textSize="20sp"
 			android:layout_gravity="center_horizontal"
-			tools:ignore="HardcodedText" />
+			tools:ignore="ButtonStyle,HardcodedText" />
 
 	</LinearLayout>
 </ScrollView>

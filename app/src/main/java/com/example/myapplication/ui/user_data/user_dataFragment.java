@@ -3,9 +3,11 @@ package com.example.myapplication.ui.user_data;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +52,9 @@ public class user_dataFragment extends Fragment {
 
         // 初始化按鈕元素
         Button buttonEmergencyContact = binding.buttonEmergencyContact;
+
+        Button buttonCancel = binding.buttonCancel;
+
         Button buttonSave = binding.buttonDataSave;
 
         // 點擊保存按钮事件
@@ -61,9 +66,21 @@ public class user_dataFragment extends Fragment {
                 String email = binding.editTextEmail.getText().toString();
                 String phone = binding.editTextPhone.getText().toString();
                 String address = binding.editTextAddress.getText().toString();
+                String emergencyContact = textViewEmergencyContact.getText().toString();
+
+                // 將輸入內容暫時儲存在Bundle中
+                Bundle bundle = new Bundle();
+                bundle.putString("username", username);
+                bundle.putString("email", email);
+                bundle.putString("phone", phone);
+                bundle.putString("address", address);
+                bundle.putString("emergencyContact", emergencyContact);
+
+                // 將Bundle設置給目標Fragment
+                getParentFragmentManager().setFragmentResult("userData", bundle);
 
                 // 確保所有字段都已填寫
-                if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()) {
+                if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || emergencyContact.isEmpty()) {
                     Toast.makeText(requireContext(), "請填寫所有資料", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -71,7 +88,9 @@ public class user_dataFragment extends Fragment {
                 // 當使用者輸入的資料保存成功時，可以將資料存儲到資料庫或其他持久化儲存裝置中。
                 // 在這個示例中，我們簡單地顯示一個 Toast 訊息表示保存成功。
                 Toast.makeText(requireContext(), "保存成功", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(v).navigate(R.id.nav_user);
+
+                // 返回上一個介面
+                Navigation.findNavController(v).navigateUp();
             }
         });
 
@@ -86,7 +105,8 @@ public class user_dataFragment extends Fragment {
         });
 
         // 獲取 EmergencyContactViewModel 的實例
-        EmergencyContactViewModel emergencyContactViewModel = new ViewModelProvider(requireActivity()).get(EmergencyContactViewModel.class);
+        EmergencyContactViewModel emergencyContactViewModel = new ViewModelProvider(requireActivity())
+                .get(EmergencyContactViewModel.class);
 
         // 觀察緊急聯絡人信息的變化並更新界面
         emergencyContactViewModel.getEmergencyName().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -122,6 +142,30 @@ public class user_dataFragment extends Fragment {
                 }
             });
         }
+
+        // 點擊取消按钮事件
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 提示用戶取消個人資料修改
+                Toast.makeText(requireContext(), "取消個人資料修改", Toast.LENGTH_SHORT).show();
+                // 返回上一個介面
+                Navigation.findNavController(v).navigateUp();
+            }
+        });
+
+        // 在這裡添加設置EditText的輸入監聽器的代碼
+        binding.editTextUsername.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    // 當按下Enter/下一步鍵時，將焦點轉移到下一個EditText
+                    binding.editTextEmail.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         return root;
     }

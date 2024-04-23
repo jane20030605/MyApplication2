@@ -26,11 +26,14 @@ public class forget_password extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        // 初始化 ViewModel
         forgetPasswordViewModel = new ViewModelProvider(this).get(ForgetPasswordViewModel.class);
 
+        // 使用 Data Binding 綁定布局
         binding = FragmentForgetPasswordBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // 獲取布局中的 EditText、Button 和 TextView 控件
         final EditText editEmail = binding.editEmail;
         final Button buttonSubmit = binding.buttonSubmit;
         final TextView textInstructions = binding.textInstructions;
@@ -40,16 +43,22 @@ public class forget_password extends Fragment {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
+                // 獲取用戶輸入的電子郵件地址
                 String email = editEmail.getText().toString().trim();
                 // 檢查是否輸入了電子郵件地址
                 if (!email.isEmpty()) {
-                    // 呼叫 ViewModel 中的方法來發送新密碼
-                    forgetPasswordViewModel.sendNewPassword(email);
-                    // 提示用戶新密碼已發送
-                    textInstructions.setText("新密碼已發送");
+                    // 調用 ViewModel 中的方法發送新密碼
+                    boolean sent = forgetPasswordViewModel.sendNewPassword(email);
+                    if (sent) {
+                        // 提示用戶新密碼已發送
+                        textInstructions.setText("新密碼已發送");
+                    } else {
+                        // 如果發送失敗，顯示錯誤提示
+                        textInstructions.setText("發送失敗，請檢查電子郵件地址");
+                    }
                 } else {
                     // 如果用戶未輸入電子郵件地址，顯示錯誤提示
-                    textInstructions.setText("請輸入電子郵件");
+                    textInstructions.setText("請輸入電子郵件地址");
                 }
             }
         });

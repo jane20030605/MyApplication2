@@ -124,16 +124,16 @@
         android:name="com.example.myapplication.ui.medicine_allbox.medicine_allboxFragment"
         android:label="@string/menu_medicine_allbox"
         tools:layout="@layout/fragment_medicine_allbox" />
-    <fragment
-        android:id="@+id/nav_guidedTour"
-        android:name="com.example.myapplication.ui.guidedtour.GuidedTour"
-        android:label="fragment_guided_tour"
-        tools:layout="@layout/fragment_guided_tour" />
-    <fragment
-        android:id="@+id/nav_feedback"
-        android:name="com.example.myapplication.ui.feedback.feedback"
-        android:label="fragment_feedback"
-        tools:layout="@layout/fragment_feedback" />
+	<fragment
+		android:id="@+id/nav_guidedTour"
+		android:name="com.example.myapplication.ui.guidedtour.GuidedTour"
+		android:label="@string/menu_guided_tour"
+		tools:layout="@layout/fragment_guided_tour" />
+	<fragment
+		android:id="@+id/nav_feedback"
+		android:name="com.example.myapplication.ui.feedback.feedback"
+		android:label="@string/menu_feedback"
+		tools:layout="@layout/fragment_feedback" />
     <fragment
         android:id="@+id/nav_emergency_contact"
         android:name="com.example.myapplication.ui.emergency.emergency_contact"

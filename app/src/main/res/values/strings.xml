@@ -25,6 +25,8 @@
     <string name="menu_medicine_allbox">藥物總覽查詢</string>
     <string name="menu_user_data">個人檔案</string>
     <string name="menu_user_set">系統設定</string>
+	<string name="menu_feedback">用戶反饋</string>
+	<string name="menu_guided_tour">使用手冊</string>
     <string name="menu_emergency_contact">緊急連絡人</string>
     <string name="menu_forget_password">忘記密碼</string>
 
@@ -69,7 +71,7 @@
     <string name="Taking_time">服用時間</string>
 
     <string name="Feedback">意見回饋</string>
-    <string name="Enter_comments">在此輸入您的意見</string>
+    <string name="Enter_comments">點選下方提交按鈕 \n 並輸入您的意見</string>
     <string name="Submit_comments">提交意見</string>
 	<string name="Not_submit_comments">取消</string>
 

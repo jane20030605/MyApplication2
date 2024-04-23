@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel;
 
 public class ForgetPasswordViewModel extends ViewModel {
 
-    public void sendNewPassword(String email) {
+    public boolean sendNewPassword(String email) {
         // 在這裡實現發送新密碼的邏輯
         // 你可以在此處調用任何必要的方法或服務來完成此操作
         // 例如，你可以使用 Retrofit 來發送 POST 請求到服務器以重置密碼
@@ -14,6 +14,7 @@ public class ForgetPasswordViewModel extends ViewModel {
         // 這裡假設你有一個用於打印日誌的方法，可以用 Logcat 查看它
         // 你可以根據你的需求替換這個方法
         logNewPasswordAndEmail(newPassword, email);
+        return false;
     }
 
     private String generateNewPassword() {

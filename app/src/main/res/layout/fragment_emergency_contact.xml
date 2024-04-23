@@ -1,120 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.emergency.emergency_contact">
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.emergency.emergency_contact">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        tools:ignore="UselessParent">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="16dp"
+		tools:ignore="UselessParent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/Emergency_contact_information"
-            android:textSize="45sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginBottom="16dp"
-            tools:ignore="HardcodedText" />
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/Emergency_contact_information"
+			android:textSize="45sp"
+			android:textStyle="bold"
+			android:gravity="center"
+			android:layout_marginBottom="16dp"
+			tools:ignore="HardcodedText" />
 
-	    <ImageView
-		    android:id="@+id/image_emergency"
-		    android:layout_width="380dp"
-		    android:layout_height="wrap_content"
-		    android:layout_centerHorizontal="true"
-		    android:layout_marginBottom="24dp"
-		    android:src="@drawable/emergency"
-		    tools:ignore="ContentDescription,ObsoleteLayoutParam" />
+		<ImageView
+			android:id="@+id/image_emergency"
+			android:layout_width="380dp"
+			android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true"
+			android:layout_marginBottom="24dp"
+			android:src="@drawable/emergency"
+			tools:ignore="ContentDescription,ObsoleteLayoutParam" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="60dp"
+			android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="@string/Name"
-                tools:ignore="HardcodedText" />
+			<TextView
+				android:layout_width="120dp"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+				android:text="@string/Name"
+				tools:ignore="HardcodedText" />
 
-            <EditText
-                android:id="@+id/edit_emergency_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:hint="@string/Enter_name"
-                tools:ignore="Autofill,HardcodedText,TextFields" />
-        </LinearLayout>
+			<EditText
+				android:id="@+id/edit_emergency_name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+				android:hint="@string/Enter_name"
+				android:imeOptions="actionNext"
+				android:inputType="text"
+				tools:ignore="Autofill,HardcodedText,TextFields" />
+		</LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="60dp"
+			android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="@string/phone_number"
-                tools:ignore="HardcodedText"/>
+			<TextView
+				android:layout_width="120dp"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+				android:text="@string/phone_number"
+				tools:ignore="HardcodedText"/>
 
-            <EditText
-                android:id="@+id/editTextPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:hint="@string/Enter_phone_number"
-                android:inputType="phone"
-                tools:ignore="Autofill,HardcodedText,TextFields"/>
+			<EditText
+				android:id="@+id/editTextPhone"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+				android:hint="@string/Enter_phone_number"
+				android:inputType="phone"
+				tools:ignore="Autofill,HardcodedText,TextFields"/>
 
-        </LinearLayout>
-        <!-- 形狀下拉式選單 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+		</LinearLayout>
+		<!-- 形狀下拉式選單 -->
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="@string/relation"
-                android:layout_marginStart="0dp"
-                tools:ignore="HardcodedText" />
+			<TextView
+				android:layout_width="120dp"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+				android:text="@string/relation"
+				android:layout_marginStart="0dp"
+				tools:ignore="HardcodedText" />
 
-            <Spinner
-                android:id="@+id/spinner_contact"
-                android:layout_width="250dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="16dp" />
-        </LinearLayout>
-        <Button
-            android:id="@+id/buttonSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:textSize="20sp"
-            android:text="@string/save"
-            android:background="@drawable/color"
-            tools:ignore="HardcodedText" />
+			<Spinner
+				android:id="@+id/spinner_contact"
+				android:layout_width="250dp"
+				android:layout_height="50dp"
+				android:layout_marginStart="0dp"
+				android:layout_marginTop="0dp"
+				android:layout_marginEnd="16dp" />
+		</LinearLayout>
+		<Button
+			android:id="@+id/buttonSave"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="15dp"
+			android:textSize="20sp"
+			android:text="@string/save"
+			android:background="@drawable/color"
+			tools:ignore="HardcodedText" />
 
-        <Button
-            android:id="@+id/buttonCancel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textSize="20sp"
-            android:text="@string/delete"
-            android:background="@drawable/color"
-            tools:ignore="HardcodedText" />
+		<Button
+			android:id="@+id/buttonCancel"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:textSize="20sp"
+			android:text="@string/delete"
+			android:background="@drawable/color"
+			tools:ignore="HardcodedText" />
 
-    </LinearLayout>
+	</LinearLayout>
 </FrameLayout>

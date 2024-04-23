@@ -1,19 +1,19 @@
 package com.example.myapplication.ui.emergency;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -101,6 +101,19 @@ public class emergency_contact extends Fragment {
             public void onClick(View v) {
                 Toast.makeText(requireContext(), "取消新增緊急連絡人", Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(v).navigateUp();
+            }
+        });
+
+        // 在這裡添加設置EditText的輸入監聽器的代碼
+        editEmergencyName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    // 當按下Enter/下一步鍵時，將焦點轉移到下一個EditText
+                    editTextPhone.requestFocus();
+                    return true;
+                }
+                return false;
             }
         });
 
