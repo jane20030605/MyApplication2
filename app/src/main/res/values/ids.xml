@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item name="datePickerStartDate" type="id" />
+	<item name="datePickerEndDate" type="id" />
+	<item name="timePickerStartTime" type="id" />
+	<item name="timePickerEndTime" type="id" />
+</resources>

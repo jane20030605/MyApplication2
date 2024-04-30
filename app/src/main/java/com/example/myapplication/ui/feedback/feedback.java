@@ -33,9 +33,7 @@ public class feedback extends Fragment {
                 // 發送意見文本到指定郵箱
                 sendFeedbackEmail(feedbackText);
             }
-
         });
-
         // 設置取消按鈕的點擊事件
         binding.buttonNotSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,11 +42,8 @@ public class feedback extends Fragment {
                 requireActivity().onBackPressed();
             }
         });
-
         return rootView; // 返回根視圖
-
     }
-
     // 發送意見文本到指定郵箱
     private void sendFeedbackEmail(String feedbackText) {
         // 創建發送郵件的意圖
@@ -63,8 +58,6 @@ public class feedback extends Fragment {
         // 顯示提示訊息
         showFeedbackSentMessage();
     }
-
-
     // 顯示意見送出相關訊息
     private void showFeedbackSentMessage() {
         Context context = getContext();

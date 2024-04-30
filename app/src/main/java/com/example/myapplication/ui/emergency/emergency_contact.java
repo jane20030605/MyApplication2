@@ -44,20 +44,21 @@ public class emergency_contact extends Fragment {
         mViewModel = new ViewModelProvider(requireActivity()).get(EmergencyContactViewModel.class);
 
         // 從 ViewModel 中獲取緊急聯絡人信息並填充到視圖中
+        //獲取聯絡人姓名
         mViewModel.getEmergencyName().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String emergencyName) {
                 editEmergencyName.setText(emergencyName);
             }
         });
-
+        //獲取聯絡人電話
         mViewModel.getPhoneNumber().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String phoneNumber) {
                 editTextPhone.setText(phoneNumber);
             }
         });
-
+        //獲取聯絡人關係
         mViewModel.getRelationship().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String relationship) {

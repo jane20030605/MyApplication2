@@ -1,117 +1,98 @@
 package com.example.myapplication.ui.Calender;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
-import com.example.myapplication.databinding.FragmentCalenderBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 public class CalenderFragment extends Fragment {
 
-    private TextView eventTextView; // 顯示事件的TextView
-    private int selectedYear; // 選擇的年份
-    private int selectedMonth; // 選擇的月份
-    private int selectedDay; // 選擇的日期
+    private TextView eventTextView;
+    private Set<String> eventsSet;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        FragmentCalenderBinding binding = FragmentCalenderBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_calender, container, false);
 
-        eventTextView = binding.eventTextView; // 獲取事件TextView
-        FloatingActionButton fabAddEvent = binding.fabAddEvent; // 添加事件的浮動操作按鈕
-        DatePicker datePicker = binding.datePicker; // 日曆日期選擇器
+        eventTextView = root.findViewById(R.id.eventTextView);
 
-        // 設置日期選擇器的選擇監聽器
-        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
-                (view, year, monthOfYear, dayOfMonth) -> {
-                    selectedYear = year; // 更新選擇的年份
-                    selectedMonth = monthOfYear; // 更新選擇的月份
-                    selectedDay = dayOfMonth; // 更新選擇的日期
-                    updateAddEventButtonDate(fabAddEvent); // 更新添加事件按鈕的日期
-                    displayEvents(); // 顯示事件
-                });
-
-        // 當按下添加事件按鈕時的操作
-        fabAddEvent.setOnClickListener(view -> {
-            try {
-                // 導航到添加事件的目的地，並傳遞選擇的日期
-                Bundle bundle = new Bundle();
-                bundle.putInt("selectedYear", selectedYear);
-                bundle.putInt("selectedMonth", selectedMonth);
-                bundle.putInt("selectedDay", selectedDay);
-                Navigation.findNavController(view).navigate(R.id.nav_calender_thing, bundle);
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(requireContext(), "出現錯誤，請再試一次", Toast.LENGTH_SHORT).show(); // 顯示錯誤消息
+        FloatingActionButton fabAddCircularButton = root.findViewById(R.id.fabAddEvent);
+        fabAddCircularButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.nav_calender_thing);
             }
         });
 
-        displayEvents(); // 顯示事件
-        return root; // 返回根視圖
-    }
-
-    // 更新添加事件按鈕的日期
-    private void updateAddEventButtonDate(FloatingActionButton fabAddEvent) {
-        String selectedDateText = String.format(Locale.getDefault(),
-                "%d/%02d/%02d", selectedYear, selectedMonth + 1, selectedDay); // 格式化選擇的日期文字
-        fabAddEvent.setContentDescription(selectedDateText); // 設置浮動操作按鈕的內容描述為選擇的日期文字
-    }
-
-    // 顯示事件
-    private void displayEvents() {
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE); // 獲取共享首選項
-        Set<String> eventsSet = sharedPreferences.getStringSet("events", new HashSet<>()); // 從共享首選項中獲取事件集合，如果不存在則返回空集合
-
-        StringBuilder eventsText = new StringBuilder(); // 用於構建事件文字的字符串生成器
-        for (String event : eventsSet) {
-            String[] eventDetails = event.split(";"); // 拆分事件詳細信息
-            String startDate = eventDetails[0]; // 開始日期
-            String endDate = eventDetails[1]; // 結束日期
-            String startTime = eventDetails[2]; // 開始時間
-            String endTime = eventDetails[3]; // 結束時間
-            String companions = eventDetails[4]; // 事件對象
-            String description = eventDetails[5]; // 事件說明
-
-            // 將事件詳細信息添加到事件文字中
-            eventsText.append("起始日期: ").append(startDate).append("\n")
-                    .append("結束日期: ").append(endDate).append("\n")
-                    .append("起始時間: ").append(startTime).append("\n")
-                    .append("結束時間: ").append(endTime).append("\n")
-                    .append("事件對象: ").append(companions).append("\n")
-                    .append("事件說明: ").append(description).append("\n\n");
-        }
-        eventTextView.setText(eventsText.toString()); // 將事件文字設置到事件TextView中
-
-        // 為每個事件文本視圖添加點擊監聽器，以實現編輯和刪除功能
         eventTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 在這裡處理編輯事件的邏輯
-                // 可以獲取事件詳細信息並進行編輯操作
-                Toast.makeText(requireContext(), "編輯事件", Toast.LENGTH_SHORT).show();
+                showEditDeleteDialog(eventTextView.getText().toString(), v);
             }
         });
 
+        displayEvents();
+
+        return root;
+    }
+
+    private void displayEvents() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
+        eventsSet = sharedPreferences.getStringSet("events", new HashSet<>());
+
+        StringBuilder eventsText = new StringBuilder();
+        for (String event : eventsSet) {
+            eventsText.append(event).append("\n\n");
+        }
+        eventTextView.setText(eventsText.toString());
+    }
+
+    private void showEditDeleteDialog(final String eventText, View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("選擇操作")
+                .setMessage("您要編輯還是刪除此事件?")
+                .setPositiveButton("編輯", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("eventDetails", eventText);
+                        bundle.putBoolean("isEditing", true);
+                        Navigation.findNavController(requireView()).navigate(R.id.nav_calender_thing, bundle);
+                    }
+                })
+                .setNegativeButton("刪除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        eventsSet.remove(eventText);
+                        saveEventsToSharedPreferences();
+                        displayEvents();
+                    }
+                })
+                .setNeutralButton("取消", null)
+                .create()
+                .show();
+    }
+
+    private void saveEventsToSharedPreferences() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("events", eventsSet);
+        editor.apply();
     }
 }

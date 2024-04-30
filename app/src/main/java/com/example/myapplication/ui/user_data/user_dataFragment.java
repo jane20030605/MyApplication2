@@ -24,7 +24,6 @@ import com.example.myapplication.ui.emergency.EmergencyContactViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class user_dataFragment extends Fragment {
 
     private FragmentUserDataBinding binding;
@@ -67,7 +66,6 @@ public class user_dataFragment extends Fragment {
                 String phone = binding.editTextPhone.getText().toString();
                 String address = binding.editTextAddress.getText().toString();
                 String emergencyContact = textViewEmergencyContact.getText().toString();
-
                 // 將輸入內容暫時儲存在Bundle中
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
@@ -75,20 +73,16 @@ public class user_dataFragment extends Fragment {
                 bundle.putString("phone", phone);
                 bundle.putString("address", address);
                 bundle.putString("emergencyContact", emergencyContact);
-
                 // 將Bundle設置給目標Fragment
                 getParentFragmentManager().setFragmentResult("userData", bundle);
-
                 // 確保所有字段都已填寫
                 if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || emergencyContact.isEmpty()) {
                     Toast.makeText(requireContext(), "請填寫所有資料", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 // 當使用者輸入的資料保存成功時，可以將資料存儲到資料庫或其他持久化儲存裝置中。
                 // 在這個示例中，我們簡單地顯示一個 Toast 訊息表示保存成功。
                 Toast.makeText(requireContext(), "保存成功", Toast.LENGTH_SHORT).show();
-
                 // 返回上一個介面
                 Navigation.findNavController(v).navigateUp();
             }
@@ -180,7 +174,7 @@ public class user_dataFragment extends Fragment {
     private void showEditDeleteDialog(final String eventText, View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("選擇操作")
-                .setMessage("您要編輯還是刪除此事件?")
+                .setMessage("您要編輯還是刪除此聯絡人?")
                 .setPositiveButton("編輯", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
