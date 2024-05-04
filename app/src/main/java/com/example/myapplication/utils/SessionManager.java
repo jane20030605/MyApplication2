@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SessionManager {
-    private final SharedPreferences sharedPreferences;
+    private final SharedPreferences sharedPreferences; // 共享偏好設置
     private final SharedPreferences.Editor editor;
-    private static final String PREF_NAME = "UserSession";
-    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+    private static final String PREF_NAME = "UserSession"; // 偏好設置名稱
+    private static final String KEY_IS_LOGGED_IN = "isLoggedIn"; // 登入狀態鍵名
 
     public SessionManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);

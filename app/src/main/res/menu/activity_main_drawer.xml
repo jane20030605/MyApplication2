@@ -20,6 +20,8 @@
             android:layout_height="40dp"
             android:text="登入系統"
             tools:ignore="HardcodedText" />
+
+
         <item
             android:id="@+id/nav_medicine_box"
             android:icon="@android:drawable/ic_menu_save"
