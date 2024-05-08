@@ -56,9 +56,9 @@
         <action
             android:id="@+id/action_nav_login_to_nav_registration"
             app:destination="@id/nav_registration" />
-        <action
-            android:id="@+id/action_nav_login_to_forget_password2"
-            app:destination="@id/nav_forget_password" />
+	    <action
+		    android:id="@+id/action_nav_login_to_forget_password"
+		    app:destination="@id/nav_forget_password" />
     </fragment>
     <fragment
         android:id="@+id/nav_memory"
@@ -142,14 +142,14 @@
         android:name="com.example.myapplication.ui.emergency.emergency_contact"
         android:label="@string/menu_emergency_contact"
         tools:layout="@layout/fragment_emergency_contact" />
-    <fragment
-        android:id="@+id/nav_forget_password"
-        android:name="com.example.myapplication.ui.forget_password.forget_password"
-        android:label="@string/menu_forget_password"
-        tools:layout="@layout/fragment_forget_password" />
 	<fragment
 		android:id="@+id/nav_medicine_inquire"
 		android:name="com.example.myapplication.ui.Medicine_inquire.medicine_inquire"
 		android:label="fragment_medicine_inquire"
 		tools:layout="@layout/fragment_medicine_inquire" />
+	<fragment
+		android:id="@+id/nav_forget_password"
+		android:name="com.example.myapplication.ui.forget_password.forget_passwordFragment"
+		android:label="fragment_forget_password"
+		tools:layout="@layout/fragment_forget_password" />
 </navigation>
