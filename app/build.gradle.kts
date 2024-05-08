@@ -40,14 +40,11 @@ android {
 
 dependencies {
 
-    //noinspection GradleDependency,UseTomlInstead
-    implementation ("com.google.android.material:material:1.11.0")
     //noinspection UseTomlInstead
-    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
-    implementation ("mysql:mysql-connector-java:8.0.28")
+    implementation("com.google.android.material:material:1.11.0")
+    //noinspection UseTomlInstead
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
 
-
-    //implementation(libs.javax.mail.jar)
     implementation(libs.activation)
     implementation(libs.appcompat)
     implementation(libs.material)

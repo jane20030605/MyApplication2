@@ -38,7 +38,7 @@ public class RegistrationFragment extends Fragment {
         // 獲取輸入欄位及按鈕
         final EditText username = binding.username;
         final EditText password = binding.password;
-        final EditText passwordCheck = binding.passwordCheck; 
+        final EditText passwordCheck = binding.passwordCheck; // 新增確認密碼輸入欄位
         final EditText realName = binding.realName;
         final EditText phone = binding.phone;
         final EditText email = binding.email;

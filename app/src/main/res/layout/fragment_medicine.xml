@@ -17,6 +17,7 @@
         tools:ignore="RedundantNamespace">
 
         <!-- 許可證下拉式選單 -->
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="373dp"
