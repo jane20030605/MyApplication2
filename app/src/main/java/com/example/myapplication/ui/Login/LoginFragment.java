@@ -21,12 +21,14 @@ import androidx.navigation.Navigation;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentLoginBinding;
 import com.example.myapplication.models.User;
+import com.example.myapplication.utils.SessionManager;
 import com.example.myapplication.utils.UserManager;
 
 public class LoginFragment extends Fragment {
 
     private FragmentLoginBinding binding; // 登入片段的綁定
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences; // 偏好設置
+    private SessionManager sessionManager; // 會話管理器
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -36,6 +38,7 @@ public class LoginFragment extends Fragment {
         View root = binding.getRoot();
 
         sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext()); // 初始化會話管理器
 
         final EditText editText = binding.editText;
         final EditText passwordEditText = binding.password;
@@ -44,6 +47,7 @@ public class LoginFragment extends Fragment {
         final Button forgotPasswordButton = binding.forgotPassword;
         final CheckBox rememberPasswordCheckBox = binding.rememberPassword;
 
+        // 登入按鈕點擊事件
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,11 +60,11 @@ public class LoginFragment extends Fragment {
                     User user = UserManager.getInstance().getUser(username);
                     if (user != null && user.getPassword().equals(password)) {
                         Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show();
-                        // 實現登入成功後的操作，這裡示範導航到首頁
-                        Navigation.findNavController(v).navigate(R.id.nav_home);
+                        Navigation.findNavController(v).navigate(R.id.nav_home); // 導航到首頁
 
-                        // 保存密碼狀態
+                        // 如果勾選了"記住密碼"，則保存密碼狀態
                         if (rememberPasswordCheckBox.isChecked()) {
+                            sessionManager.login(); // 登入
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putBoolean("記住密碼", true);
                             editor.putString("密碼:", password);
@@ -73,19 +77,19 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        // 註冊按鈕點擊事件
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 實現註冊按鈕的點擊事件
-                Navigation.findNavController(v).navigate(R.id.nav_registration);
+                Navigation.findNavController(v).navigate(R.id.nav_registration); // 導航到註冊頁面
             }
         });
 
+        // 忘記密碼按鈕點擊事件
         forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 實現忘記密碼按鈕的點擊事件
-                Navigation.findNavController(v).navigate(R.id.nav_forget_password);
+                Navigation.findNavController(v).navigate(R.id.nav_forget_password); // 導航到忘記密碼頁面
             }
         });
 

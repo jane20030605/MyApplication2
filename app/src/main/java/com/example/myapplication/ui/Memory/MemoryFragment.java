@@ -8,25 +8,30 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myapplication.Main_SQL;
 import com.example.myapplication.databinding.FragmentMemoryBinding;
-
 
 public class MemoryFragment extends Fragment {
 
-    private com.example.myapplication.databinding.FragmentMemoryBinding binding;
+    private FragmentMemoryBinding binding;
+    private Main_SQL mainSql;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        MemoryViewModel medicineboxViewModel =
-                new ViewModelProvider(this).get(MemoryViewModel.class);
-
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         binding = FragmentMemoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textMemory;
-        medicineboxViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        // 初始化 Main_SQL 實例
+        mainSql = new Main_SQL(requireContext());
+
+        // 從資料庫中獲取資料並設置到 TextView 中
+        String dataFromDatabase = mainSql.getDataFromDatabase().toString();
+        textView.setText(dataFromDatabase);
+
         return root;
     }
 

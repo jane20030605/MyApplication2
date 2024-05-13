@@ -19,8 +19,18 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="登入系統"
+	        android:visible="true"
             tools:ignore="HardcodedText" />
 
+	    <item
+		    android:id="@+id/nav_logout"
+		    android:icon="@android:drawable/ic_menu_close_clear_cancel"
+		    android:title="@string/menu_logout"
+		    android:layout_width="match_parent"
+		    android:layout_height="40dp"
+		    android:text="登出系統"
+		    android:visible="false"
+	        tools:ignore="HardcodedText" />
 
         <item
             android:id="@+id/nav_medicine_box"
