@@ -139,7 +139,7 @@ public class Main_SQL extends SQLiteOpenHelper {
                 COLUMN_Reminder_ID + " INT, " +
                 COLUMN_Atccode + " VARCHAR(45), " +
                 COLUMN_Drug_name + " VARCHAR(45), " +
-                COLUMN_Manufacturer + "VARCHAR(45), " +
+                COLUMN_Manufacturer + " VARCHAR(45), "  +
                 COLUMN_Timee + " VARCHAR(45), " +
                 COLUMN_Num + " INT)";
         db.execSQL(createReminderTableQuery);
