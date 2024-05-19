@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.example.myapplication.LineNotifySender;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentLoginBinding;
 import com.example.myapplication.models.User;
@@ -72,6 +73,8 @@ public class LoginFragment extends Fragment {
                         }
                     } else {
                         Toast.makeText(requireContext(), "使用者名稱或密碼錯誤", Toast.LENGTH_SHORT).show();
+                        LineNotifySender lineNotifySender = new LineNotifySender();
+                        lineNotifySender.sendLineNotify("錯誤的帳號密碼");
                     }
                 }
             }

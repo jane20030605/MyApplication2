@@ -1,18 +1,30 @@
 package com.example.myapplication;
+
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
+import com.example.myapplication.ui.calender_thing.CalendarEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main_SQL extends SQLiteOpenHelper {
 
+
+    public Main_SQL(Context context, String name, SQLiteDatabase.CursorFactory factory,
+                    int version) {
+        super(context, name, factory, version);
+        // TODO Auto-generated constructor stub
+    }
     // 定義資料庫名稱和版本
     private static final String DATABASE_NAME = "Main_SQL.db";
     private static final int DATABASE_VERSION = 1;
@@ -35,7 +47,7 @@ public class Main_SQL extends SQLiteOpenHelper {
     private static final String COLUMN_Birthday = "birthday"; // 使用者生日
     private static final String COLUMN_Mail = "mail"; // 使用者郵箱
     private static final String COLUMN_Address = "address"; // 使用者住址
-    private static final String COLUMN_Reset_token = "reset_token"; //
+    private static final String COLUMN_Reset_token = "reset_token"; // 忘記密碼
 
     // 行事曆使用者欄位
     private static final String COLUMN_Event_ID = "event_id"; // 行事曆事件ID
@@ -50,6 +62,7 @@ public class Main_SQL extends SQLiteOpenHelper {
     private static final String COLUMN_Contact_name= "contact_name"; // 緊急連絡人姓名
     private static final String COLUMN_Contact_tel= "contact_tel"; // 緊急連絡人電話
     private static final String COLUMN_Relation= "relation"; // 緊急連絡人關係
+    private static final String COLUMN_USER_ID= "user_id"; // 使用者id
 
     // 藥物查詢欄位
     private static final String COLUMN_Med_ID = "med_id"; // 藥物查詢ID
@@ -84,60 +97,60 @@ public class Main_SQL extends SQLiteOpenHelper {
         // 建立使用者資料註冊資料表
         String createUserTableQuery = "CREATE TABLE " + TABLE_NAME_User + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_Account + " TEXT, " +
-                COLUMN_Password + " TEXT, " +
-                COLUMN_Name + " TEXT, " +
-                COLUMN_Tel + " TEXT, " +
-                COLUMN_Birthday + " TEXT, " +
-                COLUMN_Mail + " TEXT, " +
-                COLUMN_Address + " TEXT, " +
-                COLUMN_Reset_token + " TEXT)";
+                COLUMN_Account + " CHAR(12), " +
+                COLUMN_Password + " VARCHAR(255), " +
+                COLUMN_Name + " CHAR(10), " +
+                COLUMN_Tel + " CHAR(10), " +
+                COLUMN_Birthday + " DATA, " +
+                COLUMN_Mail + " VARCHAR(255), " +
+                COLUMN_Address + " CHAR(50), " +
+                COLUMN_Reset_token + " VARCHAR(45))";
         db.execSQL(createUserTableQuery);
 
         // 建立行事曆事件資料表
         String createCalenderTableQuery = "CREATE TABLE " + TABLE_NAME_Calender + " (" +
                 COLUMN_Event_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_Thing + " TEXT, " +
-                COLUMN_Data_up + " TEXT, " +
-                COLUMN_Data_end + " TEXT, " +
-                COLUMN_People + " TEXT, " +
-                COLUMN_Describe + " TEXT, " +
-                COLUMN_Account + " TEXT)";
+                COLUMN_Thing + " CHAR(20), " +
+                COLUMN_Data_up + " DATETIME, " +
+                COLUMN_Data_end + "DATETIME, " +
+                COLUMN_People + " CHAR(20), " +
+                COLUMN_Describe + " VARCHAR(45), " +
+                COLUMN_Account + " CHAR(10))";
         db.execSQL(createCalenderTableQuery);
 
         // 建立藥物查詢資料表
         String createMedicineTableQuery = "CREATE TABLE " + TABLE_NAME_Medicine + " (" +
                 COLUMN_Med_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_Atccode + " TEXT, " +
-                COLUMN_Drug_name + " TEXT, " +
-                COLUMN_Indications + " TEXT, " +
-                COLUMN_Manufacturer + " TEXT, " +
-                COLUMN_Shape + " TEXT, " +
-                COLUMN_Color + " TEXT, " +
-                COLUMN_Mark + " TEXT, " +
-                COLUMN_Nick + " TEXT, " +
-                COLUMN_Strip + " TEXT)";
+                COLUMN_Atccode + "  VARCHAR(45), " +
+                COLUMN_Drug_name + " VARCHAR(45), " +
+                COLUMN_Indications + " VARCHAR(45), " +
+                COLUMN_Manufacturer + " VARCHAR(45), " +
+                COLUMN_Shape + " VARCHAR(45), " +
+                COLUMN_Color + " VARCHAR(45), " +
+                COLUMN_Mark + " VARCHAR(45), " +
+                COLUMN_Nick + " VARCHAR(45), " +
+                COLUMN_Strip + " VARCHAR(45))";
         db.execSQL(createMedicineTableQuery);
 
         // 建立個人藥物庫資料表
         String createReminderTableQuery = "CREATE TABLE " + TABLE_NAME_Medicine_reminder + " (" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_Account + " TEXT, " +
-                COLUMN_Reminder_ID + " INTEGER, " +
-                COLUMN_Atccode + " TEXT, " +
-                COLUMN_Drug_name + " TEXT, " +
-                COLUMN_Manufacturer + " TEXT, " +
-                COLUMN_Timee + " TEXT, " +
-                COLUMN_Num + " INTEGER)";
+                COLUMN_ID + " CHAR(10), " +
+                COLUMN_Account + " VARCHAR(45), " +
+                COLUMN_Reminder_ID + " INT, " +
+                COLUMN_Atccode + " VARCHAR(45), " +
+                COLUMN_Drug_name + " VARCHAR(45), " +
+                COLUMN_Manufacturer + "VARCHAR(45), " +
+                COLUMN_Timee + " VARCHAR(45), " +
+                COLUMN_Num + " INT)";
         db.execSQL(createReminderTableQuery);
 
         // 建立緊急連絡人資料表
         String createEmergencyTableQuery = "CREATE TABLE " + TABLE_NAME_Contact_person + " (" +
                 COLUMN_Contact_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_Contact_name + " TEXT, " +
-                COLUMN_Contact_tel + " TEXT, " +
-                COLUMN_Relation + " TEXT, " +
-                COLUMN_ID + " INTEGER, " + // 這個欄位關聯到使用者帳號ID
+                COLUMN_Contact_name + " CHAR(10), " +
+                COLUMN_Contact_tel + " CHAR(10), " +
+                COLUMN_Relation + " CHAR(45), " +
+                COLUMN_USER_ID + " VARCHAR(45), " + // 這個欄位關聯到使用者帳號ID
                 "FOREIGN KEY(" + COLUMN_ID + ") REFERENCES " + TABLE_NAME_User + "(" + COLUMN_ID + "))";
         db.execSQL(createEmergencyTableQuery);
 
@@ -145,8 +158,8 @@ public class Main_SQL extends SQLiteOpenHelper {
         String createFallTableQuery = "CREATE TABLE " + TABLE_NAME_Fall_record + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_Account + " TEXT, " +
-                COLUMN_Fall_date + " TEXT, " +
-                COLUMN_Video + " TEXT)";
+                COLUMN_Fall_date + " DATETIME, " +
+                COLUMN_Video + " BLOB)";
         db.execSQL(createFallTableQuery);
     }
 
@@ -208,10 +221,32 @@ public class Main_SQL extends SQLiteOpenHelper {
 
         String[] lines = data.split("\n");
         for (String line : lines) {
-            db.execSQL("INSERT INTO " + TABLE_NAME_Calender + " (" + COLUMN_Account + ") VALUES ('" + line + "')");
+            db.execSQL("INSERT INTO " + TABLE_NAME_Calender + " " +
+                    "(" + COLUMN_Account + ") VALUES ('" + line + "')");
         }
         db.close();
     }
+
+    public void insertCalendarEvent(
+            String eventName, String eventDescription,
+            String startDate, String endDate,
+            String startTime, String endTime, String companions) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_Thing, eventName);
+        values.put(COLUMN_Describe, eventDescription);
+        values.put(COLUMN_Data_up, startDate);
+        values.put(COLUMN_Data_end, endDate);
+        values.put(COLUMN_Thing, startTime);
+        values.put(COLUMN_People, endTime);
+        values.put(COLUMN_People, companions);
+        // 插入資料到資料庫
+        db.insert(TABLE_NAME_Calender, null, values);
+        db.close();
+    }
+
 
     // 獲取資料庫中的資料
     public Cursor getDataFromDatabase() {
@@ -219,4 +254,44 @@ public class Main_SQL extends SQLiteOpenHelper {
         return database.query(TABLE_NAME_Calender, null, null,
                 null, null, null, null);
     }
+
+    public void insertCalendarEvent(CalendarEvent event) {
+    }
+
+    // 實現 getAllCalendarEvents() 方法
+    public List<CalendarEvent> getAllCalendarEvents() {
+        List<CalendarEvent> eventList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // 定義查詢
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_Calender;
+
+        // 執行查詢
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // 檢索結果並添加到列表中
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") String eventName = cursor.getString(cursor.getColumnIndex(COLUMN_Thing));
+                @SuppressLint("Range") String eventDescription = cursor.getString(cursor.getColumnIndex(COLUMN_Describe));
+                @SuppressLint("Range") String startDate = cursor.getString(cursor.getColumnIndex(COLUMN_Data_up));
+                @SuppressLint("Range") String endDate = cursor.getString(cursor.getColumnIndex(COLUMN_Data_end));
+                @SuppressLint("Range") String startTime = cursor.getString(cursor.getColumnIndex(COLUMN_People));
+                @SuppressLint("Range") String endTime = cursor.getString(cursor.getColumnIndex(COLUMN_People));
+                @SuppressLint("Range") String companions = cursor.getString(cursor.getColumnIndex(COLUMN_Account));
+
+                // 創建 CalendarEvent 對象並添加到列表中
+                CalendarEvent event = new CalendarEvent(eventName, eventDescription,
+                        startDate, endDate, startTime, endTime, companions);
+                eventList.add(event);
+            } while (cursor.moveToNext());
+        }
+
+        // 關閉資源
+        cursor.close();
+        db.close();
+
+        return eventList;
+    }
+
 }

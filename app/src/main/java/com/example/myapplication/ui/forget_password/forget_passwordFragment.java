@@ -1,38 +1,87 @@
 package com.example.myapplication.ui.forget_password;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.myapplication.R;
+import com.example.myapplication.databinding.FragmentForgetPasswordBinding;
+import com.example.myapplication.network.ApiService;
+import com.example.myapplication.network.ResetPasswordRequest;
+import com.example.myapplication.network.RetrofitClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class forget_passwordFragment extends Fragment {
 
-    private ForgetPasswordViewModel mViewModel;
+    // 定義 View Binding 變數
+    private FragmentForgetPasswordBinding binding;
 
-    public static forget_passwordFragment newInstance() {
-        return new forget_passwordFragment();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // 使用 View Binding 來膨脹佈局
+        binding = FragmentForgetPasswordBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
+        // 使用 View Binding 設置按鈕點擊監聽器
+        binding.buttonSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitEmail();
+            }
+        });
+
+        return view;
+    }
+
+    // 提交郵件的方法
+    private void submitEmail() {
+        String email = binding.editEmail.getText().toString().trim();
+
+        // 檢查郵件地址是否為空
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getActivity(), R.string.enter_email, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 創建 Retrofit 實例和 ApiService
+        ApiService apiService = RetrofitClient.getClient("https://example.com/api/").create(ApiService.class);
+
+        // 創建重置密碼請求
+        ResetPasswordRequest request = new ResetPasswordRequest(email);
+
+        // 發送重置密碼請求
+        apiService.resetPassword(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "重置密碼郵件已發送到 " + email, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "發送失敗，請稍後重試", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getActivity(), "網絡錯誤，請稍後重試", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_forget_password, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
+        // 將 binding 設置為 null，以避免記憶體洩漏
+        binding = null;
     }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(ForgetPasswordViewModel.class);
-        // TODO: Use the ViewModel
-    }
-
 }

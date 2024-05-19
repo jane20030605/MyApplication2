@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.example.myapplication.Main_SQL;
 import com.example.myapplication.databinding.FragmentCalenderThingBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -135,20 +136,33 @@ public class CalenderThingFragment extends Fragment {
     // 保存事件
     @SuppressLint("MutatingSharedPrefs")
     private void saveEvent() {
-        String eventDetails = getEventDetailsFromInputs();
+        String eventName = binding.editTextThing.getText().toString();
+        String eventDescription = binding.editTextEventDescription.getText().toString();
+        String startDate = binding.editTextStartDate.getText().toString();
+        String endDate = binding.editTextEndDate.getText().toString();
+        String startTime = binding.editTextStartTime.getText().toString();
+        String endTime = binding.editTextEndTime.getText().toString();
+        String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
-        Set<String> eventsSet = sharedPreferences.getStringSet("events", new HashSet<>());
-        eventsSet.add(eventDetails);
+        // 創建 CalendarEvent 對象
+        CalendarEvent event = new CalendarEvent(
+                eventName, eventDescription,
+                startDate, endDate,
+                startTime, endTime, companions);
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet("events", eventsSet);
-        editor.apply();
+        // 將事件插入到資料庫中
+        Main_SQL dbHelper = new Main_SQL(requireContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+        // 顯示提示消息
         Toast.makeText(requireContext(), "事件已保存", Toast.LENGTH_SHORT).show();
 
+        // 返回上一個 Fragment
         Navigation.findNavController(requireView()).navigateUp();
     }
+
+
+
 
     // 從輸入框中獲取事件細節
     private String getEventDetailsFromInputs() {
@@ -161,7 +175,7 @@ public class CalenderThingFragment extends Fragment {
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
         String eventDetailsBuilder =
-                "事件名稱: " + eventName + "\n" +
+                        "事件名稱: " + eventName + "\n" +
                         "事件描述: " + eventDescription + "\n" +
                         "起始日期: " + sdate + "\n" +
                         "結束日期: " + edate + "\n" +

@@ -8,19 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.example.myapplication.Main_SQL;
 import com.example.myapplication.R;
+import com.example.myapplication.ui.calender_thing.CalendarEvent;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
 public class CalenderFragment extends Fragment {
 
     private TextView eventTextView;
@@ -52,17 +52,19 @@ public class CalenderFragment extends Fragment {
         return root;
     }
 
+
     private void displayEvents() {
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
-        eventsSet = sharedPreferences.getStringSet("events", new HashSet<>());
+        Main_SQL dbHelper = new Main_SQL(requireContext());
+        List<CalendarEvent> eventList = dbHelper.getAllCalendarEvents();
 
         StringBuilder eventsText = new StringBuilder();
-        for (String event : eventsSet) {
-            eventsText.append(event).append("\n\n");
+        for (CalendarEvent event : eventList) {
+            eventsText.append(event.getEventDetails()).append("\n\n");
         }
         eventTextView.setText(eventsText.toString());
     }
 
+    
     private void showEditDeleteDialog(final String eventText, View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("選擇操作")

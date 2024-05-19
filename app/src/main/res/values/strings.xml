@@ -31,9 +31,9 @@
 	<string name="menu_emergency_contact">緊急連絡人</string>
 	<string name="menu_forget_password">忘記密碼</string>
 
-	<string name="enter_email">請輸入您的電子郵件</string>
-	<string name="please_enter_email">請輸入您註冊時使用的電子郵件地址</string>
-	<string name="send_out">送出</string>
+	<string name="enter_email">請輸入您的電子郵件地址</string>
+	<string name="send_out">發送</string>
+	<string name="please_enter_email">請輸入您的電子郵件以接收重置密碼指示</string>
 
 	<string name="Calender_thing">行事曆事件輸入</string>
 	<string name="thing_name">事件名稱</string>
@@ -85,5 +85,7 @@
 	<string name="relation">關係選擇:</string>
 	<string name="save">保存</string>
 	<string name="delete">取消</string>
+	<string name="dummy_button">Dummy Button</string>
+	<string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
