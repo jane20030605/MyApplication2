@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +21,7 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.Main_SQL;
 import com.example.myapplication.databinding.FragmentCalenderThingBinding;
+import com.example.myapplication.ui.calender_thing.CalendarEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -152,7 +152,7 @@ public class CalenderThingFragment extends Fragment {
 
         // 將事件插入到資料庫中
         Main_SQL dbHelper = new Main_SQL(requireContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper.insertCalendarEvent(event);
 
         // 顯示提示消息
         Toast.makeText(requireContext(), "事件已保存", Toast.LENGTH_SHORT).show();
@@ -160,8 +160,6 @@ public class CalenderThingFragment extends Fragment {
         // 返回上一個 Fragment
         Navigation.findNavController(requireView()).navigateUp();
     }
-
-
 
 
     // 從輸入框中獲取事件細節
@@ -175,7 +173,7 @@ public class CalenderThingFragment extends Fragment {
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
         String eventDetailsBuilder =
-                        "事件名稱: " + eventName + "\n" +
+                "事件名稱: " + eventName + "\n" +
                         "事件描述: " + eventDescription + "\n" +
                         "起始日期: " + sdate + "\n" +
                         "結束日期: " + edate + "\n" +

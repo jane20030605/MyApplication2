@@ -17,6 +17,12 @@ import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.utils.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -105,5 +111,36 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    // 從URL讀取資料庫內容並插入到本地資料庫中
+    public void downloadAndInsertDataFromUrl() {
+        try {
+            // 定義URL
+            URL url = new URL("http://26.110.164.151/Untitled-1.php");
+
+            // 打開連接
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // 設置請求方式
+            connection.setRequestMethod("GET");
+
+            // 讀取輸入流
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+
+            // 讀取服務器回應
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // 斷開連接
+            connection.disconnect();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
