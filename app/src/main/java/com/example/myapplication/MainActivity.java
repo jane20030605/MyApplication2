@@ -5,7 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -13,20 +15,27 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.myapplication.network.ExampleEntity;
 import com.example.myapplication.databinding.ActivityMainBinding;
+import com.example.myapplication.network.ApiService;
 import com.example.myapplication.utils.SessionManager;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private SessionManager sessionManager; // 創建一個會話管理器實例
+    private SessionManager sessionManager;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,21 +49,32 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
-        sessionManager = new SessionManager(this); // 初始化會話管理器
+        sessionManager = new SessionManager(this);
 
-        // 定義導航架構
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine, R.id.nav_user,
                 R.id.nav_calender, R.id.nav_login, R.id.nav_memory)
                 .setOpenableLayout(drawer)
                 .build();
 
-        // 導航控制器初始化
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        // 在這裡呼叫 updateMenuItems(menu) 方法
+        // 初始化 Retrofit
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://26.110.164.151/Untitled-1.php") // 替換為你的後端 API 地址
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        apiService = retrofit.create(ApiService.class);
+
+        // 調用 fetchDataFromAPI 方法來從 API 獲取資料
+        fetchDataFromAPI();
+
+        // 更新選單項目
         updateMenuItems(navigationView.getMenu());
     }
 
@@ -69,19 +89,17 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.nav_setting) {
-            // 導航到設定頁面
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.nav_user_set);
             return true;
         } else if (id == R.id.nav_mail_for_developer) {
-            sendFeedbackEmail(); // 呼叫發送反饋郵件的方法
+            sendFeedbackEmail();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    // 發送反饋郵件的方法
     private void sendFeedbackEmail() {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto", "yijanelin2@gmail.com", null));
@@ -90,9 +108,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(emailIntent, "選擇郵件客戶端"));
     }
 
-    // 更新選單項目可見性
     private void updateMenuItems(Menu menu) {
-        if (sessionManager != null) { // 確保 sessionManager 不為空
+        if (sessionManager != null) {
             MenuItem loginMenuItem = menu.findItem(R.id.nav_login);
             MenuItem logoutMenuItem = menu.findItem(R.id.nav_logout);
 
@@ -113,34 +130,23 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    // 從URL讀取資料庫內容並插入到本地資料庫中
-    public void downloadAndInsertDataFromUrl() {
-        try {
-            // 定義URL
-            URL url = new URL("http://26.110.164.151/Untitled-1.php");
-
-            // 打開連接
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            // 設置請求方式
-            connection.setRequestMethod("GET");
-
-            // 讀取輸入流
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            // 讀取服務器回應
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+    // 在這裡定義呼叫 API 的方法
+    private void fetchDataFromAPI() {
+        apiService.getData().enqueue(new Callback<List<ExampleEntity>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<ExampleEntity>> call, @NonNull Response<List<ExampleEntity>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<ExampleEntity> data = response.body();
+                    // 處理從 API 返回的資料
+                } else {
+                    Toast.makeText(MainActivity.this, "無法獲取資料", Toast.LENGTH_SHORT).show();
+                }
             }
-            reader.close();
 
-            // 斷開連接
-            connection.disconnect();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onFailure(@NonNull Call<List<ExampleEntity>> call, @NonNull Throwable t) {
+                Toast.makeText(MainActivity.this, "網路錯誤：" + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -19,9 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.example.myapplication.Main_SQL;
+import com.example.myapplication.network.Main_SQL;
 import com.example.myapplication.databinding.FragmentCalenderThingBinding;
-import com.example.myapplication.ui.calender_thing.CalendarEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

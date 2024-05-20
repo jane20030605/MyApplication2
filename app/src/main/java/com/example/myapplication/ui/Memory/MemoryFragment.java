@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.myapplication.Main_SQL;
+import com.example.myapplication.network.Main_SQL;
 import com.example.myapplication.databinding.FragmentMemoryBinding;
 
 public class MemoryFragment extends Fragment {
