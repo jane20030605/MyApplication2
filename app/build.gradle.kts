@@ -36,6 +36,7 @@ android {
     buildFeatures {
         dataBinding = true
     }
+
 }
 
 dependencies {
@@ -53,6 +54,9 @@ dependencies {
     //noinspection UseTomlInstead,GradleDependency
     implementation ("androidx.camera:camera-extensions:1.0.0-alpha28")
 
+    //noinspection UseTomlInstead
+    implementation ("com.github.bumptech.glide:glide:4.15.0")
+
     //noinspection UseTomlInstead,GradleDependency
     implementation ("com.google.android.material:material:1.12.0")
     //noinspection UseTomlInstead,GradleDependency
@@ -66,6 +70,8 @@ dependencies {
     implementation ("androidx.room:room-runtime:2.5.0")
     //noinspection UseTomlInstead,GradleDependency
     annotationProcessor ("androidx.room:room-compiler:2.5.0")
+    //noinspection UseTomlInstead
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.0")
 
     implementation(libs.activation)
     implementation(libs.appcompat)
