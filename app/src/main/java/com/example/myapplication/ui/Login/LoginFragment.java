@@ -77,6 +77,8 @@ public class LoginFragment extends Fragment {
             }
         });
 
+
+
         // 註冊按鈕點擊事件
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override

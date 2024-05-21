@@ -20,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashSet;
 import java.util.Set;
+
 public class CalenderFragment extends Fragment {
 
     private TextView eventTextView;

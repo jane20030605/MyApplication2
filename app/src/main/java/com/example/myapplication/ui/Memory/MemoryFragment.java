@@ -4,35 +4,34 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
+import android.widget.Button;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.example.myapplication.network.Main_SQL;
+import androidx.navigation.Navigation;
+import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentMemoryBinding;
 
 public class MemoryFragment extends Fragment {
 
     private FragmentMemoryBinding binding;
-    private Main_SQL mainSql;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentMemoryBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentMemoryBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        final TextView textView = binding.textMemory;
-
-        // 初始化 Main_SQL 實例
-        mainSql = new Main_SQL(requireContext());
-
-        // 從資料庫中獲取資料並設置到 TextView 中
-        String dataFromDatabase = mainSql.getDataFromDatabase().toString();
-        textView.setText(dataFromDatabase);
-
-        return root;
+        // 設置按鈕點擊事件
+        binding.buttonOpenVideo.setOnClickListener(v -> {
+            // 使用 Navigation 進行跳轉
+            Navigation.findNavController(v).navigate(R.id.nav_video);
+        });
     }
 
     @Override

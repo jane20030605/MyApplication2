@@ -26,6 +26,7 @@ public class Main_SQL extends SQLiteOpenHelper {
         super(context, name, factory, version);
         // TODO Auto-generated constructor stub
     }
+
     // 定義資料庫名稱和版本
     private static final String DATABASE_NAME = "Main_SQL.db";
     private static final int DATABASE_VERSION = 1;
@@ -60,10 +61,10 @@ public class Main_SQL extends SQLiteOpenHelper {
 
     // 緊急連絡人欄位
     private static final String COLUMN_Contact_ID = "contact_id"; // 緊急連絡人ID
-    private static final String COLUMN_Contact_name= "contact_name"; // 緊急連絡人姓名
-    private static final String COLUMN_Contact_tel= "contact_tel"; // 緊急連絡人電話
-    private static final String COLUMN_Relation= "relation"; // 緊急連絡人關係
-    private static final String COLUMN_USER_ID= "user_id"; // 使用者id
+    private static final String COLUMN_Contact_name = "contact_name"; // 緊急連絡人姓名
+    private static final String COLUMN_Contact_tel = "contact_tel"; // 緊急連絡人電話
+    private static final String COLUMN_Relation = "relation"; // 緊急連絡人關係
+    private static final String COLUMN_USER_ID = "user_id"; // 使用者id
 
     // 藥物查詢欄位
     private static final String COLUMN_Med_ID = "med_id"; // 藥物查詢ID
@@ -140,7 +141,7 @@ public class Main_SQL extends SQLiteOpenHelper {
                 COLUMN_Reminder_ID + " INT, " +
                 COLUMN_Atccode + " VARCHAR(45), " +
                 COLUMN_Drug_name + " VARCHAR(45), " +
-                COLUMN_Manufacturer + " VARCHAR(45), "  +
+                COLUMN_Manufacturer + " VARCHAR(45), " +
                 COLUMN_Timee + " VARCHAR(45), " +
                 COLUMN_Num + " INT)";
         db.execSQL(createReminderTableQuery);
@@ -207,98 +208,13 @@ public class Main_SQL extends SQLiteOpenHelper {
             // 斷開連接
             connection.disconnect();
 
-            // 將資料插入到資料庫中
-            insertDataIntoDatabase(response.toString());
-
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("test_tag","e");
-            Log.e("test_tag","insertDataIntoDatabase failed");
+            Log.e("test_tag", "e");
+            Log.e("test_tag", "insertDataIntoDatabase failed");
             Log.e("DownloadData", "Failed to download data: " + e.getMessage());
 
         }
     }
-
-    // 將資料插入到資料庫中
-    private void insertDataIntoDatabase(String data) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_NAME_Calender); // 清空資料表
-        Log.d("test_tag","run sql command");
-        String[] lines = data.split("\n");
-        for (String line : lines) {
-            db.execSQL("INSERT INTO " + TABLE_NAME_Calender + " " +
-                    "(" + COLUMN_Account + ") VALUES ('" + line + "')");
-        }
-        db.close();
-        Log.d("test_tag","run sql command finish");
-
-    }
-
-    public void insertCalendarEvent(
-            String eventName, String eventDescription,
-            String startDate, String endDate,
-            String startTime, String endTime, String companions) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(COLUMN_Thing, eventName);
-        values.put(COLUMN_Describe, eventDescription);
-        values.put(COLUMN_Data_up, startDate);
-        values.put(COLUMN_Data_end, endDate);
-        values.put(COLUMN_Thing, startTime);
-        values.put(COLUMN_People, endTime);
-        values.put(COLUMN_People, companions);
-
-        // 插入資料到資料庫
-        db.insert(TABLE_NAME_Calender, null, values);
-        db.close();
-    }
-
-
-    // 獲取資料庫中的資料
-    public Cursor getDataFromDatabase() {
-        SQLiteDatabase database = this.getReadableDatabase();
-        return database.query(TABLE_NAME_Calender, null, null,
-                null, null, null, null);
-    }
-
-    public void insertCalendarEvent(CalendarEvent event) {
-    }
-    @SuppressLint("Range")
-    public List<CalendarEvent> getAllCalendarEvents() {
-        List<CalendarEvent> eventList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        // 定義查詢
-        String selectQuery = "SELECT * FROM " + TABLE_NAME_Calender;
-
-        // 執行查詢
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // 檢索結果並添加到列表中
-        if (cursor.moveToFirst()) {
-            do {
-                // 提取每列中的數據並創建 CalendarEvent 對象
-                CalendarEvent event = new CalendarEvent();
-                event.setThing(cursor.getString(cursor.getColumnIndex(COLUMN_Thing)));
-                event.setDescribe(cursor.getString(cursor.getColumnIndex(COLUMN_Describe)));
-                event.setDataUp(cursor.getString(cursor.getColumnIndex(COLUMN_Data_up)));
-                event.setDataEnd(cursor.getString(cursor.getColumnIndex(COLUMN_Data_end)));
-                event.setPeople(cursor.getString(cursor.getColumnIndex(COLUMN_People)));
-                event.setAccount(cursor.getString(cursor.getColumnIndex(COLUMN_Account)));
-
-                // 將 CalendarEvent 對象添加到列表中
-                eventList.add(event);
-            } while (cursor.moveToNext());
-        }
-
-        // 關閉資源
-        cursor.close();
-        db.close();
-
-        return eventList;
-    }
-
 
 }

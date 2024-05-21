@@ -64,7 +64,11 @@
         android:id="@+id/nav_memory"
         android:name="com.example.myapplication.ui.Memory.MemoryFragment"
         android:label="@string/menu_memory"
-        tools:layout="@layout/fragment_memory" />
+        tools:layout="@layout/fragment_memory" >
+	    <action
+		    android:id="@+id/nav_video"
+		    app:destination="@id/videoFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/nav_calender"
         android:name="com.example.myapplication.ui.Calender.CalenderFragment"
@@ -150,6 +154,11 @@
 	<fragment
 		android:id="@+id/nav_forget_password"
 		android:name="com.example.myapplication.ui.forget_password.forget_passwordFragment"
-		android:label="fragment_forget_password"
+		android:label="@string/menu_forget_password"
 		tools:layout="@layout/fragment_forget_password" />
+	<fragment
+		android:id="@+id/videoFragment2"
+		android:name="com.example.myapplication.ui.Video.VideoFragment"
+		android:label="@string/menu_video"
+		tools:layout="@layout/fragment_video" />
 </navigation>

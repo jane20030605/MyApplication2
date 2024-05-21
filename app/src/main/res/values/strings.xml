@@ -30,6 +30,7 @@
 	<string name="menu_guided_tour">使用手冊</string>
 	<string name="menu_emergency_contact">緊急連絡人</string>
 	<string name="menu_forget_password">忘記密碼</string>
+	<string name="menu_video">即時影像</string>
 
 	<string name="enter_email">請輸入您的電子郵件地址</string>
 	<string name="send_out">發送</string>
@@ -87,5 +88,7 @@
 	<string name="delete">取消</string>
 	<string name="dummy_button">Dummy Button</string>
 	<string name="dummy_content">DUMMY\nCONTENT</string>
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

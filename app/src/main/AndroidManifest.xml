@@ -12,7 +12,8 @@
 		tools:ignore="ScopedStorage" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
 		tools:ignore="ScopedStorage" />
-
+	<uses-permission android:name="android.permission.CAMERA"
+		tools:ignore="PermissionImpliesUnsupportedChromeOsHardware" />
 
 	<application
         android:allowBackup="true"

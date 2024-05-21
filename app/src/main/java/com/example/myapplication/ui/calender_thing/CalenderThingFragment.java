@@ -19,11 +19,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.example.myapplication.network.Main_SQL;
 import com.example.myapplication.databinding.FragmentCalenderThingBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -92,24 +92,8 @@ public class CalenderThingFragment extends Fragment {
         if (getArguments() != null && getArguments().containsKey("isEditing")
                 && getArguments().getBoolean("isEditing")) {
 
-            String eventName = getArguments().getString("eventName");
-            String eventDescription = getArguments().getString("eventDescription");
-            String sdate = getArguments().getString("sdate");
-            String edate = getArguments().getString("edate");
-            String stime = getArguments().getString("stime");
-            String etime = getArguments().getString("etime");
-            String companions = getArguments().getString("companions");
-
-            binding.editTextThing.setText(eventName);
-            binding.editTextEventDescription.setText(eventDescription);
-            binding.editTextStartDate.setText(sdate);
-            binding.editTextEndDate.setText(edate);
-            binding.editTextStartTime.setText(stime);
-            binding.editTextEndTime.setText(etime);
-
-            ArrayAdapter<String> adapter = (ArrayAdapter<String>) binding.spinnerCompanions.getAdapter();
-            int position = adapter.getPosition(companions);
-            binding.spinnerCompanions.setSelection(position);
+            String eventDetails = getArguments().getString("eventDetails");
+            populateEventDetails(eventDetails);
         }
 
         return root;
@@ -143,15 +127,18 @@ public class CalenderThingFragment extends Fragment {
         String endTime = binding.editTextEndTime.getText().toString();
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
-        // 創建 CalendarEvent 對象
-        CalendarEvent event = new CalendarEvent(
-                eventName, eventDescription,
-                startDate, endDate,
-                startTime, endTime, companions);
+        String eventDetails = eventName + "\n" + eventDescription + "\n" +
+                startDate + "\n" + endDate + "\n" +
+                startTime + "\n" + endTime + "\n" +
+                companions;
 
-        // 將事件插入到資料庫中
-        Main_SQL dbHelper = new Main_SQL(requireContext());
-        dbHelper.insertCalendarEvent(event);
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
+        Set<String> eventsSet = sharedPreferences.getStringSet("events", new HashSet<>());
+        eventsSet.add(eventDetails);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("events", eventsSet);
+        editor.apply();
 
         // 顯示提示消息
         Toast.makeText(requireContext(), "事件已保存", Toast.LENGTH_SHORT).show();
@@ -160,27 +147,20 @@ public class CalenderThingFragment extends Fragment {
         Navigation.findNavController(requireView()).navigateUp();
     }
 
+    private void populateEventDetails(String eventDetails) {
+        String[] details = eventDetails.split("\n");
+        if (details.length == 7) {
+            binding.editTextThing.setText(details[0]);
+            binding.editTextEventDescription.setText(details[1]);
+            binding.editTextStartDate.setText(details[2]);
+            binding.editTextEndDate.setText(details[3]);
+            binding.editTextStartTime.setText(details[4]);
+            binding.editTextEndTime.setText(details[5]);
 
-    // 從輸入框中獲取事件細節
-    private String getEventDetailsFromInputs() {
-        String eventName = binding.editTextThing.getText().toString();
-        String eventDescription = binding.editTextEventDescription.getText().toString();
-        String sdate = binding.editTextStartDate.getText().toString();
-        String edate = binding.editTextEndDate.getText().toString();
-        String stime = binding.editTextStartTime.getText().toString();
-        String etime = binding.editTextEndTime.getText().toString();
-        String companions = binding.spinnerCompanions.getSelectedItem().toString();
-
-        String eventDetailsBuilder =
-                "事件名稱: " + eventName + "\n" +
-                        "事件描述: " + eventDescription + "\n" +
-                        "起始日期: " + sdate + "\n" +
-                        "結束日期: " + edate + "\n" +
-                        "起始時間: " + stime + "\n" +
-                        "結束時間: " + etime + "\n" +
-                        "事件對象: " + companions;
-
-        return eventDetailsBuilder;
+            ArrayAdapter<String> adapter = (ArrayAdapter<String>) binding.spinnerCompanions.getAdapter();
+            int position = adapter.getPosition(details[6]);
+            binding.spinnerCompanions.setSelection(position);
+        }
     }
 
     // 顯示日期選擇對話框
