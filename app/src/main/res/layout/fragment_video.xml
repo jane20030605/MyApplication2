@@ -18,8 +18,8 @@
 
 	<ImageButton
 		android:id="@+id/captureButton"
-		android:layout_width="50dp"
-		android:layout_height="50dp"
+		android:layout_width="60dp"
+		android:layout_height="60dp"
 		android:layout_margin="20dp"
 		android:icon="@android:drawable/presence_invisible"
 		android:contentDescription="@string/capture_button"

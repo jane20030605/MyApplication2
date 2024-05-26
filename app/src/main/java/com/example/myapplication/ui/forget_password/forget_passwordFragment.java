@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentForgetPasswordBinding;
 import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.ResetPasswordRequest;
+import com.example.myapplication.Request.ResetPasswordRequest;
 import com.example.myapplication.network.RetrofitClient;
 
 import retrofit2.Call;
@@ -55,7 +55,8 @@ public class forget_passwordFragment extends Fragment {
         }
 
         // 創建 Retrofit 實例和 ApiService
-        ApiService apiService = RetrofitClient.getClient("https://example.com/api/").create(ApiService.class);
+        ApiService apiService = RetrofitClient.getClient
+                ("http://26.110.164.151/Untitled-1.php").create(ApiService.class);
 
         // 創建重置密碼請求
         ResetPasswordRequest request = new ResetPasswordRequest(email);

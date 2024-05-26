@@ -2,6 +2,7 @@ package com.example.myapplication.ui.Login;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,15 +19,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
-import com.example.myapplication.databinding.FragmentLoginBinding;
 import com.example.myapplication.models.User;
 import com.example.myapplication.utils.SessionManager;
 import com.example.myapplication.utils.UserManager;
 
 public class LoginFragment extends Fragment {
 
-    private FragmentLoginBinding binding; // 登入片段的綁定
     private SharedPreferences sharedPreferences; // 偏好設置
     private SessionManager sessionManager; // 會話管理器
 
@@ -34,20 +34,18 @@ public class LoginFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         LoginViewModel loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        binding = FragmentLoginBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        View root = inflater.inflate(R.layout.fragment_login, container, false);
 
         sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         sessionManager = new SessionManager(requireContext()); // 初始化會話管理器
 
-        final EditText editText = binding.editText;
-        final EditText passwordEditText = binding.password;
-        final Button loginButton = binding.button11;
-        final Button registerButton = binding.button12;
-        final Button forgotPasswordButton = binding.forgotPassword;
-        final CheckBox rememberPasswordCheckBox = binding.rememberPassword;
+        final EditText editText = root.findViewById(R.id.editText);
+        final EditText passwordEditText = root.findViewById(R.id.password);
+        final Button loginButton = root.findViewById(R.id.button11);
+        final Button registerButton = root.findViewById(R.id.button12);
+        final Button forgotPasswordButton = root.findViewById(R.id.forgot_password);
+        final CheckBox rememberPasswordCheckBox = root.findViewById(R.id.remember_password);
 
-        // 登入按鈕點擊事件
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,10 +60,24 @@ public class LoginFragment extends Fragment {
                         Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show();
                         Navigation.findNavController(v).navigate(R.id.nav_home); // 導航到首頁
 
+                        // 更新菜單項目
+                        updateMenuItems();
+
+                        // 保存使用者名稱到 SharedPreferences
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("USERNAME", username);
+                        editor.apply();
+
+                        // 傳遞使用者名稱並導航到 MainActivity
+                        Intent intent = new Intent(requireActivity(), MainActivity.class);
+                        intent.putExtra("USERNAME", username);
+                        startActivity(intent);
+
+
                         // 如果勾選了"記住密碼"，則保存密碼狀態
                         if (rememberPasswordCheckBox.isChecked()) {
                             sessionManager.login(); // 登入
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor = sharedPreferences.edit();
                             editor.putBoolean("記住密碼", true);
                             editor.putString("密碼:", password);
                             editor.apply();
@@ -77,9 +89,6 @@ public class LoginFragment extends Fragment {
             }
         });
 
-
-
-        // 註冊按鈕點擊事件
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +96,6 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        // 忘記密碼按鈕點擊事件
         forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,7 +103,6 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        // 監聽使用者名稱的變化
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -134,9 +141,10 @@ public class LoginFragment extends Fragment {
         builder.show();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    // 更新菜單項目
+    private void updateMenuItems() {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).updateMenuItems();
+        }
     }
 }

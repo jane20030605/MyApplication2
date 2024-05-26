@@ -4,34 +4,29 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SessionManager {
-    private final SharedPreferences sharedPreferences; // 偏好設置
-    private final SharedPreferences.Editor editor;
-    private static final String PREF_NAME = "UserSession"; // 偏好設置名稱
-    private static final String KEY_IS_LOGGED_IN = "isLoggedIn"; // 登入狀態鍵名
+    private static final String PREF_NAME = "SessionPref";
+    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+
+    private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
 
     public SessionManager(Context context) {
-        sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        editor = prefs.edit();
     }
 
-    // 設置登入狀態
-    public void setLoggedIn(boolean isLoggedIn) {
-        editor.putBoolean(KEY_IS_LOGGED_IN, isLoggedIn);
+    public void login() {
+        editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.apply();
     }
 
-    // 檢查用戶是否已登入
-    public boolean isLoggedIn() {
-        return sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false);
-    }
-
-    // 登入方法
-    public void login() {
-        setLoggedIn(true);
-    }
-
-    // 登出方法
     public void logout() {
-        setLoggedIn(false);
+        editor.putBoolean(KEY_IS_LOGGED_IN, false);
+        editor.clear();
+        editor.apply();
+    }
+
+    public boolean isLoggedIn() {
+        return prefs.getBoolean(KEY_IS_LOGGED_IN, false);
     }
 }

@@ -2,6 +2,8 @@ package com.example.myapplication.ui.registration;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -38,7 +40,7 @@ public class RegistrationFragment extends Fragment {
         // 獲取輸入欄位及按鈕
         final EditText username = binding.username;
         final EditText password = binding.password;
-        final EditText passwordCheck = binding.passwordCheck; // 新增確認密碼輸入欄位
+        final EditText passwordCheck = binding.passwordCheck;
         final EditText realName = binding.realName;
         final EditText phone = binding.phone;
         final EditText email = binding.email;
@@ -113,10 +115,19 @@ public class RegistrationFragment extends Fragment {
                 // 您可能希望在這裡設置newUser的其他欄位
                 UserManager.getInstance().addUser(newUser);
 
+                // 保存电子邮箱到 SharedPreferences
+                SharedPreferences sharedPreferences =
+                        requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("USER_EMAIL", enteredEmail);
+                editor.apply();
+
                 // 提示用戶註冊成功
                 Toast.makeText(requireContext(), "註冊成功，請重新登入", Toast.LENGTH_SHORT).show();
-                // 導航到登入頁面
-                Navigation.findNavController(v).navigate(R.id.nav_login);
+                // 導航到登入頁面並传递电子邮箱参数
+                Bundle bundle = new Bundle();
+                bundle.putString("USER_EMAIL", enteredEmail);
+                Navigation.findNavController(v).navigate(R.id.nav_login, bundle);
             }
         });
 

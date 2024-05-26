@@ -1,4 +1,4 @@
-package com.example.myapplication.network;
+package com.example.myapplication.Request;
 
 public class ResetPasswordRequest {
     // 儲存用戶郵件地址
@@ -6,6 +6,7 @@ public class ResetPasswordRequest {
 
     // 構造函數，用於初始化 email 字段
     public ResetPasswordRequest(String email) {
+
         this.email = email;
     }
 

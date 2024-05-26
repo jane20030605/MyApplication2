@@ -177,6 +177,7 @@ public class VideoFragment extends Fragment {
             // 在這裡處理縮略圖點擊事件，例如打開全屏查看照片
             Toast.makeText(requireContext(), "查看照片: " + photoFile.getName(), Toast.LENGTH_SHORT).show();
         });
+
     }
 
     // 處理權限請求結果
