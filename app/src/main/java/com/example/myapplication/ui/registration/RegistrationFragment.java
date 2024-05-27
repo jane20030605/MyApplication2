@@ -14,14 +14,17 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentRegistrationBinding;
 import com.example.myapplication.models.User;
 import com.example.myapplication.utils.UserManager;
+
 import java.util.Calendar;
 
 public class RegistrationFragment extends Fragment {
@@ -81,7 +84,7 @@ public class RegistrationFragment extends Fragment {
                 // 獲取用戶輸入的資料
                 String enteredUsername = username.getText().toString().trim();
                 String enteredPassword = password.getText().toString().trim();
-                String enteredPasswordCheck = passwordCheck.getText().toString().trim(); // 新增確認密碼輸入文本
+                String enteredPasswordCheck = passwordCheck.getText().toString().trim();
                 String enteredRealName = realName.getText().toString().trim();
                 String enteredPhone = phone.getText().toString().trim();
                 String enteredEmail = email.getText().toString().trim();
@@ -116,11 +119,7 @@ public class RegistrationFragment extends Fragment {
                 UserManager.getInstance().addUser(newUser);
 
                 // 保存电子邮箱到 SharedPreferences
-                SharedPreferences sharedPreferences =
-                        requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("USER_EMAIL", enteredEmail);
-                editor.apply();
+                saveUserInfoToSharedPreferences(enteredUsername, enteredEmail, enteredPhone, enteredHome);
 
                 // 提示用戶註冊成功
                 Toast.makeText(requireContext(), "註冊成功，請重新登入", Toast.LENGTH_SHORT).show();
@@ -138,5 +137,17 @@ public class RegistrationFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    // 將用戶信息保存到SharedPreferences
+    private void saveUserInfoToSharedPreferences(String real_name, String email, String phone, String address) {
+        SharedPreferences sharedPreferences =
+                requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("REAL NAME", real_name);
+        editor.putString("EMAIL", email);
+        editor.putString("PHONE", phone);
+        editor.putString("ADDRESS", address);
+        editor.apply();
     }
 }

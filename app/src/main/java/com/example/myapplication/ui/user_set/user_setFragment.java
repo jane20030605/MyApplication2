@@ -36,8 +36,6 @@ public class user_setFragment extends Fragment {
 
         final TextView Text_function_set = binding.TextFunctionSet;
         final TextView Text_message_reminder = binding.TextMessageReminder;
-        final TextView Text_theme_color = binding.TextThemeColor;
-        final TextView Text_system_language = binding.TextSystemLanguage;
         final TextView Text_day_and_night_model = binding.TextDayAndNightModel;
         // final Switch Switch_notification = binding.SwitchNotification;
         //final Spinner Spinner_themeColor =binding.SpinnerThemeColor;

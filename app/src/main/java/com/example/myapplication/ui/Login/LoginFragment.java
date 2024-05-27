@@ -73,14 +73,15 @@ public class LoginFragment extends Fragment {
                         intent.putExtra("USERNAME", username);
                         startActivity(intent);
 
-
                         // 如果勾選了"記住密碼"，則保存密碼狀態
                         if (rememberPasswordCheckBox.isChecked()) {
-                            sessionManager.login(); // 登入
+                            sessionManager.login();//登入狀態
                             editor = sharedPreferences.edit();
                             editor.putBoolean("記住密碼", true);
                             editor.putString("密碼:", password);
                             editor.apply();
+                        }else{
+                            sessionManager.login(); // 仍然為登入狀態
                         }
                     } else {
                         Toast.makeText(requireContext(), "使用者名稱或密碼錯誤", Toast.LENGTH_SHORT).show();

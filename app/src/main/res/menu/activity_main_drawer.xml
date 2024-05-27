@@ -1,76 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_home"
-            android:icon="@android:drawable/btn_star_big_on"
-            android:title="@string/menu_home"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="主畫面"
-            tools:ignore="HardcodedText" />
-        <item
-            android:id="@+id/nav_login"
-            android:icon="@android:drawable/ic_lock_idle_lock"
-            android:title="@string/menu_login"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="登入系統"
-	        android:visible="true"
-            tools:ignore="HardcodedText" />
-
-	    <item
-		    android:id="@+id/nav_logout"
-		    android:icon="@android:drawable/ic_menu_close_clear_cancel"
-		    android:title="@string/menu_logout"
-		    android:layout_width="match_parent"
-		    android:layout_height="40dp"
-		    android:text="登出系統"
-		    android:visible="false"
-	        tools:ignore="HardcodedText" />
-
-        <item
-            android:id="@+id/nav_medicine_box"
-            android:icon="@android:drawable/ic_menu_save"
-            android:title="@string/menu_medicine_box"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="個人藥物資料庫"
-            tools:ignore="HardcodedText" />
-        <item
-            android:id="@+id/nav_medicine"
-            android:icon="@android:drawable/ic_menu_search"
-            android:title="@string/menu_medicine"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="藥物資料查詢"
-            tools:ignore="HardcodedText" />
-        <item
-            android:id="@+id/nav_memory"
-            android:icon="@android:drawable/ic_dialog_dialer"
-            android:title="@string/menu_memory"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="跌倒紀錄查詢"
-            tools:ignore="HardcodedText" />
-        <item
-            android:id="@+id/nav_calender"
-            android:icon="@android:drawable/ic_menu_month"
-            android:title="@string/menu_calender"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="行事曆紀錄"
-            tools:ignore="HardcodedText" />
-        <item
-            android:id="@+id/nav_user"
-            android:icon="@android:drawable/ic_menu_my_calendar"
-            android:title="@string/menu_user"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="使用者資料"
-            tools:ignore="HardcodedText" />
-    </group>
+	<group android:checkableBehavior="single">
+		<item
+			android:id="@+id/nav_home"
+			android:icon="@android:drawable/btn_star_big_on"
+			android:title="@string/menu_home"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="主畫面"
+			tools:ignore="HardcodedText" />
+		<item
+			android:id="@+id/nav_login"
+			android:icon="@android:drawable/ic_lock_idle_lock"
+			android:title="@string/menu_login"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="登入系統"
+			android:visible="true"
+			tools:ignore="HardcodedText" />
+		<item
+			android:id="@+id/nav_logout"
+			android:icon="@android:drawable/ic_menu_close_clear_cancel"
+			android:title="@string/menu_logout"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="登出系統"
+			android:visible="false"
+			tools:ignore="HardcodedText" />
+		<item
+			android:id="@+id/nav_medicine_box"
+			android:icon="@android:drawable/ic_menu_save"
+			android:title="@string/menu_medicine_box"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="個人藥物資料庫"
+			tools:ignore="HardcodedText" />
+		<item
+			android:id="@+id/nav_medicine"
+			android:icon="@android:drawable/ic_menu_search"
+			android:title="@string/menu_medicine"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="藥物資料查詢"
+			tools:ignore="HardcodedText" />
+		<item
+			android:id="@+id/nav_memory"
+			android:icon="@android:drawable/ic_dialog_dialer"
+			android:title="@string/menu_memory"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="跌倒紀錄查詢"
+			tools:ignore="HardcodedText" />
+		<item
+			android:id="@+id/nav_calender"
+			android:icon="@android:drawable/ic_menu_month"
+			android:title="@string/menu_calender"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="行事曆紀錄"
+			tools:ignore="HardcodedText" />
+		<item
+			android:id="@+id/nav_user"
+			android:icon="@android:drawable/ic_menu_my_calendar"
+			android:title="@string/menu_user"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="使用者資料"
+			tools:ignore="HardcodedText" />
+	</group>
 </menu>

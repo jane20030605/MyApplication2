@@ -1,7 +1,9 @@
 package com.example.myapplication.ui.user_data;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -24,13 +26,14 @@ import com.example.myapplication.ui.emergency.EmergencyContactViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class user_dataFragment extends Fragment {
 
     private FragmentUserDataBinding binding;
     private TextView textViewEmergencyContact;
     private TextView textViewPhone;
     private TextView textViewRelationship;
-    private List<TextView> eventTextViews; // 新增一個列表來存儲事件列表中的文本視圖
+    private List<TextView> eventTextViews;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -51,9 +54,7 @@ public class user_dataFragment extends Fragment {
 
         // 初始化按鈕元素
         Button buttonEmergencyContact = binding.buttonEmergencyContact;
-
         Button buttonCancel = binding.buttonCancel;
-
         Button buttonSave = binding.buttonDataSave;
 
         // 點擊保存按钮事件
@@ -160,6 +161,18 @@ public class user_dataFragment extends Fragment {
                 return false;
             }
         });
+
+        // 從SharedPreferences中讀取用戶信息並設置到相應的視圖中
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        String real_name = sharedPreferences.getString("REAL NAME", "");
+        String email = sharedPreferences.getString("EMAIL", "");
+        String phone = sharedPreferences.getString("PHONE", "");
+        String address = sharedPreferences.getString("ADDRESS", "");
+
+        binding.editTextUsername.setText(real_name);
+        binding.editTextEmail.setText(email);
+        binding.editTextPhone.setText(phone);
+        binding.editTextAddress.setText(address);
 
         return root;
     }

@@ -72,18 +72,15 @@ public class MainActivity extends AppCompatActivity {
         username = getIntent().getStringExtra("USERNAME");
         if (username == null) {
             SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-            username = sharedPreferences.getString("USERNAME", "預設用戶");
+            username = sharedPreferences.getString("USERNAME", "User");
         }
 
-
         // 獲取從註冊介面傳遞過來的郵箱，如果為空則空白
-        userEmail = getIntent().getStringExtra("USER_EMAIL");
+        userEmail = getIntent().getStringExtra("EMAIL");
         if (userEmail == null) {
             // 從SharedPreferences中獲取郵箱
-            SharedPreferences sharedPreferences=getSharedPreferences("MyPrefs", MODE_PRIVATE);
-            userEmail = sharedPreferences.getString
-                    ("USER_EMAIL", "Android@example.gmail.com");
-
+            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            userEmail = sharedPreferences.getString("EMAIL", "Android@example.gmail.com");
         }
 
         // 更新導航頭部的用戶名稱和郵箱
@@ -115,25 +112,29 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.nav_user_set);
             return true;
+
         } else if (id == R.id.nav_mail_for_developer) {
             // 發送反饋郵件
             sendFeedbackEmail();
             return true;
+
         } else if (id == R.id.nav_login) {
             // 處理登入邏輯
             sessionManager.login();
             Toast.makeText(this, "登入成功", Toast.LENGTH_SHORT).show();
+            // 更新菜單項目
+            updateMenuItems();
+            // 記住用戶登錄狀態
+            rememberUser();
+
         } else if (id == R.id.nav_logout) {
             // 處理登出邏輯
             sessionManager.logout();
             Toast.makeText(this, "登出成功", Toast.LENGTH_SHORT).show();
-            // 導航到登入頁面或需要用戶登入的頁面
+            // 導航到登入頁面
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.nav_login);
         }
-
-        // 更新菜單項目
-        updateMenuItems();
 
         return super.onOptionsItemSelected(item);
     }
@@ -163,6 +164,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 記住用戶登錄狀態
+    private void rememberUser() {
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isRemembered", true);
+        editor.putString("USERNAME", username);
+        editor.putString("USER_EMAIL", userEmail);
+        editor.apply();
+    }
+
     // 圖片選擇功能
     public void selectImageFromGallery(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -175,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
-            ImageView imageView = findViewById(R.id.imageView); // 假設你的ImageView id 是 imageView
+            ImageView imageView = findViewById(R.id.imageView);
             imageView.setImageURI(uri);
         }
     }

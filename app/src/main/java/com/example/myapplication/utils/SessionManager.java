@@ -15,6 +15,7 @@ public class SessionManager {
         editor = prefs.edit();
     }
 
+
     public void login() {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.apply();
