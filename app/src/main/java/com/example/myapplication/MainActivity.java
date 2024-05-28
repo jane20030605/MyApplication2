@@ -1,9 +1,11 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -20,18 +23,17 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
+import com.example.myapplication.ui.Login.LoginFragment;
 import com.example.myapplication.utils.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     private SessionManager sessionManager;
     private Menu menu;
-
     private String username;
     private String userEmail;
-
     private static final int PICK_IMAGE_REQUEST = 1;
 
     @Override
@@ -55,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
         // 設置導航視圖的配置
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine, R.id.nav_user,
-                R.id.nav_calender, R.id.nav_login, R.id.nav_memory)
+                R.id.nav_calender, R.id.nav_login, R.id.nav_memory, R.id.nav_logout,
+                R.id.nav_setting,R.id.nav_mail_for_developer)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        // 設置 NavigationView 的選項選擇監聽器
+        navigationView.setNavigationItemSelectedListener(this);
 
         // 獲取菜單並更新菜單項目
         this.menu = navigationView.getMenu();
@@ -75,11 +81,11 @@ public class MainActivity extends AppCompatActivity {
             username = sharedPreferences.getString("USERNAME", "User");
         }
 
-        // 獲取從註冊介面傳遞過來的郵箱，如果為空則空白
+        // 獲取從註冊介面傳遞過來的郵箱，如果為空則為預設
         userEmail = getIntent().getStringExtra("EMAIL");
         if (userEmail == null) {
             // 從SharedPreferences中獲取郵箱
-            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            SharedPreferences sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
             userEmail = sharedPreferences.getString("EMAIL", "Android@example.gmail.com");
         }
 
@@ -104,40 +110,66 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         if (id == R.id.nav_setting) {
-            // 導航到設置頁面
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            // 跳到設置介面
             navController.navigate(R.id.nav_user_set);
-            return true;
 
         } else if (id == R.id.nav_mail_for_developer) {
-            // 發送反饋郵件
+            // 寄信給開發者
             sendFeedbackEmail();
-            return true;
+
+        } else if (id == R.id.nav_home) {
+            // 跳轉到主畫面
+            navController.navigate(R.id.nav_home);
 
         } else if (id == R.id.nav_login) {
-            // 處理登入邏輯
+            // 處理登錄邏輯
             sessionManager.login();
-            Toast.makeText(this, "登入成功", Toast.LENGTH_SHORT).show();
-            // 更新菜單項目
-            updateMenuItems();
-            // 記住用戶登錄狀態
+            navController.navigate(R.id.nav_login);
+            // 記住使用者登錄狀態
             rememberUser();
+            // 更新選單項目
+            updateMenuItems();
 
         } else if (id == R.id.nav_logout) {
             // 處理登出邏輯
             sessionManager.logout();
-            Toast.makeText(this, "登出成功", Toast.LENGTH_SHORT).show();
-            // 導航到登入頁面
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            // 清除使用者登錄狀態
+            clearRememberedUser();
+            // 跳轉到登錄 Fragment
             navController.navigate(R.id.nav_login);
+
+        } else if (id == R.id.nav_medicine_box) {
+            // 跳轉到個人藥物庫介面
+            navController.navigate(R.id.nav_medicine_box);
+
+        } else if (id == R.id.nav_medicine) {
+            // 跳轉到藥物查詢介面
+            navController.navigate(R.id.nav_medicine);
+
+        } else if (id == R.id.nav_memory) {
+            // 跳轉到跌倒紀錄介面
+            navController.navigate(R.id.nav_memory);
+
+        } else if (id == R.id.nav_calender) {
+            // 跳轉到行事曆介面
+            navController.navigate(R.id.nav_calender);
+
+        } else if (id == R.id.nav_user) {
+            // 跳轉到使用者資料介面
+            navController.navigate(R.id.nav_user);
         }
 
-        return super.onOptionsItemSelected(item);
+        // 在任何選項被點擊後關閉抽屜佈局
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+        return true;
     }
+
 
     // 發送反饋郵件
     private void sendFeedbackEmail() {
@@ -172,6 +204,21 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("USERNAME", username);
         editor.putString("USER_EMAIL", userEmail);
         editor.apply();
+    }
+
+    // 清除用戶登錄狀態
+    private void clearRememberedUser() {
+        Log.d("MainActivity", "clearRememberedUser: 清除用戶登錄狀態...");
+        sessionManager.logout(); // 確保登出
+        // 清除用戶登錄狀態
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("isRemembered"); // 移除登錄狀態
+        editor.remove("USERNAME"); // 移除用戶名稱
+        editor.remove("USER_EMAIL"); // 移除用戶郵箱
+        editor.apply();
+        updateMenuItems(); // 更新菜單項目
+        Log.d("MainActivity", "clearRememberedUser: 用戶登錄狀態已清除。");
     }
 
     // 圖片選擇功能

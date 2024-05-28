@@ -106,7 +106,7 @@
         <Button
             android:id="@+id/Button_feedback"
             android:layout_width="350dp"
-            android:layout_height="150dp"
+            android:layout_height="130dp"
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/color"
@@ -119,7 +119,7 @@
         <Button
             android:id="@+id/Button_guidedTour"
             android:layout_width="350dp"
-            android:layout_height="150dp"
+            android:layout_height="130dp"
             android:layout_marginStart="15dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/color"
