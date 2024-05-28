@@ -148,4 +148,11 @@ public class LoginFragment extends Fragment {
             ((MainActivity) getActivity()).updateMenuItems();
         }
     }
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // 更新菜單項目
+        updateMenuItems();
+    }
+
 }

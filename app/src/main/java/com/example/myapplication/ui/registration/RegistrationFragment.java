@@ -119,13 +119,14 @@ public class RegistrationFragment extends Fragment {
                 UserManager.getInstance().addUser(newUser);
 
                 // 保存电子邮箱到 SharedPreferences
-                saveUserInfoToSharedPreferences(enteredUsername, enteredEmail, enteredPhone, enteredHome);
+                saveUserInfoToSharedPreferences(enteredRealName, enteredEmail, enteredPhone, enteredHome);
 
                 // 提示用戶註冊成功
                 Toast.makeText(requireContext(), "註冊成功，請重新登入", Toast.LENGTH_SHORT).show();
+
                 // 導航到登入頁面並传递电子邮箱参数
                 Bundle bundle = new Bundle();
-                bundle.putString("USER_EMAIL", enteredEmail);
+                bundle.putString("EMAIL", enteredEmail);
                 Navigation.findNavController(v).navigate(R.id.nav_login, bundle);
             }
         });
@@ -150,4 +151,5 @@ public class RegistrationFragment extends Fragment {
         editor.putString("ADDRESS", address);
         editor.apply();
     }
+
 }
