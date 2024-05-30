@@ -13,6 +13,7 @@ public class UserManager {
         users = new HashMap<>();
         // 添加初始使用者
         users.put("LYJ", new User("LYJ", "LYJane"));
+
     }
 
     public static UserManager getInstance() {

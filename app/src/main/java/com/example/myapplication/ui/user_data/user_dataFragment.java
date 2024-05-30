@@ -1,6 +1,8 @@
 package com.example.myapplication.ui.user_data;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +28,7 @@ import com.example.myapplication.databinding.FragmentUserDataBinding;
 import com.example.myapplication.ui.emergency.EmergencyContactViewModel;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class user_dataFragment extends Fragment {
@@ -67,6 +71,8 @@ public class user_dataFragment extends Fragment {
                 String phone = binding.editTextPhone.getText().toString();
                 String address = binding.editTextAddress.getText().toString();
                 String emergencyContact = textViewEmergencyContact.getText().toString();
+                String birthday = binding.editTextBirthday.getText().toString();
+
                 // 將輸入內容暫時儲存在Bundle中
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
@@ -74,15 +80,36 @@ public class user_dataFragment extends Fragment {
                 bundle.putString("phone", phone);
                 bundle.putString("address", address);
                 bundle.putString("emergencyContact", emergencyContact);
+                bundle.putString("birthday", birthday);
                 // 將Bundle設置給目標Fragment
                 getParentFragmentManager().setFragmentResult("userData", bundle);
                 // 確保所有字段都已填寫
-                if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || emergencyContact.isEmpty()) {
+                if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || emergencyContact.isEmpty() || birthday.isEmpty()) {
                     Toast.makeText(requireContext(), "請填寫所有資料", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // 當使用者輸入的資料保存成功時，可以將資料存儲到資料庫或其他持久化儲存裝置中。
-                // 在這個示例中，我們簡單地顯示一個 Toast 訊息表示保存成功。
+                // 檢查電話號碼格式是否正確
+                if (!phone.matches("\\d{4}-\\d{3}-\\d{3}")) {
+                    Toast.makeText(requireContext(), "電話號碼格式不正確，應為0000-000-000", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // 檢查郵件地址格式是否正確
+                if (!isValidEmail(email)) {
+                    Toast.makeText(requireContext(), "郵件地址格式不正確", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // 保存數據到SharedPreferences
+                SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("REAL NAME", username);
+                editor.putString("EMAIL", email);
+                editor.putString("PHONE", phone);
+                editor.putString("ADDRESS", address);
+                editor.putString("EMERGENCY_CONTACT", emergencyContact);
+                editor.putString("BIRTHDAY", birthday);
+                editor.apply();
+
+                // 顯示保存成功的Toast
                 Toast.makeText(requireContext(), "保存成功", Toast.LENGTH_SHORT).show();
                 // 返回上一個介面
                 Navigation.findNavController(v).navigateUp();
@@ -161,6 +188,29 @@ public class user_dataFragment extends Fragment {
                 return false;
             }
         });
+        // 設置生日選擇器
+        binding.editTextBirthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar calendar = Calendar.getInstance();
+                int mYear = calendar.get(Calendar.YEAR);
+                int mMonth = calendar.get(Calendar.MONTH);
+                int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // 將年、月、日組合成日期字串，這裡假設您希望日期格式為YYYY/MM/DD
+                                @SuppressLint("DefaultLocale")
+                                String formattedDate = String.format("%04d/%02d/%02d", year, (monthOfYear + 1), dayOfMonth);
+                                binding.editTextBirthday.setText(formattedDate);
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
 
         // 從SharedPreferences中讀取用戶信息並設置到相應的視圖中
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
@@ -168,15 +218,24 @@ public class user_dataFragment extends Fragment {
         String email = sharedPreferences.getString("EMAIL", "");
         String phone = sharedPreferences.getString("PHONE", "");
         String address = sharedPreferences.getString("ADDRESS", "");
+        String birthday = sharedPreferences.getString("BIRTHDAY", "");
 
         binding.editTextUsername.setText(real_name);
         binding.editTextEmail.setText(email);
         binding.editTextPhone.setText(phone);
         binding.editTextAddress.setText(address);
+        binding.editTextBirthday.setText(birthday);
 
         return root;
     }
 
+    // 檢查郵件地址格式是否正確的方法
+    private boolean isValidEmail(String email) {
+        // 使用正則表達式來檢查郵件地址格式
+        // 這個正則表達式僅供參考，實際使用中可以根據需求進行修改
+        String emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
+        return email.matches(emailPattern);
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

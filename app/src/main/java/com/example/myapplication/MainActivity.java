@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +22,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
-import com.example.myapplication.ui.Login.LoginFragment;
+import com.example.myapplication.ui.calender_thing.CalendarApiClient;
 import com.example.myapplication.utils.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine, R.id.nav_user,
                 R.id.nav_calender, R.id.nav_login, R.id.nav_memory, R.id.nav_logout,
-                R.id.nav_setting,R.id.nav_mail_for_developer)
+                R.id.nav_setting, R.id.nav_mail_for_developer)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -88,19 +87,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SharedPreferences sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
             userEmail = sharedPreferences.getString("EMAIL", "Android@example.gmail.com");
         }
-
+        try {
+            // 調用獲取行事曆資料的方法
+            String calendarData = CalendarApiClient.getCalendar("account");
+            // 調用更新行事曆資料的方法
+            String eventData = "{\"eventid\": \"12345\", \"name\": \"Meeting\", \"date\": \"2024-06-01\"}";
+            String updateResponse = CalendarApiClient.updateCalendar(eventData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // 更新導航頭部的用戶名稱和郵箱
-        updateNavHeader(username, userEmail);
+        updateNavHeader(username, userEmail, false);
     }
 
     // 更新導航頭部的用戶名稱和郵箱
-    private void updateNavHeader(String username, String userEmail) {
+    @SuppressLint("SetTextI18n")
+    private void updateNavHeader(String username, String userEmail, boolean isDefault) {
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = headerView.findViewById(R.id.test_user);
         TextView navEmail = headerView.findViewById(R.id.text_mail);
-        navUsername.setText(username);
-        navEmail.setText(userEmail);
+
+        if (isDefault) {
+            navUsername.setText("User");
+            navEmail.setText("Android@example.gmail.com");
+        } else {
+            navUsername.setText(username);
+            navEmail.setText(userEmail);
+        }
     }
 
     @Override
@@ -170,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-
     // 發送反饋郵件
     private void sendFeedbackEmail() {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
@@ -210,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void clearRememberedUser() {
         Log.d("MainActivity", "clearRememberedUser: 清除用戶登錄狀態...");
         sessionManager.logout(); // 確保登出
+
         // 清除用戶登錄狀態
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -217,6 +231,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         editor.remove("USERNAME"); // 移除用戶名稱
         editor.remove("USER_EMAIL"); // 移除用戶郵箱
         editor.apply();
+
+        // 清除用戶信息
+        SharedPreferences userPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
+        SharedPreferences.Editor userEditor = userPreferences.edit();
+        userEditor.clear(); // 清除所有用戶信息
+        userEditor.apply();
+
+        // 更新導航頭部為預設值
+        updateNavHeader(null, null, true);
+
         updateMenuItems(); // 更新菜單項目
         Log.d("MainActivity", "clearRememberedUser: 用戶登錄狀態已清除。");
     }

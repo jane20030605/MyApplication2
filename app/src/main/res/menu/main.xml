@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/nav_setting"
-        android:orderInCategory="100"
-        android:title="@string/menu_user_set"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="設定"
-        tools:ignore="HardcodedText"/>
+	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	<item
+		android:id="@+id/nav_setting"
+		android:orderInCategory="100"
+		android:title="@string/menu_user_set"
+		tools:ignore="HardcodedText"/>
 
-    <item
-        android:id="@+id/nav_mail_for_developer"
-        android:orderInCategory="100"
-        android:title="@string/mail_for_developer"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="寄信給開發者"
-        tools:ignore="HardcodedText" />
+	<item
+		android:id="@+id/nav_mail_for_developer"
+		android:orderInCategory="100"
+		android:title="@string/mail_for_developer"
+		tools:ignore="HardcodedText" />
 </menu>

@@ -140,6 +140,32 @@
 
 			</LinearLayout>
 
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+
+				<TextView
+					android:id="@+id/textView_birthday"
+					android:layout_width="130dp"
+					android:layout_height="wrap_content"
+					android:text="@string/birthday_vid"
+					android:textSize="20sp"
+					tools:ignore="HardcodedText" />
+
+				<TextView
+					android:id="@+id/editTextBirthday"
+					android:layout_width="match_parent"
+					android:layout_height="52dp"
+					android:hint="輸入生日"
+					android:gravity="center_vertical"
+					android:textSize="20sp"
+					tools:ignore="Autofill,HardcodedText,LabelFor,RtlCompat"
+					android:clickable="true"
+					android:focusable="false" />
+
+
+			</LinearLayout>
 			<!-- 緊急聯絡人 -->
 			<LinearLayout
 				android:layout_width="match_parent"
