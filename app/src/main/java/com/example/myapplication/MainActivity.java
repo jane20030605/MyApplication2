@@ -22,7 +22,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
-import com.example.myapplication.ui.calender_thing.CalendarApiClient;
+import com.example.myapplication.ui.Calender.CalendarApiClient;
 import com.example.myapplication.utils.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 

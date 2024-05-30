@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.calender_thing;
+package com.example.myapplication.ui.Calender;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

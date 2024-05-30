@@ -102,7 +102,7 @@
         tools:layout="@layout/fragment_registration" />
     <fragment
         android:id="@+id/nav_calender_thing"
-        android:name="com.example.myapplication.ui.calender_thing.CalenderThingFragment"
+        android:name="com.example.myapplication.ui.Calender.CalenderThingFragment"
         android:label="@string/menu_calender_thing"
         tools:layout="@layout/fragment_calender_thing" />
     <fragment

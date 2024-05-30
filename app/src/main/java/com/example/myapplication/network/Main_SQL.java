@@ -1,22 +1,15 @@
 package com.example.myapplication.network;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import com.example.myapplication.ui.calender_thing.CalendarEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main_SQL extends SQLiteOpenHelper {
 
