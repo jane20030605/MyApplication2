@@ -104,13 +104,12 @@ public class CalenderThingViewModel extends ViewModel {
 
         // 根據您的應用邏輯，將事件詳細資訊組合成字串並返回
         String eventDetailsBuilder =
-                "事件名稱: " + eventName + "\n" +
+                        "事件名稱: " + eventName + "\n" +
                         "事件描述: " + eventDescription + "\n" +
-                        "起始日期: " + startYear + "/" + startMonth + "/" + startDay + "\n" +
-                        "結束日期: " + endYear + "/" + endMonth + "/" + endDay + "\n" +
-                        "起始時間: " + startHour + ":" + startMinute + "\n" +
-                        "結束時間: " + endHour + ":" + endMinute + "\n";
-
+                        "起始日期時間: " + startYear + "/" + startMonth + "/" + startDay + "\n" +
+                        startHour + ":" + startMinute + "\n" +
+                        "結束日期時間: " + endYear + "/" + endMonth + "/" + endDay + "\n" +
+                        endHour + ":" + endMinute + "\n";
         return eventDetailsBuilder;
     }
 }

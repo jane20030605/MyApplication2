@@ -3,6 +3,7 @@ package com.example.myapplication.ui.Calender;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,9 @@ import androidx.navigation.Navigation;
 import com.example.myapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.HashSet;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.Set;
 
 public class CalenderFragment extends Fragment {
@@ -47,24 +50,57 @@ public class CalenderFragment extends Fragment {
             }
         });
 
-        displayEvents();
+        // 在這裡調用 getCalendar 方法來檢索日曆事件
+        fetchCalendarEvents("account");
 
         return root;
     }
 
-    private void displayEvents() {
-        // 獲取 SharedPreferences 實例，用於讀取 "MyCalendar" 偏好設置文件
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
-        // 從 SharedPreferences 中獲取名為 "events" 的字符串集合，如果沒有則返回一個新的空集合
-        eventsSet = sharedPreferences.getStringSet("events", new HashSet<>());
-        // 用於存儲所有事件的字符串構建器
-        StringBuilder eventsText = new StringBuilder();
-        // 遍歷集合中的每個事件，並將其添加到字符串構建器中，每個事件之間用兩個換行符分隔
-        for (String event : eventsSet) {
-            eventsText.append(event).append("\n\n");
+    private void fetchCalendarEvents(String account) {
+        new FetchCalendarTask().execute(account);
+    }
+
+    private class FetchCalendarTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                return CalendarApiClient.getCalendar(params[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
-        // 將構建的字符串設置為 TextView 的文本
-        eventTextView.setText(eventsText.toString());
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                eventTextView.setText(result);
+            } else {
+                Toast.makeText(getContext(), "無法獲取日曆資料", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * 顯示日曆事件到 TextView 上。
+     * @param calendarData 從日曆 API 返回的事件資料。
+     */
+    private void displayEvents(String calendarData) {
+        try {
+            // 將事件資料解析為 JSON 數組
+            JSONArray eventsArray = new JSONArray(calendarData);
+            // 用於構建顯示事件的字符串構建器
+            StringBuilder eventsText = new StringBuilder();
+            // 遍歷事件數組，將每個事件添加到字符串構建器中，每個事件之間用兩個換行符分隔
+            for (int i = 0; i < eventsArray.length(); i++) {
+                eventsText.append(eventsArray.getString(i)).append("\n\n");
+            }
+            // 將構建的字符串設置為 TextView 的文本
+            eventTextView.setText(eventsText.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -92,12 +128,12 @@ public class CalenderFragment extends Fragment {
                 .setNegativeButton("刪除", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // 從事件集合中移除選中的事件
-                        eventsSet.remove(eventText);
-                        // 保存更新後的事件集合到 SharedPreferences
-                        saveEventsToSharedPreferences();
+                        // 在这里调用 API 删除事件
+                        //CalendarApiClient.deleteEvent(eventId);
+
                         // 更新顯示的事件列表
-                        displayEvents();
+                        fetchCalendarEvents("account");
+
                         // 顯示刪除成功提示
                         Toast.makeText(requireContext(), "事件已刪除", Toast.LENGTH_SHORT).show();
                     }
@@ -112,7 +148,8 @@ public class CalenderFragment extends Fragment {
 
     private void saveEventsToSharedPreferences() {
         // 獲取 SharedPreferences 實例，用於讀寫 "MyCalendar" 偏好設置文件
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireActivity()
+                .getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
         // 獲取 SharedPreferences 編輯器
         SharedPreferences.Editor editor = sharedPreferences.edit();
         // 將事件集合保存到 SharedPreferences

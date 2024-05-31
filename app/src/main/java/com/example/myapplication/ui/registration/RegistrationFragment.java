@@ -189,9 +189,8 @@ public class RegistrationFragment extends Fragment {
                     Toast.makeText(requireContext(), "請輸入有效的住址(00縣市00鄉鎮市區00街弄路00號)", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // 創建新用戶並添加到管理器中
-                User newUser = new User(enteredUsername, enteredPassword);
-                UserManager.getInstance().addUser(newUser);
+                // 创建新用户，使用带有用户名、密码和电子邮件的构造函数
+                User newUser = new User(enteredUsername, enteredEmail, enteredPassword);
 
                 // 保存資訊到 SharedPreferences
                 saveUserInfoToSharedPreferences(enteredRealName, enteredEmail, enteredPhone, enteredHome, enteredBirthday);

@@ -86,18 +86,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // 從SharedPreferences中獲取郵箱
             SharedPreferences sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
             userEmail = sharedPreferences.getString("EMAIL", "Android@example.gmail.com");
+
         }
-        try {
-            // 調用獲取行事曆資料的方法
-            String calendarData = CalendarApiClient.getCalendar("account");
-            // 調用更新行事曆資料的方法
-            String eventData = "{\"eventid\": \"12345\", \"name\": \"Meeting\", \"date\": \"2024-06-01\"}";
-            String updateResponse = CalendarApiClient.updateCalendar(eventData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // 調用獲取行事曆資料的方法
+        fetchCalendarData(username);
+
         // 更新導航頭部的用戶名稱和郵箱
         updateNavHeader(username, userEmail, false);
+    }
+    // 從後端服務獲取行事曆數據
+    private void fetchCalendarData(String username) {
+        try {
+            // 使用您的行事曆 API 客戶端獲取用戶的行事曆數據
+            String calendarData = CalendarApiClient.getCalendar(username);
+
+            // 處理從後端獲取的行事曆數據，例如顯示在 UI 上
+            // 這裡僅示例獲取成功時的處理，您需要根據您的應用程序邏輯進行相應處理
+            if (calendarData != null) {
+                Log.d("CalendarData", calendarData);
+                // 在這裡更新 UI，顯示行事曆數據
+            } else {
+                Log.e("CalendarData", "無法抓取行事曆事件");
+                // 在這裡處理無法獲取行事曆數據的情況，例如顯示錯誤消息
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 在這裡處理異常情況，例如顯示錯誤消息
+            Log.e("CalendarData", "出現異常訊息，請稍後");
+        }
     }
 
     // 更新導航頭部的用戶名稱和郵箱

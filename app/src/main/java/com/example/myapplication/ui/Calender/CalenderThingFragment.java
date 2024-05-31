@@ -23,9 +23,9 @@ import com.example.myapplication.databinding.FragmentCalenderThingBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 
 public class CalenderThingFragment extends Fragment {
 
@@ -124,6 +124,7 @@ public class CalenderThingFragment extends Fragment {
     @SuppressLint("MutatingSharedPrefs")
     private void saveEvent() {
         // 獲取事件的相關詳細信息
+        String eventId = generateUniqueId(); // 生成唯一的事件ID
         String eventName = binding.editTextThing.getText().toString();
         String eventDescription = binding.editTextEventDescription.getText().toString();
         String startDate = binding.editTextStartDate.getText().toString();
@@ -132,28 +133,34 @@ public class CalenderThingFragment extends Fragment {
         String endTime = binding.editTextEndTime.getText().toString();
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
-        // 將事件詳細信息組合成一個字串
-        String eventDetails = eventName + "\n" + eventDescription + "\n" +
-                startDate + "\n" + endDate + "\n" +
-                startTime + "\n" + endTime + "\n" +
-                companions;
+        // 將事件詳細信息組合成 JSON 字符串
+        String eventData = createEventDataJson(eventId,eventName, eventDescription, startDate, endDate, startTime, endTime, companions);
 
-        // 從共享偏好中獲取事件集合
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyCalendar", Context.MODE_PRIVATE);
-        Set<String> eventsSet = sharedPreferences.getStringSet("events", new HashSet<>());
-        // 將新的事件詳細信息添加到事件集合中
-        eventsSet.add(eventDetails);
-
-        // 將更新後的事件集合保存回共享偏好中
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet("events", eventsSet);
-        editor.apply();
-
-        // 顯示保存成功的提示消息
-        Toast.makeText(requireContext(), "事件已保存", Toast.LENGTH_SHORT).show();
-
-        // 返回上一個 Fragment
-        Navigation.findNavController(requireView()).navigateUp();
+        // 使用 API 保存事件
+        new Thread(() -> {
+            try {
+                String response = CalendarApiClient.addEvent(eventData);
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "事件已保存", Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(requireView()).navigateUp();
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(() -> Toast.makeText(requireContext(), "事件保存失敗", Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+    private String generateUniqueId() {
+        return UUID.randomUUID().toString();
+    }
+    private String createEventDataJson
+            (String eventId,String eventName, String eventDescription,
+             String startDate, String endDate,
+             String startTime, String endTime, String companions) {
+        return "{\"eventId\":\"\"" + eventId +"\",\"title\":\"" + eventName + "\",\"description\":\"" + eventDescription
+                + "\",\"startDate\":\"" + startDate + "\",\"endDate\":\"" + endDate
+                + "\",\"startTime\":\"" + startTime + "\",\"endTime\":\"" + endTime
+                + "\",\"companions\":\"" + companions + "\"}";
     }
 
     // 填充事件詳細信息

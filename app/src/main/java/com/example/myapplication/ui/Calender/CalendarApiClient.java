@@ -145,4 +145,36 @@ public class CalendarApiClient {
     public static String addEvent(String eventData) throws Exception {
         // 建立 POST 請求的 URL
         URL url = new URL(ADD_EVENT_URL);
-        HttpURLConnection connection =
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json; utf-8");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setDoOutput(true);
+
+        // 將事件資料寫入輸出流
+        try (OutputStream os = connection.getOutputStream()) {
+            byte[] input = eventData.getBytes("utf-8");
+            os.write(input, 0, input.length);
+        }
+
+        // 獲取 HTTP 響應碼
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            // 如果成功，讀取響應
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            // 逐行讀取響應並追加到 StringBuilder 中
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            return response.toString(); // 將響應作為字串返回
+        } else {
+            // 如果請求失敗，拋出異常
+            throw new RuntimeException("無法添加事件：HTTP 錯誤碼：" + responseCode);
+        }
+    }
+}

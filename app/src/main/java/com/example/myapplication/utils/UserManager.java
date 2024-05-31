@@ -9,10 +9,11 @@ public class UserManager {
     private static final UserManager instance = new UserManager();
     private Map<String, User> users; // 使用者資料映射
 
+
     private UserManager() {
         users = new HashMap<>();
         // 添加初始使用者
-        users.put("LYJ", new User("LYJ", "LYJane"));
+        users.put("LYJ", new User("LYJ", "yijanelin2@gmail","LYJane"));
 
     }
 

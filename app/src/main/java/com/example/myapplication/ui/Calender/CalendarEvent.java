@@ -24,11 +24,6 @@ public class CalendarEvent {
         this.companions = companions;
     }
 
-    public CalendarEvent() {
-    }
-
-    // Getters and Setters
-
     public String getEventId() {
         return event_id;
     }
