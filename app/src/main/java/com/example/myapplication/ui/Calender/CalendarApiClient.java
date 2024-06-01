@@ -182,5 +182,26 @@ public class CalendarApiClient {
         void onSuccess(String result);
 
         void onFailure(String errorMessage);
+
+        void onDataReceived(String calendarData);
+
     }
+    public static void fetchCalendarData(Callback callback) {
+        new Thread(new Runnable() {
+            private Object account;
+
+            @Override
+            public void run() {
+                try {
+                    String calendarData = getCalendar(account.toString());
+                    callback.onSuccess(calendarData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    callback.onFailure("無法獲取日曆資料：" + e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+
 }

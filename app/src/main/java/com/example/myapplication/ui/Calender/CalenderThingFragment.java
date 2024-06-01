@@ -21,6 +21,9 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.databinding.FragmentCalenderThingBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -169,18 +172,30 @@ public class CalenderThingFragment extends Fragment {
         }).start();
     }
 
-    private String generateUniqueId() {
-        return UUID.randomUUID().toString();
-    }
-
     private String createEventDataJson
             (String eventId,String eventName, String eventDescription,
              String startDate, String endDate,
              String startTime, String endTime, String companions) {
-        return "{\"eventId\":\"\"" + eventId +"\",\"title\":\"" + eventName + "\",\"description\":\"" + eventDescription
-                + "\",\"startDate\":\"" + startDate + "\",\"endDate\":\"" + endDate
-                + "\",\"startTime\":\"" + startTime + "\",\"endTime\":\"" + endTime
-                + "\",\"companions\":\"" + companions + "\"}";
+        // 使用 JSONObject 创建 JSON 字符串
+        JSONObject eventDataJson = new JSONObject();
+        try {
+            eventDataJson.put("eventId", eventId);
+            eventDataJson.put("title", eventName);
+            eventDataJson.put("description", eventDescription);
+            eventDataJson.put("startDate", startDate);
+            eventDataJson.put("endDate", endDate);
+            eventDataJson.put("startTime", startTime);
+            eventDataJson.put("endTime", endTime);
+            eventDataJson.put("companions", companions);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return eventDataJson.toString();
+    }
+
+    // 在 generateUniqueId 方法中返回 UUID 字符串
+    private String generateUniqueId() {
+        return UUID.randomUUID().toString();
     }
 
     // 填充事件詳細信息

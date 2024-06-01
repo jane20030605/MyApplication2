@@ -27,15 +27,15 @@ import com.example.myapplication.utils.UserManager;
 
 public class LoginFragment extends Fragment {
 
-    private SharedPreferences sharedPreferences; // 偏好设置
-    private SessionManager sessionManager; // 会话管理器
+    private SharedPreferences sharedPreferences; // 偏好設置
+    private SessionManager sessionManager; // 會話管理器
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_login, container, false);
 
         sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
-        sessionManager = new SessionManager(requireContext()); // 初始化会话管理器
+        sessionManager = new SessionManager(requireContext()); // 初始化會話管理器
 
         final EditText editText = root.findViewById(R.id.editText);
         final EditText passwordEditText = root.findViewById(R.id.password);
@@ -51,7 +51,7 @@ public class LoginFragment extends Fragment {
                 String password = passwordEditText.getText().toString();
 
                 if (username.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(requireContext(), "請輸入用戶名稱及密碼", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "請輸入使用者名稱及密碼", Toast.LENGTH_SHORT).show();
                 } else {
                     // 使用 PasswordHasher 類對密碼進行雜湊處理
                     String hashedPassword = PasswordHasher.hashPassword(password);
@@ -61,16 +61,14 @@ public class LoginFragment extends Fragment {
                             @Override
                             public void onSuccess(User user) {
                                 if (user != null) {
-                                    // 登錄成功的處理邏輯
-                                    Toast.makeText(requireContext(), "登錄成功", Toast.LENGTH_SHORT).show();
-                                    // 獲取行事曆事件
-                                    //fetchCalendarEvents(username);
+                                    // 登入成功的處理邏輯
+                                    Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show();
                                     // 導航到首頁
                                     Navigation.findNavController(v).navigate(R.id.nav_home);
-                                    // 更新菜單項目
+                                    // 更新選單項目
                                     updateMenuItems();
 
-                                    // 保存使用者名稱到 SharedPreferences
+                                    // 將使用者名稱保存到 SharedPreferences
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString("USERNAME", username);
                                     editor.apply();
@@ -80,7 +78,7 @@ public class LoginFragment extends Fragment {
                                     intent.putExtra("USERNAME", username);
                                     startActivity(intent);
 
-                                    // 如果需要记住密码，保存用户名和密码到 SharedPreferences
+                                    // 如果需要記住密碼，保存使用者名稱和密碼到 SharedPreferences
                                     if (rememberPasswordCheckBox.isChecked()) {
                                         sessionManager.login();
                                         editor = sharedPreferences.edit();
@@ -92,14 +90,14 @@ public class LoginFragment extends Fragment {
                                         sessionManager.login();
                                     }
                                 } else {
-                                    // 用户不存在
-                                    Toast.makeText(requireContext(), "用戶不存在", Toast.LENGTH_SHORT).show();
+                                    // 使用者不存在
+                                    Toast.makeText(requireContext(), "使用者不存在", Toast.LENGTH_SHORT).show();
                                 }
                             }
 
                             @Override
                             public void onFailure(String errorMessage) {
-                                // API 请求失败的处理逻辑
+                                // API 請求失敗的處理邏輯
                                 Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -109,18 +107,18 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-
+        //導航到註冊介面
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 导航到注册页面
+                Navigation.findNavController(getView()).navigate(R.id.nav_registration);
             }
         });
-
+        //導航到忘記密碼介面
         forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 导航到忘记密码页面
+                Navigation.findNavController(getView()).navigate(R.id.nav_forget_password);
             }
         });
 
@@ -140,11 +138,11 @@ public class LoginFragment extends Fragment {
         return root;
     }
 
-    // 显示填充密码的对话框
+    // 顯示填充密碼的對話框
     private void showFillPasswordDialog(EditText passwordEditText) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("填充密码");
-        builder.setMessage("是否填充保存的密码？");
+        builder.setTitle("填充密碼");
+        builder.setMessage("是否填充保存的密碼？");
         builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -165,11 +163,11 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // 更新菜单项
+        // 更新選單項目
         updateMenuItems();
     }
 
-    // 更新菜单项
+    // 更新選單項目
     private void updateMenuItems() {
         if (getActivity() != null && getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).updateMenuItems();

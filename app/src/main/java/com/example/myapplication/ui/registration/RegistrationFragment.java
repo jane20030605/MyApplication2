@@ -1,9 +1,7 @@
 package com.example.myapplication.ui.registration;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -27,6 +25,13 @@ import com.example.myapplication.databinding.FragmentRegistrationBinding;
 import com.example.myapplication.models.User;
 import com.example.myapplication.utils.UserManager;
 
+import java.io.BufferedWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 
 public class RegistrationFragment extends Fragment {
@@ -189,59 +194,105 @@ public class RegistrationFragment extends Fragment {
                     Toast.makeText(requireContext(), "請輸入有效的住址(00縣市00鄉鎮市區00街弄路00號)", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // 创建新用户，使用带有用户名、密码和电子邮件的构造函数
-                User newUser = new User(enteredUsername, enteredEmail, enteredPassword);
 
-                // 保存資訊到 SharedPreferences
-                saveUserInfoToSharedPreferences(enteredRealName, enteredEmail, enteredPhone, enteredHome, enteredBirthday);
+                // 將密碼進行雜湊
+                String hashedPassword = hashPassword(enteredPassword);
 
-                // 提示用戶註冊成功
-                Toast.makeText(requireContext(), "註冊成功，請重新登入", Toast.LENGTH_SHORT).show();
-
-                // 導航到登入頁面並传递电子邮箱参数
-                Bundle bundle = new Bundle();
-                bundle.putString("EMAIL", enteredEmail);
-                Navigation.findNavController(v).navigate(R.id.nav_login, bundle);
+                // 發送註冊請求到API
+                new RegisterUserTask().execute(enteredUsername, hashedPassword, enteredEmail, enteredRealName, enteredPhone, enteredHome, enteredBirthday);
             }
         });
 
         return root;
     }
-    // 檢查住址是否符合一般格式
-    private boolean isValidAddress(String address) {
-        // 這裡可以根據你的實際需求定義住址的驗證邏輯
-        // 例如: 某某市某某區某某街某某號
-        return address.matches(".*[市縣].*[鄉鎮市區].*[街路弄].*號.*");
-    }
 
-
-    // 檢查郵件地址格式是否正確的方法
+    // 檢查郵件地址格式是否正確
     private boolean isValidEmail(String email) {
-        // 使用正則表達式來檢查郵件地址格式
-        String emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
         return email.matches(emailPattern);
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // 釋放綁定
-        binding = null;
+
+    // 檢查住址格式是否正確
+    private boolean isValidAddress(String address) {
+        String addressPattern = ".*\\d+號.*";
+        return address.matches(addressPattern);
     }
 
-    // 將用戶信息保存到SharedPreferences
-    private void saveUserInfoToSharedPreferences(String real_name, String email, String phone, String address, String birthday) {
-        // 獲取SharedPreferences實例
-        SharedPreferences sharedPreferences =
-                requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        // 保存用戶信息
-        editor.putString("REAL NAME", real_name);
-        editor.putString("EMAIL", email);
-        editor.putString("PHONE", phone);
-        editor.putString("ADDRESS", address);
-        editor.putString("BIRTHDAY", birthday);
-        // 提交修改
-        editor.apply();
+    // 將密碼進行雜湊的方法
+    private String hashPassword(String password) {
+        try {
+            // 使用SHA-256算法進行雜湊
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(password.getBytes());
+            byte[] hashedPasswordBytes = md.digest();
+
+            // 將byte數組轉換為十六進制字符串
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedPasswordBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
+    // 註冊用戶的異步任務
+    private class RegisterUserTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            // 從參數中獲取註冊資料
+            String enteredUsername = params[0];
+            String enteredPassword = params[1];
+            String enteredEmail = params[2];
+            String enteredRealName = params[3];
+            String enteredPhone = params[4];
+            String enteredHome = params[5];
+            String enteredBirthday = params[6];
+
+            try {
+                // 設定API網址
+                URL url = new URL("http://100.96.1.3/api_register.php");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoOutput(true);
+
+                // 構建POST請求參數
+                String postData = "username=" + enteredUsername + "&password=" + enteredPassword +
+                        "&email=" + enteredEmail + "&real_name=" + enteredRealName +
+                        "&phone=" + enteredPhone + "&home=" + enteredHome + "&birthday=" + enteredBirthday;
+
+                // 發送請求參數
+                OutputStream os = urlConnection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(postData);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                // 檢查響應碼
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    return "註冊成功";
+                } else {
+                    return "註冊失敗，請稍後再試";
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "註冊失敗，請稍後再試";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // 顯示註冊結果
+            Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
+            if (result.equals("註冊成功")) {
+                // 導航到下一個Fragment或Activity
+                Navigation.findNavController(getView()).navigate(R.id.nav_login);
+            }
+        }
+    }
 }
