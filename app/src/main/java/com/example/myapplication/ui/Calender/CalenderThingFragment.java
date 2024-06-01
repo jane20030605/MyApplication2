@@ -122,6 +122,7 @@ public class CalenderThingFragment extends Fragment {
 
     // 保存事件
     @SuppressLint("MutatingSharedPrefs")
+    // 在 saveEvent() 方法中
     private void saveEvent() {
         // 獲取事件的相關詳細信息
         String eventId = generateUniqueId(); // 生成唯一的事件ID
@@ -134,25 +135,44 @@ public class CalenderThingFragment extends Fragment {
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
         // 將事件詳細信息組合成 JSON 字符串
-        String eventData = createEventDataJson(eventId,eventName, eventDescription, startDate, endDate, startTime, endTime, companions);
+        String eventData = createEventDataJson(
+                eventId, eventName, eventDescription,
+                startDate, endDate, startTime, endTime, companions);
 
         // 使用 API 保存事件
-        new Thread(() -> {
-            try {
-                String response = CalendarApiClient.addEvent(eventData);
-                requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "事件已保存", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(requireView()).navigateUp();
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                requireActivity().runOnUiThread(() -> Toast.makeText(requireContext(), "事件保存失敗", Toast.LENGTH_SHORT).show());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String response = CalendarApiClient.addEvent(eventData);
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(requireContext(), "事件已保存", Toast.LENGTH_SHORT).show();
+                            // 保存成功後，通知事件已保存
+                            if (getActivity() instanceof OnEventSavedListener) {
+                                ((OnEventSavedListener) getActivity()).onEventSaved(eventData);
+                            }
+                            Navigation.findNavController(requireView()).navigateUp();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(requireContext(), "事件保存失敗", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         }).start();
     }
+
     private String generateUniqueId() {
         return UUID.randomUUID().toString();
     }
+
     private String createEventDataJson
             (String eventId,String eventName, String eventDescription,
              String startDate, String endDate,
@@ -231,5 +251,9 @@ public class CalenderThingFragment extends Fragment {
                     }
                 }, hourOfDay, minute, true);
         timePickerDialog.show();
+    }
+
+    public interface OnEventSavedListener {
+        void onEventSaved(String event);
     }
 }

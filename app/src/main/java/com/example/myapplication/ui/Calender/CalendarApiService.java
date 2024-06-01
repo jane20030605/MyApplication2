@@ -13,15 +13,16 @@ import retrofit2.http.Query;
 // 定義 API 服務接口
 public interface CalendarApiService {
     @GET("api_get_calendar.php")
-    Call<List<CalendarEvent>> getCalendarEvents(@Query("account") String account);
+    Call<List<String>> getCalendarEvents(@Query("account") String account);
 
     @POST("api_update_calendar.php")
-    Call<Void> updateCalendarEvent(@Body CalendarEvent event);
+    Call<Void> updateCalendarEvent(@Body String event);
 
     @DELETE("api_delete_calendar.php")
     Call<Void> deleteCalendarEvent(@Query("event_id") String eventId);
 
-    @PUT("api_add_calendar.php")
-    Call<Void> addCalendarEvent(@Body CalendarEvent event);
+    @POST("api_add_calendar.php")
+    Call<Void> addCalendarEvent(@Body String event);
+
 }
 

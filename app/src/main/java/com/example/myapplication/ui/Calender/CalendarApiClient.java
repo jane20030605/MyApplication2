@@ -177,4 +177,10 @@ public class CalendarApiClient {
             throw new RuntimeException("無法添加事件：HTTP 錯誤碼：" + responseCode);
         }
     }
+
+    public interface Callback {
+        void onSuccess(String result);
+
+        void onFailure(String errorMessage);
+    }
 }
