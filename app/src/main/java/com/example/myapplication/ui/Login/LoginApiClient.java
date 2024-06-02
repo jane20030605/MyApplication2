@@ -1,71 +1,98 @@
 package com.example.myapplication.ui.Login;
 
-import com.example.myapplication.RetrofitClient;
+import android.util.Log;
+
 import com.example.myapplication.models.User;
-import com.example.myapplication.ui.Calender.CalendarApiService;
-import com.example.myapplication.ui.Calender.CalendarEvent;
 import com.example.myapplication.utils.PasswordHasher;
 
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import java.io.IOException;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class LoginApiClient {
 
-    private static final String BASE_URL = "http://100.96.1.3/";
-
-    private Retrofit retrofit;
-    private LoginApiService loginApiService;
-    private CalendarApiService calendarApiService;
-    private PasswordHasher passwordHasher;
+    private OkHttpClient client; // OkHttp 客戶端
+    private PasswordHasher passwordHasher; // 密碼雜湊工具
 
     public LoginApiClient() {
-        // 建立 Retrofit 實例
-        retrofit = RetrofitClient.getClient();
-        // 使用 Retrofit 實例建立 API 服務
-        loginApiService = retrofit.create(LoginApiService.class);
-        calendarApiService = retrofit.create(CalendarApiService.class);
-        passwordHasher = new PasswordHasher();
+        client = new OkHttpClient(); // 初始化 OkHttp 客戶端
+        passwordHasher = new PasswordHasher(); // 初始化密碼雜湊工具
     }
 
-    // 發送網路請求以獲取使用者資料
-    public void getUser(String username, String password, final LoginApiCallback<User> callback) {
-        // 使用 PasswordHasher 類對密碼進行雜湊處理
+    // 登入方法
+    public void login(String username, String password, final LoginApiCallback<User> callback) {
+        // 對密碼進行雜湊處理
         String hashedPassword = passwordHasher.hashPassword(password);
         if (hashedPassword == null) {
             callback.onFailure("密碼雜湊失敗");
             return;
         }
 
-        // 調用 API 服務的 getUser 方法，發送 GET 請求並獲取使用者資料
-        Call<User> call = loginApiService.getUser(username, hashedPassword);
-        call.enqueue(new Callback<User>() {
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("username", username);
+            jsonBody.put("password", hashedPassword); // 發送雜湊後的密碼
+        } catch (JSONException e) {
+            callback.onFailure("建立 JSON 請求失敗");
+            return;
+        }
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), jsonBody.toString());
+        Request request = new Request.Builder()
+                .url("http://100.96.1.3/api_login.php") // 登入 API 的 URL
+                .post(requestBody)
+                .build();
+
+        // 使用 OkHttp 執行非同步請求
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    // 如果請求成功，則獲取使用者資料並呼叫回調函式的 onSuccess 方法
-                    User user = response.body();
-                    if (user != null) {
-                        callback.onSuccess(user);
-                    } else {
-                        callback.onFailure("用戶資訊為空");
+                    try {
+                        // 解析 API 響應
+                        String responseBody = response.body().string();
+                        Log.d("API_RESPONSE", responseBody);
+
+                        // 將 JSON 字符串轉換為 JSONObject
+                        JSONObject jsonResponse = new JSONObject(responseBody);
+                        // 使用 optString 方法獲取 "id/account/password" 鍵的值，如果不存在則返回默認值 ""
+                        String userId = jsonResponse.optString("id", "");
+                        String username = jsonResponse.optString("account", "");
+                        String password = jsonResponse.optString("password", "");
+                        // 檢查 userId 是否為空
+                        if (!userId.isEmpty() && !password.isEmpty()) {
+                            // 創建用戶對象
+                            User user = new User(userId, username, password);
+                            // 調用回調函式的 onSuccess 方法
+                            callback.onSuccess(user);
+                        } else {
+                            // 如果 userId 為空，則認為登入失敗，並呼叫 onFailure 方法
+                            callback.onFailure("登入失敗：找不到用戶ID或密碼");
+                        }
+                    } catch (JSONException e) {
+                        // JSONException 發生時，認為登入失敗，並呼叫 onFailure 方法
+                        callback.onFailure("登入失敗：解析 JSON 響應時出現錯誤");
                     }
                 } else {
-                    // 如果請求失敗，則呼叫回調函式的 onFailure 方法，並提供錯誤訊息
-                    callback.onFailure("無法讀取用戶資訊");
+                    // 調用回調函式的 onFailure 方法，並提供錯誤訊息
+                    callback.onFailure("登入失敗：伺服器返回錯誤狀態碼 " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                // 如果請求失敗，則呼叫回調函式的 onFailure 方法，並提供錯誤訊息
-                callback.onFailure(t.getMessage());
+            public void onFailure(Call call, IOException e) {
+                // 調用回調函式的 onFailure 方法，並提供錯誤訊息
+                callback.onFailure(e.getMessage());
             }
         });
     }
-
 }

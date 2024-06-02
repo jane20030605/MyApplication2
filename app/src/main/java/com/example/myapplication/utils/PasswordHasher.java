@@ -1,27 +1,24 @@
 package com.example.myapplication.utils;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class PasswordHasher {
 
-    public static String hashPassword(String password) {
+    public String hashPassword(String password) {
         try {
-            // 创建MessageDigest对象
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            // 将密码转换为字节数组
-            byte[] bytes = password.getBytes();
-            // 执行哈希计算
-            byte[] hashedBytes = digest.digest(bytes);
-            // 将字节数组转换为十六进制字符串
-            StringBuilder builder = new StringBuilder();
-            for (byte b : hashedBytes) {
-                builder.append(String.format("%02x", b));
+            byte[] hash = digest.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
             }
-            return builder.toString();
+            return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;
         }
     }
 }
-

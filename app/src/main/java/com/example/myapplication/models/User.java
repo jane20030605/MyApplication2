@@ -47,5 +47,21 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setRealName(String enteredRealName) {
+    }
+
+    public void setPhone(String enteredPhone) {
+    }
+
+    public void setHome(String enteredHome) {
+    }
+
+    public void setBirthday(String enteredBirthday) {
+    }
+
+    public boolean isValid() {
+        return false;
+    }
 }
 

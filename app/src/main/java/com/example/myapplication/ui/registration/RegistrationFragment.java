@@ -252,6 +252,11 @@ public class RegistrationFragment extends Fragment {
             String enteredHome = params[5];
             String enteredBirthday = params[6];
 
+            // 檢查使用者名稱是否已存在
+            if (UserManager.getInstance().getUser(enteredUsername) != null) {
+                return "用戶名已存在，請輸入其他用戶名";
+            }
+
             try {
                 // 設定API網址
                 URL url = new URL("http://100.96.1.3/api_register.php");

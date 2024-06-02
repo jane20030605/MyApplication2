@@ -5,6 +5,9 @@ import com.example.myapplication.models.User;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.http.GET;
+
 public class UserManager {
     private static final UserManager instance = new UserManager();
     private Map<String, User> users; // 使用者資料映射
@@ -29,3 +32,4 @@ public class UserManager {
         users.put(newUser.getUsername(), newUser);
     }
 }
+
