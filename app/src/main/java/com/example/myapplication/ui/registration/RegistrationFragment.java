@@ -1,4 +1,5 @@
 package com.example.myapplication.ui.registration;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.AsyncTask;
@@ -22,10 +23,13 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentRegistrationBinding;
-import com.example.myapplication.models.User;
 import com.example.myapplication.utils.UserManager;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -38,13 +42,14 @@ public class RegistrationFragment extends Fragment {
 
     private FragmentRegistrationBinding binding;
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        // 創建ViewModelProvider以便獲取RegistrationViewModel實例
+        // 創建RegistrationViewModel實例以便後續使用
         RegistrationViewModel registrationViewModel =
                 new ViewModelProvider(this).get(RegistrationViewModel.class);
 
-        // 載入布局檔並綁定
+        // 綁定Fragment的視圖與相關的資源
         binding = FragmentRegistrationBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -63,24 +68,20 @@ public class RegistrationFragment extends Fragment {
         birthday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 獲取當前日期
                 final Calendar calendar = Calendar.getInstance();
                 int mYear = calendar.get(Calendar.YEAR);
                 int mMonth = calendar.get(Calendar.MONTH);
                 int mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                // 創建DatePickerDialog並顯示
                 DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @SuppressLint("SetTextI18n")
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
-                                // 將年、月、日組合成日期字串，格式為YYYY/MM/DD
                                 @SuppressLint("DefaultLocale")
                                 String formattedDate = String.format
                                         ("%04d/%02d/%02d", year, (monthOfYear + 1), dayOfMonth);
-                                // 設定生日欄位的文本
                                 birthday.setText(formattedDate);
                             }
                         }, mYear, mMonth, mDay);
@@ -90,41 +91,29 @@ public class RegistrationFragment extends Fragment {
 
         // 設定電話號碼格式
         phone.addTextChangedListener(new TextWatcher() {
-            // 標誌是否正在格式化電話號碼
             private boolean isFormatting;
-            // 輸入變化後的字符數
             private int after;
-            // 電話號碼的總長度，包括分隔符
-            private static final int TOTAL_SYMBOLS = 12; // 格式為0000-000-000
-            // 電話號碼的總數字數量
-            private static final int TOTAL_DIGITS = 10; // 數字總數為10
-            // 第一個分隔符位置
-            private static final int FIRST_DIVIDER_POSITION = 5; // 第一個分隔符位置為5
-            // 第二個分隔符位置
-            private static final int SECOND_DIVIDER_POSITION = 9; // 第二個分隔符位置為9
-            // 分隔符
+            private static final int TOTAL_SYMBOLS = 12;
+            private static final int TOTAL_DIGITS = 10;
+            private static final int FIRST_DIVIDER_POSITION = 5;
+            private static final int SECOND_DIVIDER_POSITION = 9;
             private static final char DIVIDER = '-';
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // 獲取輸入變化後的字符數
                 this.after = after;
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // 當有輸入變化且不在格式化過程中時
                 if (s.length() > 0 && !isFormatting) {
                     isFormatting = true;
-                    // 如果是添加字符且在需要插入分隔符的位置
                     if (after > 0 && (s.length() == FIRST_DIVIDER_POSITION || s.length() == SECOND_DIVIDER_POSITION)) {
-                        // 當前長度小於總符號長度時插入分隔符
                         if (s.length() < TOTAL_SYMBOLS) {
                             phone.setText(new StringBuilder(s).insert(s.length() - 1, DIVIDER).toString());
                             phone.setSelection(phone.getText().length());
                         }
                     } else if (after == 0 && s.length() > 0 && (s.length() == FIRST_DIVIDER_POSITION || s.length() == SECOND_DIVIDER_POSITION)) {
-                        // 如果是刪除字符且在分隔符的位置
                         phone.setText(s.subSequence(0, s.length() - 1));
                         phone.setSelection(phone.getText().length());
                     }
@@ -134,7 +123,6 @@ public class RegistrationFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                // 如果超過10個字符，則刪除多餘字符
                 if (s.length() > TOTAL_SYMBOLS) {
                     s.delete(TOTAL_SYMBOLS, s.length());
                 }
@@ -262,25 +250,39 @@ public class RegistrationFragment extends Fragment {
                 URL url = new URL("http://100.96.1.3/api_register.php");
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setDoOutput(true);
 
-                // 構建POST請求參數
-                String postData = "username=" + enteredUsername + "&password=" + enteredPassword +
-                        "&email=" + enteredEmail + "&real_name=" + enteredRealName +
-                        "&phone=" + enteredPhone + "&home=" + enteredHome + "&birthday=" + enteredBirthday;
+                // 構建JSON對象
+                JSONObject postData = new JSONObject();
+                postData.put("account", enteredUsername);
+                postData.put("password", hashPassword(enteredPassword));
+                postData.put("name", enteredRealName);
+                postData.put("birthday", enteredBirthday);
+                postData.put("tel", enteredPhone);
+                postData.put("address", enteredHome);
+                postData.put("mail", enteredEmail);
 
                 // 發送請求參數
                 OutputStream os = urlConnection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(postData);
+                writer.write(postData.toString());
                 writer.flush();
                 writer.close();
                 os.close();
 
-                // 檢查響應碼
+                // 讀取服務器回應
                 int responseCode = urlConnection.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    return "註冊成功";
+                    // 解析服務器回應
+                    BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                    in.close();
+                    return response.toString();
                 } else {
                     return "註冊失敗，請稍後再試";
                 }
@@ -296,8 +298,9 @@ public class RegistrationFragment extends Fragment {
             Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
             if (result.equals("註冊成功")) {
                 // 導航到下一個Fragment或Activity
-                Navigation.findNavController(getView()).navigate(R.id.nav_login);
+                Navigation.findNavController(requireView()).navigate(R.id.nav_login);
             }
         }
     }
 }
+

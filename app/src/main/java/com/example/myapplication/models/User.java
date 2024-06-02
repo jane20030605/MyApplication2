@@ -13,7 +13,7 @@ public class User {
     private String password;
 
     // 无参数构造函数
-    public User() {
+    public User(String username, String password) {
     }
 
     // 带参数构造函数
