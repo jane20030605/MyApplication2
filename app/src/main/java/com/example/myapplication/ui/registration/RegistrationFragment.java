@@ -25,22 +25,83 @@ import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentRegistrationBinding;
 import com.example.myapplication.utils.UserManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 
 public class RegistrationFragment extends Fragment {
 
-    private FragmentRegistrationBinding binding;
+    // 建立 Retrofit 實例
+    private RegistrationApiClient apiClient;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        apiClient = new RegistrationApiClient();
+    }
+
+    // RegisterUserTask 現在使用 Retrofit 來處理 API 請求
+    @SuppressLint("StaticFieldLeak")
+    private class RegisterUserTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                // 從參數中獲取註冊資料
+                String enteredUsername = params[0];
+                String enteredPassword = params[1];
+                String enteredEmail = params[2];
+                String enteredRealName = params[3];
+                String enteredPhone = params[4];
+                String enteredHome = params[5];
+                String enteredBirthday = params[6];
+
+                // 創建 RegistrationRequest 實例
+                RegistrationRequest request = new RegistrationRequest();
+                request.setUsername(enteredUsername);
+                request.setPassword(enteredPassword);
+                request.setEmail(enteredEmail);
+                request.setRealName(enteredRealName);
+                request.setPhone(enteredPhone);
+                request.setHome(enteredHome);
+                request.setBirthday(enteredBirthday);
+
+                // 創建 JSON 物件
+                JSONObject requestData = new JSONObject();
+                requestData.put("account", enteredUsername);
+                requestData.put("password", enteredPassword);
+                requestData.put("name", enteredRealName);
+                requestData.put("birthday", enteredBirthday);
+                requestData.put("tel", enteredPhone);
+                requestData.put("address", enteredHome);
+                requestData.put("mail", enteredEmail);
+
+                // 使用 Retrofit 來執行 API 請求
+                apiClient.registerUser(requestData, new RegistrationApiClient.RegistrationCallback() {
+                    @Override
+                    public void onSuccess(String message) {
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                        if (message.equals("註冊成功")) {
+                            // 註冊成功後導航到下一個 Fragment 或 Activity
+                            Navigation.findNavController(requireView()).navigate(R.id.nav_login);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -50,7 +111,7 @@ public class RegistrationFragment extends Fragment {
                 new ViewModelProvider(this).get(RegistrationViewModel.class);
 
         // 綁定Fragment的視圖與相關的資源
-        binding = FragmentRegistrationBinding.inflate(inflater, container, false);
+        FragmentRegistrationBinding binding = FragmentRegistrationBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         // 獲取輸入欄位及按鈕
@@ -109,7 +170,8 @@ public class RegistrationFragment extends Fragment {
                 if (s.length() > 0 && !isFormatting) {
                     isFormatting = true;
                     if (after > 0 && (s.length() == FIRST_DIVIDER_POSITION || s.length() == SECOND_DIVIDER_POSITION)) {
-                        if (s.length() < TOTAL_SYMBOLS) {
+                        if (s.length() < TOTAL_SYMBOLS)
+                        {
                             phone.setText(new StringBuilder(s).insert(s.length() - 1, DIVIDER).toString());
                             phone.setSelection(phone.getText().length());
                         }
@@ -225,82 +287,4 @@ public class RegistrationFragment extends Fragment {
             return null;
         }
     }
-
-    // 註冊用戶的異步任務
-    private class RegisterUserTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            // 從參數中獲取註冊資料
-            String enteredUsername = params[0];
-            String enteredPassword = params[1];
-            String enteredEmail = params[2];
-            String enteredRealName = params[3];
-            String enteredPhone = params[4];
-            String enteredHome = params[5];
-            String enteredBirthday = params[6];
-
-            // 檢查使用者名稱是否已存在
-            if (UserManager.getInstance().getUser(enteredUsername) != null) {
-                return "用戶名已存在，請輸入其他用戶名";
-            }
-
-            try {
-                // 設定API網址
-                URL url = new URL("http://100.96.1.3/api_register.php");
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type", "application/json");
-                urlConnection.setDoOutput(true);
-
-                // 構建JSON對象
-                JSONObject postData = new JSONObject();
-                postData.put("account", enteredUsername);
-                postData.put("password", hashPassword(enteredPassword));
-                postData.put("name", enteredRealName);
-                postData.put("birthday", enteredBirthday);
-                postData.put("tel", enteredPhone);
-                postData.put("address", enteredHome);
-                postData.put("mail", enteredEmail);
-
-                // 發送請求參數
-                OutputStream os = urlConnection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(postData.toString());
-                writer.flush();
-                writer.close();
-                os.close();
-
-                // 讀取服務器回應
-                int responseCode = urlConnection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    // 解析服務器回應
-                    BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = in.readLine()) != null) {
-                        response.append(line);
-                    }
-                    in.close();
-                    return response.toString();
-                } else {
-                    return "註冊失敗，請稍後再試";
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "註冊失敗，請稍後再試";
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            // 顯示註冊結果
-            Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
-            if (result.equals("註冊成功")) {
-                // 導航到下一個Fragment或Activity
-                Navigation.findNavController(requireView()).navigate(R.id.nav_login);
-            }
-        }
-    }
 }
-
