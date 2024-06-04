@@ -51,49 +51,30 @@ public class RegistrationFragment extends Fragment {
         @Override
         protected Void doInBackground(String... params) {
             try {
-                // 從參數中獲取註冊資料
-                String enteredUsername = params[0];
-                String enteredPassword = params[1];
-                String enteredEmail = params[2];
-                String enteredRealName = params[3];
-                String enteredPhone = params[4];
-                String enteredHome = params[5];
-                String enteredBirthday = params[6];
+                final JSONObject requestData = getJsonObject(params);
 
-                // 創建 RegistrationRequest 實例
-                RegistrationRequest request = new RegistrationRequest();
-                request.setUsername(enteredUsername);
-                request.setPassword(enteredPassword);
-                request.setEmail(enteredEmail);
-                request.setRealName(enteredRealName);
-                request.setPhone(enteredPhone);
-                request.setHome(enteredHome);
-                request.setBirthday(enteredBirthday);
-
-                // 創建 JSON 物件
-                JSONObject requestData = new JSONObject();
-                requestData.put("account", enteredUsername);
-                requestData.put("password", enteredPassword);
-                requestData.put("name", enteredRealName);
-                requestData.put("birthday", enteredBirthday);
-                requestData.put("tel", enteredPhone);
-                requestData.put("address", enteredHome);
-                requestData.put("mail", enteredEmail);
-
-                // 使用 Retrofit 來執行 API 請求
                 apiClient.registerUser(requestData, new RegistrationApiClient.RegistrationCallback() {
                     @Override
-                    public void onSuccess(String message) {
-                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-                        if (message.equals("註冊成功")) {
-                            // 註冊成功後導航到下一個 Fragment 或 Activity
-                            Navigation.findNavController(requireView()).navigate(R.id.nav_login);
-                        }
+                    public void onSuccess(final String message) {
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                                if (message.equals("註冊成功")) {
+                                    Navigation.findNavController(requireView()).navigate(R.id.nav_login);
+                                }
+                            }
+                        });
                     }
 
                     @Override
-                    public void onError(String message) {
-                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    public void onError(final String message) {
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 });
             } catch (JSONException e) {
@@ -101,6 +82,39 @@ public class RegistrationFragment extends Fragment {
             }
             return null;
         }
+    }
+
+
+    @NonNull
+    private static JSONObject getJsonObject(String[] params) throws JSONException {
+        String enteredUsername = params[0];
+        String enteredPassword = params[1];
+        String enteredEmail = params[2];
+        String enteredRealName = params[3];
+        String enteredPhone = params[4];
+        String enteredHome = params[5];
+        String enteredBirthday = params[6];
+
+        // 創建 RegistrationRequest 實例
+        RegistrationRequest request = new RegistrationRequest();
+        request.setUsername(enteredUsername);
+        request.setPassword(enteredPassword);
+        request.setEmail(enteredEmail);
+        request.setRealName(enteredRealName);
+        request.setPhone(enteredPhone);
+        request.setHome(enteredHome);
+        request.setBirthday(enteredBirthday);
+
+        // 創建 JSON 物件
+        JSONObject requestData = new JSONObject();
+        requestData.put("account", enteredUsername);
+        requestData.put("password", enteredPassword);
+        requestData.put("name", enteredRealName);
+        requestData.put("birthday", enteredBirthday);
+        requestData.put("tel", enteredPhone);
+        requestData.put("address", enteredHome);
+        requestData.put("mail", enteredEmail);
+        return requestData;
     }
 
     @Override
@@ -149,7 +163,7 @@ public class RegistrationFragment extends Fragment {
                 datePickerDialog.show();
             }
         });
-
+/**
         // 設定電話號碼格式
         phone.addTextChangedListener(new TextWatcher() {
             private boolean isFormatting;
@@ -190,7 +204,7 @@ public class RegistrationFragment extends Fragment {
                 }
             }
         });
-
+**/
         // 設定註冊按鈕點擊事件
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,14 +242,8 @@ public class RegistrationFragment extends Fragment {
                 }
 
                 // 檢查電話號碼格式是否正確
-                if (!enteredPhone.matches("\\d{4}-\\d{3}-\\d{3}")) {
+                if (!enteredPhone.matches("\\d{4}\\d{3}\\d{3}")) {
                     Toast.makeText(requireContext(), "電話號碼格式不正確，應為0000-000-000", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // 使用正則表達式檢查郵件地址的格式是否正確
-                if (!isValidEmail(enteredEmail)) {
-                    Toast.makeText(requireContext(), "郵件地址格式不正確", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -244,7 +252,6 @@ public class RegistrationFragment extends Fragment {
                     Toast.makeText(requireContext(), "請輸入有效的住址(00縣市00鄉鎮市區00街弄路00號)", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 // 將密碼進行雜湊
                 String hashedPassword = hashPassword(enteredPassword);
 
@@ -254,12 +261,6 @@ public class RegistrationFragment extends Fragment {
         });
 
         return root;
-    }
-
-    // 檢查郵件地址格式是否正確
-    private boolean isValidEmail(String email) {
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        return email.matches(emailPattern);
     }
 
     // 檢查住址格式是否正確

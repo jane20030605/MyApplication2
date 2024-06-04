@@ -2,6 +2,8 @@ package com.example.myapplication.ui.Login;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.myapplication.models.User;
 import com.example.myapplication.ui.Login.LoginApiCallback;
 
@@ -46,10 +48,11 @@ public class LoginApiClient {
         // 使用 OkHttp 執行非同步請求
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     try {
                         // 解析 API 響應
+                        assert response.body() != null;
                         String responseBody = response.body().string();
                         Log.d("API_RESPONSE", responseBody);
 
