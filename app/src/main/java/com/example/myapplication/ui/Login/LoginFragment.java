@@ -135,14 +135,14 @@ public class LoginFragment extends Fragment {
     }
 
     // 登入方法
-    private void login(String username, String password) {
+    private void login(String username, String hashpassword) {
         // 建立 OkHttpClient
         OkHttpClient client = new OkHttpClient();
 
         // 建立 FormBody，將使用者名稱和密碼添加到請求中
         RequestBody formBody = new FormBody.Builder()
                 .add("account", username)
-                .add("password", password)
+                .add("password", hashpassword)
                 .build();
 
         // 建立 POST 請求
@@ -172,7 +172,7 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void run() {
                             // 登入成功，執行相應操作
-                            handleLoginSuccess(username, password);
+                            handleLoginSuccess(username, hashpassword);
                         }
                     });
                 } else {

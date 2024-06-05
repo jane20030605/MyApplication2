@@ -66,7 +66,7 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
     // 取得日曆事件
     private void fetchCalendarEvents() {
         String account = "USERNAME"; // 要獲取日曆資料的用戶帳戶
-        CalendarApiClient.fetchCalendarData(new CalendarApiClient.Callback() {
+        CalendarApiClient.fetchCalendarData(new CalendarApiCallback(){
             @Override
             public void onSuccess(String result) {
                 // 成功取得日曆資料後顯示事件

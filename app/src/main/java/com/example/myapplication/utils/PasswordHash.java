@@ -3,7 +3,7 @@ package com.example.myapplication.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class PasswordHasher {
+public class PasswordHash {
 
     public String hashPassword(String password) {
         try {

@@ -156,55 +156,14 @@ public class RegistrationFragment extends Fragment {
                                                   int monthOfYear, int dayOfMonth) {
                                 @SuppressLint("DefaultLocale")
                                 String formattedDate = String.format
-                                        ("%04d/%02d/%02d", year, (monthOfYear + 1), dayOfMonth);
+                                        ("%04d-%02d-%02d", year, (monthOfYear + 1), dayOfMonth);
                                 birthday.setText(formattedDate);
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
             }
         });
-/**
-        // 設定電話號碼格式
-        phone.addTextChangedListener(new TextWatcher() {
-            private boolean isFormatting;
-            private int after;
-            private static final int TOTAL_SYMBOLS = 12;
-            private static final int TOTAL_DIGITS = 10;
-            private static final int FIRST_DIVIDER_POSITION = 5;
-            private static final int SECOND_DIVIDER_POSITION = 9;
-            private static final char DIVIDER = '-';
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                this.after = after;
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0 && !isFormatting) {
-                    isFormatting = true;
-                    if (after > 0 && (s.length() == FIRST_DIVIDER_POSITION || s.length() == SECOND_DIVIDER_POSITION)) {
-                        if (s.length() < TOTAL_SYMBOLS)
-                        {
-                            phone.setText(new StringBuilder(s).insert(s.length() - 1, DIVIDER).toString());
-                            phone.setSelection(phone.getText().length());
-                        }
-                    } else if (after == 0 && s.length() > 0 && (s.length() == FIRST_DIVIDER_POSITION || s.length() == SECOND_DIVIDER_POSITION)) {
-                        phone.setText(s.subSequence(0, s.length() - 1));
-                        phone.setSelection(phone.getText().length());
-                    }
-                    isFormatting = false;
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() > TOTAL_SYMBOLS) {
-                    s.delete(TOTAL_SYMBOLS, s.length());
-                }
-            }
-        });
-**/
         // 設定註冊按鈕點擊事件
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -69,5 +69,18 @@
 			android:layout_height="40dp"
 			android:text="使用者資料"
 			tools:ignore="HardcodedText" />
+		<item
+			android:id="@+id/nav_setting"
+			android:orderInCategory="100"
+			android:icon="?attr/actionModeSelectAllDrawable"
+			android:title="@string/menu_user_set"
+			tools:ignore="HardcodedText"/>
+
+		<item
+			android:id="@+id/nav_mail_for_developer"
+			android:orderInCategory="100"
+			android:icon="@android:drawable/sym_action_email"
+			android:title="@string/mail_for_developer"
+			tools:ignore="HardcodedText" />
 	</group>
 </menu>
