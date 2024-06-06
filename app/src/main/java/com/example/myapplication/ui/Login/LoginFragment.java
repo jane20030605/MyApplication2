@@ -39,7 +39,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
 public class LoginFragment extends Fragment {
 
     private SharedPreferences sharedPreferences; // 偏好設置
@@ -76,7 +75,7 @@ public class LoginFragment extends Fragment {
                     // 將密碼進行雜湊
                     String hashedPassword = hashPassword(password);
                     // 呼叫登入 API 客戶端進行登入
-                    login(username, password);
+                    login(username, hashedPassword);
                 }
             }
         });
@@ -105,7 +104,7 @@ public class LoginFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     String username = editText.getText().toString();
-                    boolean rememberPassword = sharedPreferences.getBoolean("記住密碼", false);
+                    boolean rememberPassword = sharedPreferences.getBoolean("remember_password", false);
                     if (rememberPassword && UserManager.getInstance().getUser(username) != null) {
                         showFillPasswordDialog(passwordEditText);
                     }
@@ -129,7 +128,7 @@ public class LoginFragment extends Fragment {
         builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String savedPassword = sharedPreferences.getString("密碼", "");
+                String savedPassword = sharedPreferences.getString("password", "");
                 passwordEditText.setText(savedPassword);
                 dialog.dismiss();
             }
@@ -201,7 +200,6 @@ public class LoginFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("USERNAME", username);
         editor.apply();
-
         // 導航到 MainActivity
         Intent intent = new Intent(requireActivity(), MainActivity.class);
         intent.putExtra("USERNAME", username);
@@ -212,9 +210,9 @@ public class LoginFragment extends Fragment {
         if (rememberPasswordCheckBox.isChecked()) {
             sessionManager.login();
             editor = sharedPreferences.edit();
-            editor.putString("使用者名稱", username);
-            editor.putString("密碼", password);
-            editor.putBoolean("記住密碼", true);
+            editor.putString("username", username);
+            editor.putString("password", password);
+            editor.putBoolean("remember_password", true);
             editor.apply();
         } else {
             sessionManager.login();

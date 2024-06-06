@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // 發送反饋郵件
     private void sendFeedbackEmail() {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                "mailto", "yijanelin2@gmail.com", null));
+                "mailto", "lsofeveryone@gmail.com", null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "用戶意見反饋");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         startActivity(Intent.createChooser(emailIntent, "選擇郵件客戶端"));

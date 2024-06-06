@@ -28,7 +28,7 @@
 	<string name="menu_user_set">系統設定</string>
 	<string name="menu_feedback">用戶反饋</string>
 	<string name="menu_guided_tour">使用手冊</string>
-	<string name="menu_emergency_contact">緊急連絡人</string>
+	<string name="menu_emergency_contact">資料修改</string>
 	<string name="menu_forget_password">忘記密碼</string>
 	<string name="menu_video">即時影像</string>
 

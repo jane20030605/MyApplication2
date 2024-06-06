@@ -15,7 +15,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginEnd="28dp"
-			android:text="@string/Calender_thing"
+			android:text="行事曆事件修改"
 			android:textSize="50sp"
 			app:layout_constraintEnd_toEndOf="parent"
 			tools:ignore="MissingConstraints"

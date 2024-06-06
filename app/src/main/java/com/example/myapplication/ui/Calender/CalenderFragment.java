@@ -2,6 +2,7 @@ package com.example.myapplication.ui.Calender;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,8 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
         // 檢查用戶登錄狀態
         if (isLoggedIn()) {
             // 如果已登錄，則取得日曆事件
-            fetchCalendarEvents();
+            String account = getCurrentLoggedInAccount(); // 获取当前已登录用户的帐户
+            fetchCalendarEvents(account); // 调用 fetchCalendarEvents 方法，并传递当前登录用户的帐户
         } else {
             // 如果尚未登錄，則導航到登錄界面
             navigateToLogin();
@@ -68,9 +70,16 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
         return true;
     }
 
+    // 获取当前已登录用户的帐户
+    private String getCurrentLoggedInAccount() {
+        // 在此实现获取当前已登录用户帐户的逻辑
+        // 返回当前已登录用户的帐户
+        // 这里先假设帐户名为"example_user"
+        return "qwe";
+    }
+
     // 取得日曆事件
-    private void fetchCalendarEvents() {
-        String account = "USERNAME"; // 要获取日历数据的用户帐户
+    private void fetchCalendarEvents(String account) {
         String phpApiUrl = "http://100.96.1.3/api_get_calendar.php" + "?account=" + account;
 
         NetworkRequestManager.getInstance(getContext()).makeGetRequest(phpApiUrl, new NetworkRequestManager.RequestListener() {
@@ -92,6 +101,7 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
     private void displayEvents(String calendarData) {
         try {
             JSONArray eventsArray = new JSONArray(calendarData);
+            Log.e("CalendarResponse",  calendarData);
             eventList.clear(); // 清空已有的事件列表
             for (int i = 0; i < eventsArray.length(); i++) {
                 JSONObject event = eventsArray.getJSONObject(i);

@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.Calender;
+package com.example.myapplication.ui.Calender;// CalenderThingFragment.java
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -20,22 +20,16 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.databinding.FragmentCalenderThingBinding;
+import com.example.myapplication.ui.Calender.CalendarAddClient;
+import com.example.myapplication.ui.Calender.CalendarEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Set;
-import java.util.UUID;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class CalenderThingFragment extends Fragment {
 
@@ -142,22 +136,24 @@ public class CalenderThingFragment extends Fragment {
         String endTime = binding.editTextEndTime.getText().toString();
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
-        // 將事件詳細信息組合成 JSON 字符串
-        String eventData = createEventDataJson(
+        // 創建 CalendarEvent 對象
+        CalendarEvent calendarEvent = new CalendarEvent(
                 eventName, eventDescription,
-                startDate, endDate, startTime, endTime, companions);
+                startDate, endDate,
+                startTime, endTime, companions);
 
-        // 使用 API 保存事件
+        // 將 CalendarEvent 對象轉換為 JSON 字串
+        String eventData = createEventDataJson(calendarEvent);
+
+        // 使用 CalendarAddClient 類中的 addEvent 方法保存事件，並傳遞 event_id
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    // 呼叫PHP API
-                    String response = postEventDataToPhpAPI(eventData);
+                    String response = CalendarAddClient.addEvent(eventData, calendarEvent.getEventId());
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // 處理API回應
                             handleApiResponse(response);
                         }
                     });
@@ -174,87 +170,21 @@ public class CalenderThingFragment extends Fragment {
         }).start();
     }
 
-    // 使用 PHP API 保存事件
-    private String postEventDataToPhpAPI(String eventData) throws IOException {
-        // 設置API端點URL
-        String apiUrl = "http://100.96.1.3/api_add_calendar.php";
-
-        // 創建POST請求
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), eventData);
-        Request request = new Request.Builder()
-                .url(apiUrl)
-                .post(body)
-                .build();
-
-        // 執行請求並取得回應
-        Response response = client.newCall(request).execute();
-        return response.body().string();
-    }
-
-    // 處理 API 回應
-    private void handleApiResponse(String response) {
-        try {
-            JSONObject jsonResponse = new JSONObject(response);
-            String message = jsonResponse.getString("message");
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-            // 保存成功後，通知事件已保存
-            if (getActivity() instanceof OnEventSavedListener) {
-                ((OnEventSavedListener) getActivity()).onEventSaved(message);
-            }
-            Navigation.findNavController(requireView()).navigateUp();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(requireContext(), "無法處理 API 回應", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String createEventDataJson
-            (String eventName, String eventDescription,
-             String startDate, String endDate,
-             String startTime, String endTime, String companions) {
-        // 使用 JSONObject 创建 JSON 字符串
+    // 將 CalendarEvent 對象轉換為 JSON 字串
+    private String createEventDataJson(CalendarEvent calendarEvent) {
         JSONObject eventDataJson = new JSONObject();
         try {
-            // 生成唯一的事件ID
-            String eventId = generateUniqueId();
-
-            eventDataJson.put("thing", eventName);
-            eventDataJson.put("date_up", startDate);
-            eventDataJson.put("date_end", endDate);
-            eventDataJson.put("people", companions);
-            eventDataJson.put("describe", eventDescription);
-            eventDataJson.put("account", ""); // 假設帳戶資訊在這裡是空的
-
+            eventDataJson.put("event_id", calendarEvent.getEventId());
+            eventDataJson.put("thing", calendarEvent.getEventName());
+            eventDataJson.put("start_datetime", calendarEvent.getStartDate() + " " + calendarEvent.getStartTime());
+            eventDataJson.put("end_datetime", calendarEvent.getEndDate() + " " + calendarEvent.getEndTime());
+            eventDataJson.put("people", calendarEvent.getCompanions());
+            eventDataJson.put("describe", calendarEvent.getEventDescription());
+            eventDataJson.put("account", calendarEvent.getAccount());
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return eventDataJson.toString();
-    }
-
-    // 生成唯一的事件ID
-    private String generateUniqueId() {
-        return UUID.randomUUID().toString();
-    }
-
-    // 填充事件詳細信息
-    private void populateEventDetails(String eventDetails) {
-        // 將事件詳細信息拆分成各個部分
-        String[] details = eventDetails.split("\n");
-        if (details.length == 7) {
-            // 將各個部分的信息填充到相應的 EditText 中
-            binding.editTextThing.setText(details[0]);
-            binding.editTextEventDescription.setText(details[1]);
-            binding.editTextStartDate.setText(details[2]);
-            binding.editTextEndDate.setText(details[3]);
-            binding.editTextStartTime.setText(details[4]);
-            binding.editTextEndTime.setText(details[5]);
-
-            // 從 Spinner 的適配器中獲取陪伴者在清單中的位置並設置給 Spinner
-            ArrayAdapter<String> adapter = (ArrayAdapter<String>) binding.spinnerCompanions.getAdapter();
-            int position = adapter.getPosition(details[6]);
-            binding.spinnerCompanions.setSelection(position);
-        }
     }
 
     // 顯示日期選擇對話框
@@ -296,7 +226,7 @@ public class CalenderThingFragment extends Fragment {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
                         Calendar selectedTime = Calendar.getInstance();
                         selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         selectedTime.set(Calendar.MINUTE, minute);
@@ -307,7 +237,46 @@ public class CalenderThingFragment extends Fragment {
         timePickerDialog.show();
     }
 
+    // 填充事件詳細信息
+    private void populateEventDetails(String eventDetails) {
+        // 將事件詳細信息拆分成各個部分
+        String[] details = eventDetails.split("\n");
+        if (details.length == 7) {
+            // 將各個部分的信息填充到相應的 EditText 中
+            binding.editTextThing.setText(details[0]);
+            binding.editTextEventDescription.setText(details[1]);
+            binding.editTextStartDate.setText(details[2]);
+            binding.editTextEndDate.setText(details[3]);
+            binding.editTextStartTime.setText(details[4]);
+            binding.editTextEndTime.setText(details[5]);
+
+            // 從 Spinner 的適配器中獲取陪伴者在清單中的位置並設置給 Spinner
+            ArrayAdapter<String> adapter = (ArrayAdapter<String>) binding.spinnerCompanions.getAdapter();
+            int position = adapter.getPosition(details[6]);
+            binding.spinnerCompanions.setSelection(position);
+        }
+    }
+
+    // 處理 API 回應
+    private void handleApiResponse(String response) {
+        try {
+            JSONObject jsonResponse = new JSONObject(response);
+            String message = jsonResponse.getString("message");
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            // 保存成功後，通知事件已保存
+            if (getActivity() instanceof OnEventSavedListener) {
+                ((OnEventSavedListener) getActivity()).onEventSaved(message);
+                Toast.makeText(requireContext(), "保存成功，已上傳資料，請下拉頁面刷新", Toast.LENGTH_SHORT).show();
+            }
+            Navigation.findNavController(requireView()).navigateUp();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "無法處理 API 回應", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public interface OnEventSavedListener {
         void onEventSaved(String event);
     }
 }
+

@@ -1,4 +1,5 @@
 package com.example.myapplication.ui.Calender;
+// CalendarAddClient.java
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,12 +9,19 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 這個類提供了與日曆 API 進行 HTTP 請求來添加日曆事件的方法。
+ * 這個類提供了方法來通過 HTTP POST 請求向日曆 API 添加日曆事件。
  */
 public class CalendarAddClient {
     private static final String ADD_EVENT_URL = "http://100.96.1.3/api_add_calendar.php";
 
-    public static String addEvent(String eventData) throws Exception {
+    /**
+     * 使用 HTTP POST 請求向日曆 API 添加日曆事件。
+     * @param eventData 表示事件數據的 JSON 字符串。
+     * @param eventId 事件的ID。
+     * @return API 的回應。
+     * @throws Exception 如果在 HTTP 請求期間發生錯誤。
+     */
+    public static String addEvent(String eventData, String eventId) throws Exception {
         URL url = new URL(ADD_EVENT_URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
@@ -26,20 +34,16 @@ public class CalendarAddClient {
             os.write(input, 0, input.length);
         }
 
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder response = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+            String responseLine;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
             }
-            in.close();
-
             return response.toString();
-        } else {
-            throw new RuntimeException("無法添加事件：HTTP 錯誤碼：" + responseCode);
+        } finally {
+            connection.disconnect();
         }
     }
 }

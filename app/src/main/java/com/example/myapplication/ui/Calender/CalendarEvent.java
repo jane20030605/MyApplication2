@@ -1,4 +1,7 @@
-package com.example.myapplication.ui.Calender;
+package com.example.myapplication.ui.Calender;// CalendarEvent.java
+// CalendarEvent.java
+
+import java.util.UUID;
 
 public class CalendarEvent {
     private String event_id;
@@ -15,6 +18,7 @@ public class CalendarEvent {
             String eventName, String eventDescription,
             String startDate, String endDate,
             String startTime, String endTime, String companions) {
+        this.event_id = generateUniqueId();
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.startDate = startDate;
@@ -94,5 +98,11 @@ public class CalendarEvent {
 
     public void setCompanions(String companions) {
         this.companions = companions;
+    }
+
+    // 生成唯一的事件ID
+    public String generateUniqueId() {
+        // 這裡使用當前時間的毫秒數和一個隨機數來生成唯一ID
+        return System.currentTimeMillis() + "-" + UUID.randomUUID().toString();
     }
 }
