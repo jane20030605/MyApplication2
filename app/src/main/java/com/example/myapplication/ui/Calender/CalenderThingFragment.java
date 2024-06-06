@@ -279,4 +279,3 @@ public class CalenderThingFragment extends Fragment {
         void onEventSaved(String event);
     }
 }
-

@@ -113,6 +113,9 @@
         <action
             android:id="@+id/action_nav_user_data_to_emergency_contact"
             app:destination="@id/nav_emergency_contact" />
+	    <action
+		    android:id="@+id/action_nav_user_data_to_password_changeFragment"
+		    app:destination="@id/nav_password_change" />
     </fragment>
     <fragment
         android:id="@+id/nav_user_set"
@@ -148,8 +151,8 @@
         tools:layout="@layout/fragment_emergency_contact" />
 	<fragment
 		android:id="@+id/nav_medicine_inquire"
-		android:name="com.example.myapplication.ui.Medicine_inquire.medicine_inquire"
-		android:label="fragment_medicine_inquire"
+		android:name="com.example.myapplication.ui.Medicine_inquire.Medicine_inquireFragment"
+		android:label="@string/menu_medicine_inquire"
 		tools:layout="@layout/fragment_medicine_inquire" />
 	<fragment
 		android:id="@+id/nav_forget_password"
@@ -161,4 +164,9 @@
 		android:name="com.example.myapplication.ui.Video.VideoFragment"
 		android:label="@string/menu_video"
 		tools:layout="@layout/fragment_video" />
+	<fragment
+		android:id="@+id/nav_password_change"
+		android:name="com.example.myapplication.ui.change_password.password_changeFragment"
+		android:label="@string/menu_password_change"
+		tools:layout="@layout/fragment_password_change" />
 </navigation>

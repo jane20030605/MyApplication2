@@ -54,8 +54,7 @@ public class MedicineFragment extends Fragment {
         query_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 在這裡處理查詢按鈕的點擊事件
-                // 例如，執行藥物查詢操作
+                Navigation.findNavController(v).navigate(R.id.nav_medicine_inquire);
             }
         });
 

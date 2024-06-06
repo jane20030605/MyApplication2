@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.Medicine_box;
+package com.example.myapplication.ui.Medicine_inquire;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +22,7 @@ import com.example.myapplication.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Medicine_boxFragment extends Fragment {
+public class Medicine_inquireFragment extends Fragment {
     // 添加暫存區屬性
     private String selectedTime;
     private String dosage;
@@ -29,13 +32,13 @@ public class Medicine_boxFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_medicine_box, container, false);
+        View view = inflater.inflate(R.layout.fragment_medicine_inquire, container, false);
 
-        // 初始化 RecyclerView
+        // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.medicine_list);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        // 創建假數據
+        // Create dummy data
         medicineList = new ArrayList<>();
         int[] imageResIds = {
                 R.drawable.medicine_1, R.drawable.medicine_2, R.drawable.medicine_3, R.drawable.medicine_4,
@@ -50,7 +53,7 @@ public class Medicine_boxFragment extends Fragment {
             medicineList.add(medicine);
         }
 
-        // 初始化並設置 Adapter
+        // Initialize and set Adapter
         adapter = new MedicineBoxAdapter(medicineList);
         recyclerView.setAdapter(adapter);
 
@@ -137,15 +140,29 @@ public class Medicine_boxFragment extends Fragment {
         builder.setTitle(medicine.getName());
         builder.setMessage("許可證字號:\n衛署藥製字第001400號\n" +
                 "藥物名稱:\n大豐普樂非林錠\n" +
-                "適應症:\n氣喘及支氣管痙攣\n" +
-                "服藥時間: " + "早餐前" + "\n" +
-                "一次幾顆: " + "3");
-        builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                "適應症:\n氣喘及支氣管痙攣\n" );
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.medicine_detail_dialog, null);
+        builder.setView(dialogView);
+
+        // Get references to views in the dialog layout
+        Spinner timeSpinner = dialogView.findViewById(R.id.timeSpinner);
+        EditText dosageEditText = dialogView.findViewById(R.id.dosageEditText);
+
+        // Set up spinner with options
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.time_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        timeSpinner.setAdapter(adapter);
+
+        builder.setPositiveButton("加入個人藥物庫", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+                // 在點擊確定按鈕時將數據存入暫存區
+                selectedTime = timeSpinner.getSelectedItem().toString();
+                dosage = dosageEditText.getText().toString();
             }
         });
+
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -155,4 +172,6 @@ public class Medicine_boxFragment extends Fragment {
 
         builder.show();
     }
+
+
 }

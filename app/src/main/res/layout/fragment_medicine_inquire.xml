@@ -5,7 +5,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".ui.Medicine_inquire.medicine_inquire">
+	tools:context=".ui.Medicine_inquire.Medicine_inquireFragment">
 
 	<TextView
 		android:id="@+id/text_medicine_inquire_end"
@@ -22,7 +22,6 @@
 		app:layout_constraintTop_toTopOf="parent"
 		tools:ignore="HardcodedText" />
 
-	<!-- 使用 NestedScrollView 包裹 RecyclerView 和文字部分 -->
 	<androidx.core.widget.NestedScrollView
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
@@ -31,11 +30,10 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintBottom_toBottomOf="parent">
 
-		<!-- 藥品列表 -->
 		<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/medicine_list"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			/>
+			android:layout_height="wrap_content" />
+
 	</androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

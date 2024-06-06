@@ -169,10 +169,9 @@ public class user_dataFragment extends Fragment {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 提示用戶取消個人資料修改
-                Toast.makeText(requireContext(), "取消個人資料修改", Toast.LENGTH_SHORT).show();
-                // 返回上一個介面
-                Navigation.findNavController(v).navigateUp();
+                // 提示進行帳戶密碼變更修改
+                Toast.makeText(requireContext(), "進行變更密碼", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(v).navigate(R.id.nav_password_change);
             }
         });
 

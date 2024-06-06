@@ -24,7 +24,7 @@
             android:layout_height="233dp"
             android:layout_marginTop="60dp"
             android:padding="10dp"
-            android:src="@drawable/images10">
+            android:src="@drawable/menu_user">
         </ImageView>
 
         <!-- 帳號輸入 -->

@@ -34,7 +34,7 @@
 				android:layout_height="wrap_content"
 				android:layout_centerHorizontal="true"
 				android:layout_marginBottom="24dp"
-				android:src="@drawable/user"
+				android:src="@drawable/menu_userdata"
 				tools:ignore="ContentDescription,ObsoleteLayoutParam" />
 
 			<!-- 用戶名稱 -->
@@ -248,7 +248,7 @@
 					android:layout_weight="1"
 					android:layout_marginTop="10dp"
 					android:background="@drawable/color"
-					android:text="@string/delete"
+					android:text="修改密碼"
 					android:textSize="20sp"
 					tools:ignore="ButtonStyle,HardcodedText" />
 			</LinearLayout>

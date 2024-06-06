@@ -22,7 +22,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
-import com.example.myapplication.ui.Calender.CalendarApiClient;
+import com.example.myapplication.ui.Calender.CalendarAddClient;
+import com.example.myapplication.ui.Calender.CalendarGetClient;
+import com.example.myapplication.ui.Calender.CalendarUpdateClient;
+import com.example.myapplication.ui.Calender.CalendarDeleteClient;
 import com.example.myapplication.utils.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 
@@ -122,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void fetchCalendarData(String username) {
         try {
             // 使用您的行事曆 API 客戶端獲取用戶的行事曆數據
-            String calendarData = CalendarApiClient.getCalendar(username);
+            String calendarData = CalendarGetClient.getCalendar(username);
 
             // 處理從後端獲取的行事曆數據，例如顯示在 UI 上
             // 這裡僅示例獲取成功時的處理，您需要根據您的應用程序邏輯進行相應處理

@@ -18,6 +18,7 @@
 	<string name="menu_logout">登出系統</string>
 	<string name="menu_medicine_box">個人藥物資料庫</string>
 	<string name="menu_medicine">藥物資料查詢</string>
+	<string name="menu_medicine_inquire">藥物查詢結果</string>
 	<string name="menu_memory">跌倒記錄查詢</string>
 	<string name="menu_calender">行事曆紀錄</string>
 	<string name="menu_user">使用者資料</string>
@@ -26,9 +27,10 @@
 	<string name="menu_medicine_allbox">藥物總覽查詢</string>
 	<string name="menu_user_data">個人檔案</string>
 	<string name="menu_user_set">系統設定</string>
+	<string name="menu_password_change">修改密碼</string>
 	<string name="menu_feedback">用戶反饋</string>
 	<string name="menu_guided_tour">使用手冊</string>
-	<string name="menu_emergency_contact">資料修改</string>
+	<string name="menu_emergency_contact">緊急連絡人修改</string>
 	<string name="menu_forget_password">忘記密碼</string>
 	<string name="menu_video">即時影像</string>
 

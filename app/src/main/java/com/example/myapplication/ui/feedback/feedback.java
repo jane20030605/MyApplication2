@@ -48,7 +48,7 @@ public class feedback extends Fragment {
     private void sendFeedbackEmail(String feedbackText) {
         // 創建發送郵件的意圖
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                "mailto", "yijanelin2@gmail.com", null));
+                "mailto", "lsofeveryone@gmail.com", null));
         // 設置郵件主題
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "用戶意見反饋");
         // 設置郵件內容，包括用户输入的意见文本
