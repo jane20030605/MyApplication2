@@ -219,13 +219,11 @@ public class CalenderThingFragment extends Fragment {
             // 生成唯一的事件ID
             String eventId = generateUniqueId();
 
-            eventDataJson.put("eventId", eventId);
             eventDataJson.put("thing", eventName);
             eventDataJson.put("date_up", startDate);
             eventDataJson.put("date_end", endDate);
             eventDataJson.put("people", companions);
             eventDataJson.put("describe", eventDescription);
-            // 此處需注意PHP API的要求，可能需要將時間格式進行調整
             eventDataJson.put("account", ""); // 假設帳戶資訊在這裡是空的
 
         } catch (JSONException e) {
@@ -274,7 +272,7 @@ public class CalenderThingFragment extends Fragment {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                         Calendar selectedDate = Calendar.getInstance();
                         selectedDate.set(year, month, dayOfMonth);
                         // 將選擇的日期設置到指定的 EditText 中
@@ -313,4 +311,3 @@ public class CalenderThingFragment extends Fragment {
         void onEventSaved(String event);
     }
 }
-

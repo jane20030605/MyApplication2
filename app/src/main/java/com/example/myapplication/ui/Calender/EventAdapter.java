@@ -6,14 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.myapplication.R;
+import com.example.myapplication.utils.NetworkRequestManager;
+
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
-    private List<String> eventList;
+    private List<JSONObject> eventList;
 
     // 事件適配器的ViewHolder類別
     public static class EventViewHolder extends RecyclerView.ViewHolder {
@@ -30,7 +36,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     // 建構函式，接受事件清單參數
-    public EventAdapter(List<String> eventList) {
+    public EventAdapter(List<JSONObject> eventList) {
         this.eventList = eventList; // 初始化事件清單
     }
 
@@ -44,42 +50,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        String selectedEventId = eventList.get(position); // 取得選定事件的ID
+        JSONObject event = eventList.get(position); // 取得選定事件
+        String eventId = event.optString("event_id"); // 取得事件ID
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String eventDetail = CalendarApiClient.getCalendar(selectedEventId); // 從API取得事件詳細資訊
-                    holder.itemView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            holder.tvEventName.setText(eventDetail); // 在UI執行緒上設定事件名稱
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        holder.tvEventName.setText(event.optString("thing")); // 設置事件名稱
 
         holder.btnEditEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String eventDetail = CalendarApiClient.getCalendar(selectedEventId); // 取得事件詳細資訊
-                            Bundle bundle = new Bundle();
-                            bundle.putString("eventDetail", eventDetail); // 將事件詳細資訊放入Bundle
-                            bundle.putString("eventId", selectedEventId); // 將事件ID放入Bundle
-                            Navigation.findNavController(holder.itemView).navigate(R.id.nav_calender_thing, bundle); // 導航至編輯事件頁面
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                Bundle bundle = new Bundle();
+                bundle.putString("eventDetail", event.toString()); // 將事件詳細資訊放入Bundle
+                bundle.putString("eventId", eventId); // 將事件ID放入Bundle
+                Navigation.findNavController(holder.itemView).navigate(R.id.nav_calender_thing, bundle); // 導航至編輯事件頁面
             }
         });
 
@@ -87,14 +69,23 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition(); // 取得ViewHolder的位置
-                String selectedEventId = eventList.get(position); // 取得選定事件的ID
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            CalendarApiClient.deleteEvent(selectedEventId); // 刪除事件
-                            removeEvent(position); // 從清單中移除事件
+                            String deleteApiUrl = "http://100.96.1.3/api_delete_calendar.php";
+                            NetworkRequestManager.getInstance(v.getContext()).makePostRequest(deleteApiUrl, "event_id=" + eventId, new NetworkRequestManager.RequestListener() {
+                                @Override
+                                public void onSuccess(String response) {
+                                    removeEvent(position); // 從清單中移除事件
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    // 顯示錯誤消息
+                                }
+                            });
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -110,20 +101,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     // 新增事件到清單
-    public void addEvent(String event) {
-        eventList.add(event); // 將事件新增到清單
-        notifyItemInserted(eventList.size() - 1); // 通知Adapter有新的事件插入
-    }
-
-    // 編輯事件
-    public void editEvent(int position, String newEvent) {
-        eventList.set(position, newEvent); // 在指定位置編輯事件
-        notifyItemChanged(position); // 通知Adapter有事件資料變更
+    public void addEvent(JSONObject event) {
+        eventList.add(event); // 將事件加入清單
+        notifyItemInserted(eventList.size() - 1); // 通知適配器有新項目插入
     }
 
     // 從清單中移除事件
     public void removeEvent(int position) {
-        eventList.remove(position); // 從清單中移除事件
-        notifyItemRemoved(position); // 通知Adapter有事件被移除
+        eventList.remove(position); // 移除指定位置的事件
+        notifyItemRemoved(position); // 通知適配器有項目移除
     }
 }

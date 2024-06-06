@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
@@ -18,13 +19,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CalenderFragment extends Fragment implements CalenderThingFragment.OnEventSavedListener {
 
-    private List<String> eventList; // 事件列表
+    private List<JSONObject> eventList; // 事件列表
     private RecyclerView recyclerView; // RecyclerView 用於顯示事件列表
     private EventAdapter eventAdapter; // 事件適配器
 
@@ -35,6 +37,7 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
         recyclerView = root.findViewById(R.id.recyclerView); // 初始化 RecyclerView
         eventList = new ArrayList<>(); // 初始化事件列表
         eventAdapter = new EventAdapter(eventList); // 初始化事件適配器
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(eventAdapter); // 設置適配器給 RecyclerView
 
         FloatingActionButton fabAddCircularButton = root.findViewById(R.id.fabAddEvent); // FloatingActionButton 用於添加新事件
@@ -44,6 +47,7 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
                 Navigation.findNavController(v).navigate(R.id.nav_calender_thing); // 點擊按鈕時導航到添加事件的界面
             }
         });
+
         // 檢查用戶登錄狀態
         if (isLoggedIn()) {
             // 如果已登錄，則取得日曆事件
@@ -90,7 +94,7 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
             JSONArray eventsArray = new JSONArray(calendarData);
             eventList.clear(); // 清空已有的事件列表
             for (int i = 0; i < eventsArray.length(); i++) {
-                String event = eventsArray.getString(i);
+                JSONObject event = eventsArray.getJSONObject(i);
                 eventList.add(event); // 将事件加入到事件列表中
             }
             eventAdapter.notifyDataSetChanged(); // 通知 RecyclerView 更新
@@ -103,11 +107,16 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
     @Override
     public void onEventSaved(String event) {
         // 添加新事件到事件列表
-        addEvent(event);
+        try {
+            JSONObject newEvent = new JSONObject(event);
+            addEvent(newEvent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void addEvent(String event) {
+    private void addEvent(JSONObject event) {
         eventList.add(event); // 将事件加入到事件列表中
         eventAdapter.notifyDataSetChanged(); // 通知适配器数据集已更改
     }
