@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,12 +25,9 @@ import com.example.myapplication.utils.UserManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
-
 public class RegistrationFragment extends Fragment {
 
     // 建立 Retrofit 實例
@@ -230,21 +225,6 @@ public class RegistrationFragment extends Fragment {
 
     // 將密碼進行雜湊的方法
     private String hashPassword(String password) {
-        try {
-            // 使用SHA-256算法進行雜湊
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(password.getBytes());
-            byte[] hashedPasswordBytes = md.digest();
-
-            // 將byte數組轉換為十六進制字符串
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedPasswordBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 }

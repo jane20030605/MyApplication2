@@ -13,6 +13,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.utils.NetworkRequestManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -62,32 +63,23 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
         // 這裡先假設用戶已登錄，實際情況需要根據你的應用邏輯來確定
         return true;
     }
-    // 取得日曆事件
+
     // 取得日曆事件
     private void fetchCalendarEvents() {
-        String account = "USERNAME"; // 要獲取日曆資料的用戶帳戶
-        CalendarApiClient.fetchCalendarData(new CalendarApiCallback(){
+        String account = "USERNAME"; // 要获取日历数据的用户帐户
+        String phpApiUrl = "http://100.96.1.3/api_get_calendar.php" + "?account=" + account;
+
+        NetworkRequestManager.getInstance(getContext()).makeGetRequest(phpApiUrl, new NetworkRequestManager.RequestListener() {
             @Override
-            public void onSuccess(String result) {
-                // 成功取得日曆資料後顯示事件
-                displayEvents(result);
+            public void onSuccess(String response) {
+                // 成功获取日历数据后显示事件
+                displayEvents(response);
             }
 
             @Override
-            public void onFailure(final String errorMessage) {
-                // 取得日曆資料失敗時顯示錯誤訊息
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onDataReceived(String calendarData) {
-                // 在此方法中處理收到的日曆資料
-                displayEvents(calendarData);
+            public void onError(String error) {
+                // 获取日历数据失败时显示错误消息
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -99,7 +91,7 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
             eventList.clear(); // 清空已有的事件列表
             for (int i = 0; i < eventsArray.length(); i++) {
                 String event = eventsArray.getString(i);
-                eventList.add(event); // 將事件加入到事件列表中
+                eventList.add(event); // 将事件加入到事件列表中
             }
             eventAdapter.notifyDataSetChanged(); // 通知 RecyclerView 更新
         } catch (JSONException e) {
@@ -116,12 +108,12 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
 
     @SuppressLint("NotifyDataSetChanged")
     private void addEvent(String event) {
-        eventList.add(event); // 將事件加入到事件列表中
-        eventAdapter.notifyDataSetChanged(); // 通知適配器數據集已更改
+        eventList.add(event); // 将事件加入到事件列表中
+        eventAdapter.notifyDataSetChanged(); // 通知适配器数据集已更改
     }
+
     private void navigateToLogin() {
         // 在此實現導航到登錄界面的邏輯
         Navigation.findNavController(requireView()).navigate(R.id.nav_login);
     }
-
 }

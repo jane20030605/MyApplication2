@@ -53,6 +53,12 @@ dependencies {
     implementation ("androidx.camera:camera-view:1.0.0-alpha28")
     //noinspection UseTomlInstead,GradleDependency
     implementation ("androidx.camera:camera-extensions:1.0.0-alpha28")
+    //noinspection UseTomlInstead
+    implementation ("org.mindrot:jbcrypt:0.4")
+    //noinspection UseTomlInstead
+    implementation ("com.android.volley:volley:1.2.1")
+
+
 
     //noinspection UseTomlInstead
     implementation ("com.github.bumptech.glide:glide:4.15.0")

@@ -27,6 +27,7 @@ import com.example.myapplication.utils.SessionManager;
 import com.example.myapplication.utils.UserManager;
 
 import org.jetbrains.annotations.NotNull;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 
@@ -37,6 +38,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
 
 public class LoginFragment extends Fragment {
 
@@ -71,6 +73,8 @@ public class LoginFragment extends Fragment {
                 if (username.isEmpty() || password.isEmpty()) {
                     Toast.makeText(requireContext(), "請輸入使用者名稱及密碼", Toast.LENGTH_SHORT).show();
                 } else {
+                    // 將密碼進行雜湊
+                    String hashedPassword = hashPassword(password);
                     // 呼叫登入 API 客戶端進行登入
                     login(username, password);
                 }
@@ -110,6 +114,11 @@ public class LoginFragment extends Fragment {
         });
 
         return root;
+    }
+
+    // 將密碼進行雜湊的方法
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     // 顯示填充密碼的對話框
@@ -171,7 +180,6 @@ public class LoginFragment extends Fragment {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            // 登入成功，執行相應操作
                             handleLoginSuccess(username, hashpassword);
                         }
                     });
@@ -179,7 +187,6 @@ public class LoginFragment extends Fragment {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            // 登入失敗，顯示錯誤訊息
                             Toast.makeText(requireContext(), "登入失敗，請檢查帳號和密碼", Toast.LENGTH_SHORT).show();
                         }
                     });

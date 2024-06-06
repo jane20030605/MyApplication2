@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.Calender;
 
+import java.io.IOException;
+
 public abstract class CalendarApiCallback<T> {
     public abstract void onSuccess(String result);
 
@@ -10,5 +12,8 @@ public abstract class CalendarApiCallback<T> {
     }
     public void onDataReceived(String calendarData){
 
+    }
+
+    public void onFailure(IOException e) {
     }
 }

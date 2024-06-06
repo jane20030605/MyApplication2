@@ -24,11 +24,18 @@ import com.example.myapplication.databinding.FragmentCalenderThingBinding;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class CalenderThingFragment extends Fragment {
 
@@ -125,10 +132,8 @@ public class CalenderThingFragment extends Fragment {
 
     // 保存事件
     @SuppressLint("MutatingSharedPrefs")
-    // 在 saveEvent() 方法中
     private void saveEvent() {
         // 獲取事件的相關詳細信息
-        String eventId = generateUniqueId(); // 生成唯一的事件ID
         String eventName = binding.editTextThing.getText().toString();
         String eventDescription = binding.editTextEventDescription.getText().toString();
         String startDate = binding.editTextStartDate.getText().toString();
@@ -139,7 +144,7 @@ public class CalenderThingFragment extends Fragment {
 
         // 將事件詳細信息組合成 JSON 字符串
         String eventData = createEventDataJson(
-                eventId, eventName, eventDescription,
+                eventName, eventDescription,
                 startDate, endDate, startTime, endTime, companions);
 
         // 使用 API 保存事件
@@ -147,16 +152,13 @@ public class CalenderThingFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    String response = CalendarApiClient.addEvent(eventData);
+                    // 呼叫PHP API
+                    String response = postEventDataToPhpAPI(eventData);
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(requireContext(), "事件已保存", Toast.LENGTH_SHORT).show();
-                            // 保存成功後，通知事件已保存
-                            if (getActivity() instanceof OnEventSavedListener) {
-                                ((OnEventSavedListener) getActivity()).onEventSaved(eventData);
-                            }
-                            Navigation.findNavController(requireView()).navigateUp();
+                            // 處理API回應
+                            handleApiResponse(response);
                         }
                     });
                 } catch (Exception e) {
@@ -172,28 +174,67 @@ public class CalenderThingFragment extends Fragment {
         }).start();
     }
 
+    // 使用 PHP API 保存事件
+    private String postEventDataToPhpAPI(String eventData) throws IOException {
+        // 設置API端點URL
+        String apiUrl = "http://100.96.1.3/api_add_calendar.php";
+
+        // 創建POST請求
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), eventData);
+        Request request = new Request.Builder()
+                .url(apiUrl)
+                .post(body)
+                .build();
+
+        // 執行請求並取得回應
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
+    // 處理 API 回應
+    private void handleApiResponse(String response) {
+        try {
+            JSONObject jsonResponse = new JSONObject(response);
+            String message = jsonResponse.getString("message");
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            // 保存成功後，通知事件已保存
+            if (getActivity() instanceof OnEventSavedListener) {
+                ((OnEventSavedListener) getActivity()).onEventSaved(message);
+            }
+            Navigation.findNavController(requireView()).navigateUp();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "無法處理 API 回應", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private String createEventDataJson
-            (String eventId,String eventName, String eventDescription,
+            (String eventName, String eventDescription,
              String startDate, String endDate,
              String startTime, String endTime, String companions) {
         // 使用 JSONObject 创建 JSON 字符串
         JSONObject eventDataJson = new JSONObject();
         try {
+            // 生成唯一的事件ID
+            String eventId = generateUniqueId();
+
             eventDataJson.put("eventId", eventId);
-            eventDataJson.put("title", eventName);
-            eventDataJson.put("description", eventDescription);
-            eventDataJson.put("startDate", startDate);
-            eventDataJson.put("endDate", endDate);
-            eventDataJson.put("startTime", startTime);
-            eventDataJson.put("endTime", endTime);
-            eventDataJson.put("companions", companions);
+            eventDataJson.put("thing", eventName);
+            eventDataJson.put("date_up", startDate);
+            eventDataJson.put("date_end", endDate);
+            eventDataJson.put("people", companions);
+            eventDataJson.put("describe", eventDescription);
+            // 此處需注意PHP API的要求，可能需要將時間格式進行調整
+            eventDataJson.put("account", ""); // 假設帳戶資訊在這裡是空的
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return eventDataJson.toString();
     }
 
-    // 在 generateUniqueId 方法中返回 UUID 字符串
+    // 生成唯一的事件ID
     private String generateUniqueId() {
         return UUID.randomUUID().toString();
     }
@@ -272,3 +313,4 @@ public class CalenderThingFragment extends Fragment {
         void onEventSaved(String event);
     }
 }
+
