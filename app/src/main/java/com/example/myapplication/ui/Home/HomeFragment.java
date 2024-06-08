@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
         Button_userdata.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.nav_user);
+                Navigation.findNavController(view).navigate(R.id.nav_user_data);
             }
         });
 

@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // 設置導航視圖的配置
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine, R.id.nav_user,
+                R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine, R.id.nav_user_data,
                 R.id.nav_calender, R.id.nav_login, R.id.nav_memory, R.id.nav_logout,
                 R.id.nav_setting, R.id.nav_mail_for_developer)
                 .setOpenableLayout(drawer)
@@ -191,9 +191,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // 跳轉到行事曆介面
             navController.navigate(R.id.nav_calender);
 
-        } else if (id == R.id.nav_user) {
+        } else if (id == R.id.nav_user_data) {
             // 跳轉到使用者資料介面
-            navController.navigate(R.id.nav_user);
+            navController.navigate(R.id.nav_user_data);
         }
 
         // 在任何選項被點擊後關閉抽屜佈局

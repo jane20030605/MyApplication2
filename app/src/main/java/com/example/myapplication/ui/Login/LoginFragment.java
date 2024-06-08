@@ -193,6 +193,7 @@ public class LoginFragment extends Fragment {
         // 保存使用者名稱到偏好設置
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("USERNAME", username);
+        editor.putString("ACCOUNT", username); // 保存帳戶信息
         editor.apply();
 
         // 導航到 MainActivity
@@ -200,6 +201,7 @@ public class LoginFragment extends Fragment {
         intent.putExtra("USERNAME", username);
         startActivity(intent);
         Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show();
+
         // 如果需要記住密碼，保存使用者名稱和密碼到偏好設置
         CheckBox rememberPasswordCheckBox = requireView().findViewById(R.id.remember_password);
         if (rememberPasswordCheckBox.isChecked()) {

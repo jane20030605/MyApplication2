@@ -1,5 +1,4 @@
 package com.example.myapplication.ui.Calender;
-// CalendarAddClient.java
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,11 +16,10 @@ public class CalendarAddClient {
     /**
      * 使用 HTTP POST 請求向日曆 API 添加日曆事件。
      * @param eventData 表示事件數據的 JSON 字符串。
-     * @param eventId 事件的ID。
      * @return API 的回應。
      * @throws Exception 如果在 HTTP 請求期間發生錯誤。
      */
-    public static String addEvent(String eventData, String eventId) throws Exception {
+    public static String addEvent(String eventData) throws Exception {
         URL url = new URL(ADD_EVENT_URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");

@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.Calender;// CalenderThingFragment.java
+package com.example.myapplication.ui.Calender;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -20,8 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.databinding.FragmentCalenderThingBinding;
-import com.example.myapplication.ui.Calender.CalendarAddClient;
-import com.example.myapplication.ui.Calender.CalendarEvent;
+import com.example.myapplication.utils.SessionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,12 +33,18 @@ import java.util.Set;
 public class CalenderThingFragment extends Fragment {
 
     private FragmentCalenderThingBinding binding;
+    private SharedPreferences sharedPreferences;
+    private SessionManager sessionManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentCalenderThingBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        // 初始化偏好設置和會話管理器
+        sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        sessionManager = new SessionManager(requireContext());
 
         // 設置陪伴者下拉清單
         setupCompanionsSpinner();
@@ -124,7 +129,6 @@ public class CalenderThingFragment extends Fragment {
         binding.spinnerCompanions.setAdapter(companionsAdapter);
     }
 
-    // 保存事件
     @SuppressLint("MutatingSharedPrefs")
     private void saveEvent() {
         // 獲取事件的相關詳細信息
@@ -136,21 +140,26 @@ public class CalenderThingFragment extends Fragment {
         String endTime = binding.editTextEndTime.getText().toString();
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
-        // 創建 CalendarEvent 對象
+        // 從 SharedPreferences 中讀取帳戶信息
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        String account = sharedPreferences.getString("ACCOUNT", "");
+
+        // 創建 CalendarEvent 對象並添加帳戶信息
         CalendarEvent calendarEvent = new CalendarEvent(
                 eventName, eventDescription,
                 startDate, endDate,
                 startTime, endTime, companions);
+        calendarEvent.setAccount(account); // 添加帳戶信息
 
         // 將 CalendarEvent 對象轉換為 JSON 字串
         String eventData = createEventDataJson(calendarEvent);
 
-        // 使用 CalendarAddClient 類中的 addEvent 方法保存事件，並傳遞 event_id
+        // 使用 CalendarAddClient 類中的 addEvent 方法保存事件
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    String response = CalendarAddClient.addEvent(eventData, calendarEvent.getEventId());
+                    String response = CalendarAddClient.addEvent(eventData);
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -174,10 +183,9 @@ public class CalenderThingFragment extends Fragment {
     private String createEventDataJson(CalendarEvent calendarEvent) {
         JSONObject eventDataJson = new JSONObject();
         try {
-            eventDataJson.put("event_id", calendarEvent.getEventId());
             eventDataJson.put("thing", calendarEvent.getEventName());
-            eventDataJson.put("start_datetime", calendarEvent.getStartDate() + " " + calendarEvent.getStartTime());
-            eventDataJson.put("end_datetime", calendarEvent.getEndDate() + " " + calendarEvent.getEndTime());
+            eventDataJson.put("date_up", calendarEvent.getStartDate() + " " + calendarEvent.getStartTime());
+            eventDataJson.put("date_end", calendarEvent.getEndDate() + " " + calendarEvent.getEndTime());
             eventDataJson.put("people", calendarEvent.getCompanions());
             eventDataJson.put("describe", calendarEvent.getEventDescription());
             eventDataJson.put("account", calendarEvent.getAccount());
@@ -279,3 +287,4 @@ public class CalenderThingFragment extends Fragment {
         void onEventSaved(String event);
     }
 }
+

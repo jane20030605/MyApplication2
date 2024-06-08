@@ -1,5 +1,4 @@
-package com.example.myapplication.ui.Calender;// CalendarEvent.java
-// CalendarEvent.java
+package com.example.myapplication.ui.Calender;
 
 import java.util.UUID;
 
@@ -18,6 +17,7 @@ public class CalendarEvent {
             String eventName, String eventDescription,
             String startDate, String endDate,
             String startTime, String endTime, String companions) {
+
         this.event_id = generateUniqueId();
         this.eventName = eventName;
         this.eventDescription = eventDescription;

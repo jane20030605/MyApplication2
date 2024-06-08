@@ -25,9 +25,12 @@
         <action
             android:id="@+id/action_nav_home_to_nav_calender"
             app:destination="@id/nav_calender" />
-        <action
-            android:id="@+id/action_nav_home_to_nav_user"
-            app:destination="@id/nav_user" />
+	    <action
+		    android:id="@+id/action_nav_home_to_nav_user_data"
+		    app:destination="@id/nav_user_data" />
+	    <action
+		    android:id="@+id/action_nav_home_to_nav_user_set"
+		    app:destination="@id/nav_user_set" />
     </fragment>
 
     <fragment
@@ -78,19 +81,7 @@
             android:id="@+id/action_nav_calender_to_nav_calender_thing"
             app:destination="@id/nav_calender_thing" />
     </fragment>
-    <fragment
-        android:id="@+id/nav_user"
-        android:name="com.example.myapplication.ui.User.UserFragment"
-        android:label="@string/menu_user"
-        tools:layout="@layout/fragment_user" >
-        <action
-            android:id="@+id/action_nav_user_to_nav_user_data"
-            app:destination="@id/nav_user_data" />
-        <action
-            android:id="@+id/action_nav_user_to_nav_user_set"
-            app:destination="@id/nav_user_set" />
-    </fragment>
-    <activity
+	<activity
         android:id="@+id/mainActivity"
         android:name="com.example.myapplication.MainActivity"
         android:label="app_bar_main"
