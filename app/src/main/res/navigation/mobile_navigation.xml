@@ -139,7 +139,11 @@
         android:id="@+id/nav_emergency_contact"
         android:name="com.example.myapplication.ui.emergency.emergency_contact"
         android:label="@string/menu_emergency_contact"
-        tools:layout="@layout/fragment_emergency_contact" />
+        tools:layout="@layout/fragment_emergency_contact" >
+	    <action
+		    android:id="@+id/action_nav_emergency_contact_to_contact_listFragment"
+		    app:destination="@id/nav_contact_list" />
+    </fragment>
 	<fragment
 		android:id="@+id/nav_medicine_inquire"
 		android:name="com.example.myapplication.ui.Medicine_inquire.Medicine_inquireFragment"
@@ -160,4 +164,9 @@
 		android:name="com.example.myapplication.ui.change_password.password_changeFragment"
 		android:label="@string/menu_password_change"
 		tools:layout="@layout/fragment_password_change" />
+	<fragment
+		android:id="@+id/nav_contact_list"
+		android:name="com.example.myapplication.ui.emergency.contact_listFragment"
+		android:label="menu_contact_list"
+		tools:layout="@layout/fragment_contact_list" />
 </navigation>

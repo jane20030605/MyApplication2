@@ -27,9 +27,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentUserDataBinding;
 import com.example.myapplication.ui.emergency.EmergencyContactViewModel;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class user_dataFragment extends Fragment {
 
@@ -37,24 +35,12 @@ public class user_dataFragment extends Fragment {
     private TextView textViewEmergencyContact;
     private TextView textViewPhone;
     private TextView textViewRelationship;
-    private List<TextView> eventTextViews;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentUserDataBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        // 初始化文本視圖元素
-        textViewEmergencyContact = binding.eventTextView0;
-        textViewPhone = binding.eventTextView1;
-        textViewRelationship = binding.eventTextView2;
-
-        // 初始化事件列表中的文本視圖列表
-        eventTextViews = new ArrayList<>();
-        eventTextViews.add(textViewEmergencyContact);
-        eventTextViews.add(textViewPhone);
-        eventTextViews.add(textViewRelationship);
 
         // 初始化按鈕元素
         Button buttonEmergencyContact = binding.buttonEmergencyContact;
@@ -70,7 +56,6 @@ public class user_dataFragment extends Fragment {
                 String email = binding.editTextEmail.getText().toString();
                 String phone = binding.editTextPhone.getText().toString();
                 String address = binding.editTextAddress.getText().toString();
-                String emergencyContact = textViewEmergencyContact.getText().toString();
                 String birthday = binding.editTextBirthday.getText().toString();
 
                 // 將輸入內容暫時儲存在Bundle中
@@ -79,18 +64,12 @@ public class user_dataFragment extends Fragment {
                 bundle.putString("email", email);
                 bundle.putString("phone", phone);
                 bundle.putString("address", address);
-                bundle.putString("emergencyContact", emergencyContact);
                 bundle.putString("birthday", birthday);
                 // 將Bundle設置給目標Fragment
                 getParentFragmentManager().setFragmentResult("userData", bundle);
                 // 確保所有字段都已填寫
-                if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || emergencyContact.isEmpty() || birthday.isEmpty()) {
+                if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || birthday.isEmpty()) {
                     Toast.makeText(requireContext(), "請填寫所有資料", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                // 檢查電話號碼格式是否正確
-                if (!phone.matches("\\d{4}-\\d{3}-\\d{3}")) {
-                    Toast.makeText(requireContext(), "電話號碼格式不正確，應為0000-000-000", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // 檢查郵件地址格式是否正確
@@ -105,7 +84,6 @@ public class user_dataFragment extends Fragment {
                 editor.putString("EMAIL", email);
                 editor.putString("PHONE", phone);
                 editor.putString("ADDRESS", address);
-                editor.putString("EMERGENCY_CONTACT", emergencyContact);
                 editor.putString("BIRTHDAY", birthday);
                 editor.apply();
 
@@ -153,17 +131,6 @@ public class user_dataFragment extends Fragment {
                 textViewRelationship.setText(relationship);
             }
         });
-
-        // 對每個事件文本視圖添加點擊監聽器，以實現修改和刪除功能
-        for (final TextView eventTextView : eventTextViews) {
-            eventTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // 顯示對話框，讓用戶選擇編輯或刪除該事件
-                    showEditDeleteDialog(eventTextView.getText().toString(), v);
-                }
-            });
-        }
 
         // 點擊取消按钮事件
         buttonCancel.setOnClickListener(new View.OnClickListener() {
