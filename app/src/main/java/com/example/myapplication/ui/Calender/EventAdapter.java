@@ -27,6 +27,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         public TextView tvStartDate; // 開始日期
         public TextView tvEndDate;   // 結束日期
         public TextView tvCompanions; // 同伴
+        public TextView tvEventthing; //事件詳情
         public Button btnEditEvent;  // 編輯事件按鈕
         public Button btnDeleteEvent; // 刪除事件按鈕
 
@@ -36,6 +37,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             tvStartDate = itemView.findViewById(R.id.tvStartDate);
             tvEndDate = itemView.findViewById(R.id.tvEndDate);
             tvCompanions = itemView.findViewById(R.id.tvCompanions);
+            tvEventthing = itemView.findViewById(R.id.tvEventthing);
             btnEditEvent = itemView.findViewById(R.id.btnEditEvent);
             btnDeleteEvent = itemView.findViewById(R.id.btnDeleteEvent);
         }
@@ -62,6 +64,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.tvStartDate.setText(event.optString("date_up")); // 開始日期
         holder.tvEndDate.setText(event.optString("date_end")); // 結束日期
         holder.tvCompanions.setText(event.optString("people")); // 同伴
+        holder.tvEventthing.setText(event.optString("describe")); // 事件詳情
 
         String eventId = event.optString("event_id"); // 取得事件ID
 
@@ -72,7 +75,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 Bundle bundle = new Bundle();
                 bundle.putString("eventDetail", event.toString()); // 將事件詳細資訊放入 Bundle
                 bundle.putString("eventId", eventId); // 將事件ID放入 Bundle
-                Navigation.findNavController(holder.itemView).navigate(R.id.nav_calender_thing, bundle); // 導航至編輯事件頁面
+                Navigation.findNavController(holder.itemView).navigate(R.id.nav_calender_thing_update, bundle); // 導航至編輯事件頁面
             }
         });
 

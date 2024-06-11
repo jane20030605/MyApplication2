@@ -23,15 +23,17 @@
 	<string name="menu_calender">行事曆紀錄</string>
 	<string name="menu_user">使用者資料</string>
 	<string name="menu_registration">註冊介面</string>
-	<string name="menu_calender_thing">行事曆事件</string>
+	<string name="menu_calender_thing">行事曆事件新增</string>
+	<string name="menu_calender_thing_update">行事曆事件修改</string>
 	<string name="menu_medicine_allbox">藥物總覽查詢</string>
-	<string name="menu_contact_list">緊急連絡人列表</string>
 	<string name="menu_user_data">個人檔案</string>
 	<string name="menu_user_set">系統設定</string>
 	<string name="menu_password_change">修改密碼</string>
 	<string name="menu_feedback">用戶反饋</string>
 	<string name="menu_guided_tour">使用手冊</string>
-	<string name="menu_emergency_contact">緊急連絡人修改</string>
+	<string name="menu_emergency_contact">緊急連絡人新增</string>
+	<string name="menu_contact_list">緊急連絡人列表</string>
+	<string name="menu_contact_update">緊急連絡人修改</string>
 	<string name="menu_forget_password">忘記密碼</string>
 	<string name="menu_video">即時影像</string>
 
@@ -51,6 +53,7 @@
 	<string name="thing_people">事件對象</string>
 	<string name="thing_illustrate">事件說明</string>
 	<string name="thing_save">保存事件</string>
+	<string name="thing_update_save">更新事件</string>
 	<string name="thing_edit">繼續編輯</string>
 
 	<string name="registration_form">註冊表單</string>

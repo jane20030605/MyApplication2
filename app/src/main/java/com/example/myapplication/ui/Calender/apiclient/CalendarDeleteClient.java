@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.Calender;
+package com.example.myapplication.ui.Calender.apiclient;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,21 +8,21 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 這個類提供了與日曆 API 進行 HTTP 請求來更新日曆資料的方法。
+ * 這個類提供了與日曆 API 進行 HTTP 請求來刪除日曆事件的方法。
  */
-public class CalendarUpdateClient {
-    private static final String UPDATE_CALENDAR_URL = "http://100.96.1.3/api_update_calendar.php";
+public class CalendarDeleteClient {
+    private static final String DELETE_EVENT_URL = "http://100.96.1.3/api_delete_calendar.php";
 
-    public static String updateCalendar(String eventData) throws Exception {
-        URL url = new URL(UPDATE_CALENDAR_URL);
+    public static String deleteEvent(String eventId) throws Exception {
+        URL url = new URL(DELETE_EVENT_URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
+        connection.setRequestMethod("DELETE");
         connection.setRequestProperty("Content-Type", "application/json; utf-8");
         connection.setRequestProperty("Accept", "application/json");
         connection.setDoOutput(true);
 
         try (OutputStream os = connection.getOutputStream()) {
-            byte[] input = eventData.getBytes(StandardCharsets.UTF_8);
+            byte[] input = eventId.getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
         }
 
@@ -39,7 +39,7 @@ public class CalendarUpdateClient {
 
             return response.toString();
         } else {
-            throw new RuntimeException("無法更新日曆：HTTP 錯誤碼：" + responseCode);
+            throw new RuntimeException("無法刪除事件：HTTP 錯誤碼：" + responseCode);
         }
     }
 }

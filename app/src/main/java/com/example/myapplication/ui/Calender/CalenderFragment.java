@@ -60,8 +60,8 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (sessionManager.isLoggedIn()) { // 修改
-                    String account = sessionManager.getCurrentLoggedInAccount(); // 修改
+                if (sessionManager.isLoggedIn()) {
+                    String account = sessionManager.getCurrentLoggedInAccount();
                     fetchCalendarEvents(account);
                 } else {
                     navigateToLogin();
@@ -70,8 +70,8 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
         });
 
         // 檢查用戶登錄狀態
-        if (sessionManager.isLoggedIn()) { // 修改
-            String account = sessionManager.getCurrentLoggedInAccount(); // 修改
+        if (sessionManager.isLoggedIn()) {
+            String account = sessionManager.getCurrentLoggedInAccount();
             fetchCalendarEvents(account);
         } else {
             navigateToLogin();

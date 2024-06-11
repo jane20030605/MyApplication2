@@ -80,6 +80,9 @@
         <action
             android:id="@+id/action_nav_calender_to_nav_calender_thing"
             app:destination="@id/nav_calender_thing" />
+	    <action
+		    android:id="@+id/action_nav_calender_to_clender_thing_updateFragment"
+		    app:destination="@id/nav_calender_thing_update" />
     </fragment>
 	<activity
         android:id="@+id/mainActivity"
@@ -169,4 +172,9 @@
 		android:name="com.example.myapplication.ui.emergency.contact_listFragment"
 		android:label="menu_contact_list"
 		tools:layout="@layout/fragment_contact_list" />
+	<fragment
+		android:id="@+id/nav_calender_thing_update"
+		android:name="com.example.myapplication.ui.Calender.CalenderThingUpdateFragment"
+		android:label="@string/menu_calender_thing_update"
+		tools:layout="@layout/fragment_clender_thing_update" />
 </navigation>

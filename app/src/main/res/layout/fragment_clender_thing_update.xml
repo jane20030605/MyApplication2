@@ -8,14 +8,14 @@
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		tools:context=".ui.Calender.CalenderThingFragment">
+		tools:context=".ui.Calender.CalenderThingUpdateFragment">
 
 		<TextView
 			android:id="@+id/textView_calender_thing"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginEnd="28dp"
-			android:text="行事曆事件新增"
+			android:text="行事曆事件修改"
 			android:textSize="50sp"
 			app:layout_constraintEnd_toEndOf="parent"
 			tools:ignore="HardcodedText,MissingConstraints"/>
@@ -180,7 +180,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:textSize="20sp"
-				android:text="@string/thing_save" />
+				android:text="@string/thing_update_save" />
 
 			<Button
 				android:id="@+id/no_save_button"

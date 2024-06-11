@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.Calender;
+package com.example.myapplication.ui.Calender.apiclient;
 
 import android.util.Log;
 
@@ -20,6 +20,7 @@ import okhttp3.Response;
 public class CalendarAddClient {
     // 定義 JSON 資料的 MediaType
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    //private static final MediaType mediaType = MediaType.parse("text/plain");
     // API 端點
     private static final String ADD_EVENT_URL = "http://100.96.1.3/api_add_calendar.php";
 
@@ -36,11 +37,23 @@ public class CalendarAddClient {
      * @param callback 添加事件結果的回調介面
      */
     public void addEvent(String eventDataJson, final CalendarCallback callback) {
-        // 將 JSON 物件轉換為字串
-        String jsonBody = eventDataJson.toString();
+        Log.d("CalendarAddClient", "EventData JSON: " + eventDataJson); // 記錄事件資料
+
         // 建立請求本文
-        RequestBody requestBody = RequestBody.create(jsonBody, JSON);
+        RequestBody requestBody = RequestBody.create(eventDataJson, JSON);
+
+
         // 建立 POST 請求
+/*
+        RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+        .addFormDataPart("date_up","2024-06-10 23:59:00")
+                .addFormDataPart("date_end","2024-06-10 23:59:00")
+                .addFormDataPart("people","android_test")
+                .addFormDataPart("thing","測試")
+                .addFormDataPart("describe","Android Test TTTTTTEEEESY")
+                .addFormDataPart("account","qwe")
+                .build();
+*/
         Request request = new Request.Builder()
                 .url(ADD_EVENT_URL)
                 .post(requestBody)
@@ -50,14 +63,13 @@ public class CalendarAddClient {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    Log.d("CalendarAddClient", "Response: " + responseBody);
-                    try {
-                        // 驗證 JSON 格式
-                        JSONObject jsonResponse = new JSONObject(responseBody);
+                Log.d("CalendarAddClient", "Response Code: " + response.code());
+                String responseBody = response.body().string();
+                Log.d("CalendarAddClient", "Response Body: " + responseBody);
 
-                        // 檢查是否包含必要的字段
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(responseBody);
                         if (jsonResponse.has("status") && jsonResponse.has("message")) {
                             String status = jsonResponse.getString("status");
                             String message = jsonResponse.getString("message");
@@ -66,24 +78,17 @@ public class CalendarAddClient {
                             } else {
                                 callback.onError(message);
                             }
-                        } else {
-                            Log.e("CalendarAddClient", "Invalid JSON response: missing 'status' or 'message'");
-                            callback.onError("伺服器響應中缺少必要的字段");
                         }
                     } catch (JSONException e) {
-                        Log.e("CalendarAddClient", "JSON Parsing error: " + e.getMessage());
-                        callback.onError("新增事件失敗，無效的伺服器響應: " + e.getMessage());
+                        callback.onError("無效的伺服器響應: " + e.getMessage());
                     }
                 } else {
-                    String errorResponse = response.body() != null ? response.body().string() : "No response body";
-                    Log.e("CalendarAddClient", "HTTP error code: " + response.code() + ", response: " + errorResponse);
-                    callback.onError("新增事件失敗，請稍後再試。HTTP 錯誤碼: " + response.code());
+                    callback.onError("HTTP 錯誤碼: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("CalendarAddClient", "Request failed: " + e.getMessage());
                 callback.onError("新增事件失敗，請稍後再試: " + e.getMessage());
             }
         });
