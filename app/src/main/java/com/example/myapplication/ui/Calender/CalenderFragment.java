@@ -13,9 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.R;
 import com.example.myapplication.utils.NetworkRequestManager;
+import com.example.myapplication.utils.SessionManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -30,12 +32,15 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
     private List<JSONObject> eventList; // 事件列表
     private RecyclerView recyclerView; // RecyclerView 用於顯示事件列表
     private EventAdapter eventAdapter; // 事件適配器
+    private SwipeRefreshLayout swipeRefreshLayout; // 用於下拉刷新的 SwipeRefreshLayout
+    private SessionManager sessionManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_calender, container, false);
 
         recyclerView = root.findViewById(R.id.recyclerView); // 初始化 RecyclerView
+        swipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout); // 初始化 SwipeRefreshLayout
         eventList = new ArrayList<>(); // 初始化事件列表
         eventAdapter = new EventAdapter(eventList); // 初始化事件適配器
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -49,13 +54,26 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
             }
         });
 
+        sessionManager = new SessionManager(requireContext());
+
+        // 設置下拉刷新動作
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (sessionManager.isLoggedIn()) { // 修改
+                    String account = sessionManager.getCurrentLoggedInAccount(); // 修改
+                    fetchCalendarEvents(account);
+                } else {
+                    navigateToLogin();
+                }
+            }
+        });
+
         // 檢查用戶登錄狀態
-        if (isLoggedIn()) {
-            // 如果已登錄，則取得日曆事件
-            String account = getCurrentLoggedInAccount(); // 获取当前已登录用户的帐户
-            fetchCalendarEvents(account); // 调用 fetchCalendarEvents 方法，并传递当前登录用户的帐户
+        if (sessionManager.isLoggedIn()) { // 修改
+            String account = sessionManager.getCurrentLoggedInAccount(); // 修改
+            fetchCalendarEvents(account);
         } else {
-            // 如果尚未登錄，則導航到登錄界面
             navigateToLogin();
         }
 
@@ -75,7 +93,7 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
         // 在此实现获取当前已登录用户帐户的逻辑
         // 返回当前已登录用户的帐户
         // 这里先假设帐户名为"example_user"
-        return "qwe";
+        return "ACCOUNT";
     }
 
     // 取得日曆事件
@@ -85,14 +103,14 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
         NetworkRequestManager.getInstance(getContext()).makeGetRequest(phpApiUrl, new NetworkRequestManager.RequestListener() {
             @Override
             public void onSuccess(String response) {
-                // 成功获取日历数据后显示事件
-                displayEvents(response);
+                displayEvents(response); // 成功获取日历数据后显示事件
+                swipeRefreshLayout.setRefreshing(false); // 停止刷新动画
             }
 
             @Override
             public void onError(String error) {
-                // 获取日历数据失败时显示错误消息
-                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show(); // 获取日历数据失败时显示错误消息
+                swipeRefreshLayout.setRefreshing(false); // 停止刷新动画
             }
         });
     }
@@ -116,10 +134,9 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
     // 實現 OnEventSavedListener 接口的方法
     @Override
     public void onEventSaved(String event) {
-        // 添加新事件到事件列表
         try {
             JSONObject newEvent = new JSONObject(event);
-            addEvent(newEvent);
+            addEvent(newEvent); // 添加新事件到事件列表
         } catch (JSONException e) {
             e.printStackTrace();
         }

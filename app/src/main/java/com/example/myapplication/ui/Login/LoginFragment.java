@@ -24,7 +24,6 @@ import androidx.navigation.Navigation;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.utils.SessionManager;
-import com.example.myapplication.utils.UserManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,19 +39,17 @@ import okhttp3.Response;
 
 public class LoginFragment extends Fragment {
 
-    private SharedPreferences sharedPreferences; // 偏好設置
-    private SessionManager sessionManager; // 會話管理器
-    private Handler mainHandler = new Handler(Looper.getMainLooper()); // 主線程的 Handler
+    private SharedPreferences sharedPreferences;
+    private SessionManager sessionManager;
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_login, container, false);
 
-        // 初始化偏好設置和會話管理器
         sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         sessionManager = new SessionManager(requireContext());
 
-        // 獲取 layout 中的元件
         final EditText editText = root.findViewById(R.id.editText);
         final EditText passwordEditText = root.findViewById(R.id.password);
         final Button loginButton = root.findViewById(R.id.button11);
@@ -60,24 +57,19 @@ public class LoginFragment extends Fragment {
         final Button forgotPasswordButton = root.findViewById(R.id.forgot_password);
         final CheckBox rememberPasswordCheckBox = root.findViewById(R.id.remember_password);
 
-        // 登入按鈕的點擊事件
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String username = editText.getText().toString();
                 String password = passwordEditText.getText().toString();
-
-                // 檢查使用者名稱和密碼是否為空
                 if (username.isEmpty() || password.isEmpty()) {
                     Toast.makeText(requireContext(), "請輸入使用者名稱及密碼", Toast.LENGTH_SHORT).show();
                 } else {
-                    // 呼叫登入 API 客戶端進行登入
                     login(username, password);
                 }
             }
         });
 
-        // 導航到註冊介面
         registerButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseRequireInsteadOfGet")
             @Override
@@ -86,7 +78,6 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        // 導航到忘記密碼介面
         forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseRequireInsteadOfGet")
             @Override
@@ -95,14 +86,13 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        // 當使用者名稱的 EditText 失去焦點時，檢查是否需要填充保存的密碼
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     String username = editText.getText().toString();
-                    boolean rememberPassword = sharedPreferences.getBoolean("記住密碼", false);
-                    if (rememberPassword && UserManager.getInstance().getUser(username) != null) {
+                    boolean rememberPassword = sharedPreferences.getBoolean("remember_password", false);
+                    if (rememberPassword) {
                         showFillPasswordDialog(passwordEditText);
                     }
                 }
@@ -135,14 +125,14 @@ public class LoginFragment extends Fragment {
     }
 
     // 登入方法
-    private void login(String username, String hashpassword) {
+    private void login(String username, String password) {
         // 建立 OkHttpClient
         OkHttpClient client = new OkHttpClient();
 
         // 建立 FormBody，將使用者名稱和密碼添加到請求中
         RequestBody formBody = new FormBody.Builder()
                 .add("account", username)
-                .add("password", hashpassword)
+                .add("password", password)
                 .build();
 
         // 建立 POST 請求
@@ -172,7 +162,7 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void run() {
                             // 登入成功，執行相應操作
-                            handleLoginSuccess(username, hashpassword);
+                            handleLoginSuccess(username, password);
                         }
                     });
                 } else {
@@ -192,27 +182,26 @@ public class LoginFragment extends Fragment {
     private void handleLoginSuccess(String username, String password) {
         // 保存使用者名稱到偏好設置
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("USERNAME", username);
         editor.putString("ACCOUNT", username); // 保存帳戶信息
         editor.apply();
 
         // 導航到 MainActivity
         Intent intent = new Intent(requireActivity(), MainActivity.class);
-        intent.putExtra("USERNAME", username);
+        intent.putExtra("ACCOUNT", username);
         startActivity(intent);
         Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show();
 
         // 如果需要記住密碼，保存使用者名稱和密碼到偏好設置
         CheckBox rememberPasswordCheckBox = requireView().findViewById(R.id.remember_password);
         if (rememberPasswordCheckBox.isChecked()) {
-            sessionManager.login();
+            sessionManager.login(username);
             editor = sharedPreferences.edit();
             editor.putString("使用者名稱", username);
             editor.putString("密碼", password);
             editor.putBoolean("記住密碼", true);
             editor.apply();
         } else {
-            sessionManager.login();
+            sessionManager.login(username);
         }
     }
 

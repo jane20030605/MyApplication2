@@ -33,8 +33,15 @@ import java.util.Set;
 public class CalenderThingFragment extends Fragment {
 
     private FragmentCalenderThingBinding binding;
+    private CalendarAddClient apiClient;
     private SharedPreferences sharedPreferences;
     private SessionManager sessionManager;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        apiClient = new CalendarAddClient();
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -53,7 +60,11 @@ public class CalenderThingFragment extends Fragment {
         binding.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveEvent();
+                try {
+                    saveEvent();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
@@ -130,7 +141,7 @@ public class CalenderThingFragment extends Fragment {
     }
 
     @SuppressLint("MutatingSharedPrefs")
-    private void saveEvent() {
+    private void saveEvent() throws JSONException {
         // 獲取事件的相關詳細信息
         String eventName = binding.editTextThing.getText().toString();
         String eventDescription = binding.editTextEventDescription.getText().toString();
@@ -140,63 +151,57 @@ public class CalenderThingFragment extends Fragment {
         String endTime = binding.editTextEndTime.getText().toString();
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
 
-        // 從 SharedPreferences 中讀取帳戶信息
+        // 从 SharedPreferences 中读取账户信息
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         String account = sharedPreferences.getString("ACCOUNT", "");
 
-        // 創建 CalendarEvent 對象並添加帳戶信息
+        // 创建 CalendarEvent 对象并添加账户信息
         CalendarEvent calendarEvent = new CalendarEvent(
                 eventName, eventDescription,
                 startDate, endDate,
-                startTime, endTime, companions);
-        calendarEvent.setAccount(account); // 添加帳戶信息
+                startTime, endTime, companions, account);
 
-        // 將 CalendarEvent 對象轉換為 JSON 字串
-        String eventData = createEventDataJson(calendarEvent);
+        // 将 CalendarEvent 对象转换为 JSON 字符串
+        String eventDataJson = createEventDataJson(calendarEvent);
 
-        // 使用 CalendarAddClient 類中的 addEvent 方法保存事件
-        new Thread(new Runnable() {
+        // 使用 CalendarAddClient 类中的 addEvent 方法保存事件
+        apiClient.addEvent(eventDataJson, new CalendarAddClient.CalendarCallback() {
             @Override
-            public void run() {
-                try {
-                    String response = CalendarAddClient.addEvent(eventData);
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            handleApiResponse(response);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(requireContext(), "事件保存失敗", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+            public void onSuccess(String message) {
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleApiResponse("{\"message\": \"" + message + "\"}");
+                    }
+                });
             }
-        }).start();
-    }
 
+            @Override
+            public void onError(String message) {
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(requireContext(), "事件保存失败：" + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
     // 將 CalendarEvent 對象轉換為 JSON 字串
-    private String createEventDataJson(CalendarEvent calendarEvent) {
+    private String createEventDataJson(CalendarEvent calendarEvent) throws JSONException {
         JSONObject eventDataJson = new JSONObject();
-        try {
-            eventDataJson.put("thing", calendarEvent.getEventName());
-            eventDataJson.put("date_up", calendarEvent.getStartDate() + " " + calendarEvent.getStartTime());
-            eventDataJson.put("date_end", calendarEvent.getEndDate() + " " + calendarEvent.getEndTime());
-            eventDataJson.put("people", calendarEvent.getCompanions());
-            eventDataJson.put("describe", calendarEvent.getEventDescription());
-            eventDataJson.put("account", calendarEvent.getAccount());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        eventDataJson.put("thing", calendarEvent.getEventName());
+        eventDataJson.put("date_up", calendarEvent.getStartDate() + calendarEvent.getStartTime());
+        eventDataJson.put("date_end", calendarEvent.getEndDate()  + calendarEvent.getEndTime());
+        eventDataJson.put("people", calendarEvent.getCompanions());
+        eventDataJson.put("describe", calendarEvent.getEventDescription());
+        eventDataJson.put("account", calendarEvent.getAccount());
         return eventDataJson.toString();
     }
 
     // 顯示日期選擇對話框
     private void showDatePickerDialog(final EditText editText) {
+
         // 獲取當前日期
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -287,4 +292,3 @@ public class CalenderThingFragment extends Fragment {
         void onEventSaved(String event);
     }
 }
-

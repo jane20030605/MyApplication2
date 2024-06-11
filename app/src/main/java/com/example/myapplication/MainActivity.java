@@ -22,10 +22,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
-import com.example.myapplication.ui.Calender.CalendarAddClient;
 import com.example.myapplication.ui.Calender.CalendarGetClient;
-import com.example.myapplication.ui.Calender.CalendarUpdateClient;
-import com.example.myapplication.ui.Calender.CalendarDeleteClient;
 import com.example.myapplication.utils.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 
@@ -76,11 +73,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.menu = navigationView.getMenu();
         updateMenuItems();
 
+        // 獲取當前登入的帳號名稱
+        username = sessionManager.getCurrentLoggedInAccount();
+
         // 獲取從登入頁面傳遞過來的用戶名稱，如果為空則使用默認用戶名稱
-        username = getIntent().getStringExtra("USERNAME");
+        username = getIntent().getStringExtra("ACCOUNT");
         if (username == null) {
             SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-            username = sharedPreferences.getString("USERNAME", "User");
+            username = sharedPreferences.getString("ACCOUNT", "User");
         }
 
         // 獲取從註冊介面傳遞過來的郵箱，如果為空則為預設
@@ -122,20 +122,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    private void fetchCalendarData(String username) {
+    private void fetchCalendarData(String ACCOUNT) {
         try {
             // 使用您的行事曆 API 客戶端獲取用戶的行事曆數據
             String calendarData = CalendarGetClient.getCalendar(username);
 
             // 處理從後端獲取的行事曆數據，例如顯示在 UI 上
             // 這裡僅示例獲取成功時的處理，您需要根據您的應用程序邏輯進行相應處理
-            if (calendarData != null) {
-                Log.d("CalendarData", calendarData);
-                // 在這裡更新 UI，顯示行事曆數據
-            } else {
-                Log.e("CalendarData", "無法抓取行事曆事件");
-                // 在這裡處理無法獲取行事曆數據的情況，例如顯示錯誤消息
-            }
+            Log.d("CalendarData", calendarData);
+            // 在這裡更新 UI，顯示行事曆數據
         } catch (Exception e) {
             e.printStackTrace();
             // 在這裡處理異常情況，例如顯示錯誤消息
@@ -160,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_login) {
             // 處理登錄邏輯
-            sessionManager.login();
+            sessionManager.login(ACCOUNT_SERVICE);
             navController.navigate(R.id.nav_login);
             // 記住使用者登錄狀態
             rememberUser();
@@ -233,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isRemembered", true);
-        editor.putString("USERNAME", username);
+        editor.putString("ACCOUNT", username);
         editor.putString("USER_EMAIL", userEmail);
         editor.apply();
     }
@@ -247,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove("isRemembered"); // 移除登錄狀態
-        editor.remove("USERNAME"); // 移除用戶名稱
+        editor.remove("ACCOUNT"); // 移除用戶名稱
         editor.remove("USER_EMAIL"); // 移除用戶郵箱
         editor.apply();
 
