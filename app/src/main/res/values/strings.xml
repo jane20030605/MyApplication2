@@ -66,6 +66,8 @@
 	<string name="mail">信箱</string>
 	<string name="birthday_vid">生日(西元)</string>
 	<string name="registration">註冊</string>
+	<string name="calender_thing_update">行事曆事件修改</string>
+	<string name="calender_thing">行事曆事件新增</string>
 
 	<string name="function_set">功能設定</string>
 	<string name="Message_reminder_set">消息提醒設置</string>

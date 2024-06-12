@@ -21,7 +21,7 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentCalenderThingBinding;
-import com.example.myapplication.ui.Calender.apiclient.CalendarAddClient;
+import com.example.myapplication.ui.Calender.apiclient.CalendarUpdateClient;
 import com.example.myapplication.utils.SessionManager;
 
 import org.json.JSONException;
@@ -35,14 +35,15 @@ import java.util.Set;
 public class CalenderThingUpdateFragment extends Fragment {
 
     private FragmentCalenderThingBinding binding;
-    private CalendarAddClient apiClient;
+    private CalendarUpdateClient apiClient;
     private SharedPreferences sharedPreferences;
     private SessionManager sessionManager;
+    private CalendarEvent calendarupdateEvent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        apiClient = new CalendarAddClient();
+        apiClient = new CalendarUpdateClient();
     }
 
     @Override
@@ -147,23 +148,24 @@ public class CalenderThingUpdateFragment extends Fragment {
         String startTime = binding.editTextStartTime.getText().toString();
         String endTime = binding.editTextEndTime.getText().toString();
         String companions = binding.spinnerCompanions.getSelectedItem().toString();
-
+        String event_id = null;
         // 从 SharedPreferences 中读取账户信息
         SharedPreferences sharedPreferences =
                 requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         String account = sharedPreferences.getString("ACCOUNT", "");
 
         // 创建 CalendarEvent 对象
-        CalendarEvent calendarEvent = new CalendarEvent(
+
+        CalendarUpdateEvent CalendarUpdateEvent = new CalendarUpdateEvent(
                 eventName, eventDescription,
                 startDate, endDate,startTime, endTime,
-                companions, account );
+                companions, account, event_id );
 
         // 将 CalendarEvent 对象转换为 JSON 字符串
-        String eventDataJson = createEventDataJson(calendarEvent);
+        String eventDataJson = createEventDataJson(calendarupdateEvent);
 
-        // 使用 CalendarAddClient 类中的 addEvent 方法保存事件
-        apiClient.addEvent(eventDataJson, new CalendarAddClient.CalendarCallback() {
+        // 使用 CalendarUpdateClient 类中的 updateEvent 方法保存事件
+        apiClient.updateEvent(eventDataJson, new CalendarUpdateClient.CalendarCallback() {
             @Override
             public void onSuccess(String message) {
                 requireActivity().runOnUiThread(new Runnable() {
@@ -187,15 +189,15 @@ public class CalenderThingUpdateFragment extends Fragment {
     }
 
     // 将 CalendarEvent 对象转换为 JSON 字符串
-    private String createEventDataJson(CalendarEvent calendarEvent) throws JSONException {
+    private String createEventDataJson(CalendarEvent CalendarUpdateEvent) throws JSONException {
         JSONObject eventDataJson = new JSONObject();
-        eventDataJson.put("event_id", calendarEvent.getEventName());
-        eventDataJson.put("thing", calendarEvent.getEventName());
-        eventDataJson.put("date_up", calendarEvent.getStartDate() + " " + calendarEvent.getStartTime());
-        eventDataJson.put("date_end", calendarEvent.getEndDate() + " " + calendarEvent.getEndTime());
-        eventDataJson.put("people", calendarEvent.getCompanions());
-        eventDataJson.put("describe", calendarEvent.getEventDescription());
-        eventDataJson.put("account", calendarEvent.getAccount());
+        eventDataJson.put("event_id", calendarupdateEvent.getEvent_id());
+        eventDataJson.put("thing", calendarupdateEvent.getEventName());
+        eventDataJson.put("date_up", calendarupdateEvent.getStartDate() + " " + calendarupdateEvent.getStartTime());
+        eventDataJson.put("date_end", calendarupdateEvent.getEndDate() + " " + calendarupdateEvent.getEndTime());
+        eventDataJson.put("people", calendarupdateEvent.getCompanions());
+        eventDataJson.put("describe", calendarupdateEvent.getEventDescription());
+        eventDataJson.put("account",calendarupdateEvent.getAccount());
         return eventDataJson.toString();
     }
 

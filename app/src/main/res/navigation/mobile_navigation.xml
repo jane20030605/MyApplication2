@@ -176,5 +176,5 @@
 		android:id="@+id/nav_calender_thing_update"
 		android:name="com.example.myapplication.ui.Calender.CalenderThingUpdateFragment"
 		android:label="@string/menu_calender_thing_update"
-		tools:layout="@layout/fragment_clender_thing_update" />
+		tools:layout="@layout/fragment_calender_thing_update" />
 </navigation>

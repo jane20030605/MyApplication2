@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.Calender;
 
-public class CalendarEvent {
+public class CalendarUpdateEvent {
+    private String Event_id;
     private String ACCOUNT;
     private String eventName;
     private String eventDescription;
@@ -10,12 +11,11 @@ public class CalendarEvent {
     private String endTime;
     private String companions;
 
-    public CalendarEvent(
+    public CalendarUpdateEvent(
             String eventName, String eventDescription,
             String startDate, String endDate,
             String startTime, String endTime, String companions,
-            String ACCOUNT) {
-
+            String ACCOUNT, String event_id) {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.startDate = startDate;
@@ -24,12 +24,23 @@ public class CalendarEvent {
         this.endTime = endTime;
         this.companions = companions;
         this.ACCOUNT = ACCOUNT;
+        this.Event_id = event_id;
     }
+
     public String getAccount() {
         return ACCOUNT;
     }
+
     public void setAccount(String ACCOUNT) {
         this.ACCOUNT = ACCOUNT;
+    }
+
+    public String getEvent_id() {
+        return Event_id;
+    }
+
+    public void setEvent_id(String event_id) {
+        this.Event_id = event_id;
     }
 
     public String getEventName() {
@@ -86,9 +97,5 @@ public class CalendarEvent {
 
     public void setCompanions(String companions) {
         this.companions = companions;
-    }
-
-    public boolean getEvent_id() {
-        return false;
     }
 }
