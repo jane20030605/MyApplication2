@@ -1,15 +1,11 @@
 package com.example.myapplication.ui.emergency;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
@@ -23,20 +19,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
-    private List<JSONObject> contactList;
-    private Context context;
+    private final List<JSONObject> contactList;
 
-    public ContactAdapter(Context context, List<JSONObject> contactList) {
-        this.context = context;
-        this.contactList = contactList;
-    }
-    // 添加一个方法用于更新联系人列表
-    @SuppressLint("NotifyDataSetChanged")
-    public void updateContactList(List<JSONObject> newContactList) {
-        contactList.clear();
-        contactList.addAll(newContactList);
-        notifyDataSetChanged();
-    }
     public static class ContactViewHolder extends RecyclerView.ViewHolder {
         public TextView tvContactName;
         public TextView tvContactTel;
@@ -53,15 +37,18 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             btnDeleteContact = itemView.findViewById(R.id.btnDeleteContact);
         }
     }
-
+    public ContactAdapter(List<JSONObject> contactList) {
+        this.contactList = contactList;
+    }
     @NonNull
     @Override
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
         return new ContactViewHolder(v);
     }
+
     @Override
-    public void onBindViewHolder(@NonNull ContactViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         JSONObject contact = contactList.get(position);
 
         // 設置聯絡人資訊
@@ -71,47 +58,44 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
         String contactId = contact.optString("contact_Id"); // 取得聯絡人 ID
 
-        holder.btnEditContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("contactDetail", contact.toString());
-                bundle.putString("contactId", contactId);
-                Navigation.findNavController(holder.itemView).navigate(R.id.nav_emergency_contact, bundle);
-            }
+        holder.btnEditContact.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("contactDetail", contact.toString());
+            bundle.putString("contact_Id", contactId);
+            Navigation.findNavController(holder.itemView).navigate(R.id.nav_emergency_contact, bundle);
         });
 
         holder.btnDeleteContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            String result = ContactDeleteClient.deleteContact(contactId);
-                            ((Activity) context).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
-                                    if (result.equals("Delete operation successful.")) {
-                                        removeContact(position);
-                                    }
-                                }
-                            });
+                            String deleteApiUrl = "http://100.96.1.3/api_delete_contact.php";
+                            // 向 API 發送 POST 請求刪除聯絡人
+                            NetworkRequestManager.getInstance(v.getContext()).makePostRequest(
+                                    deleteApiUrl, "contact_Id=" + contactId, new NetworkRequestManager.RequestListener() {
+                                        @Override
+                                        public void onSuccess(String response) {
+                                            deleteContact(position); // 從清單中移除聯絡人
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+
+                                        }
+                                    });
                         } catch (Exception e) {
                             e.printStackTrace();
-                            ((Activity) context).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(context, "刪除聯絡人時出錯: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
                         }
                     }
                 }).start();
             }
-        });
 
+        });
     }
 
     @Override
@@ -119,30 +103,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         return contactList.size();
     }
 
-    private void deleteContact(String contactId, int position) {
-        String deleteApiUrl = "http://100.96.1.3/api_delete_contact.php";
-        try {
-            NetworkRequestManager.getInstance(context).makePostRequest(deleteApiUrl, "contact_Id=" + contactId, new NetworkRequestManager.RequestListener() {
-                @Override
-                public void onSuccess(String response) {
-                    removeContact(position);
-                    Toast.makeText(context, "聯絡人已成功刪除", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onError(String error) {
-                    Toast.makeText(context, "刪除聯絡人時出錯: " + error, Toast.LENGTH_SHORT).show();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(context, "刪除聯絡人時出錯: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+    // 新增聯絡人到清單
+    public void addContact(JSONObject event) {
+        contactList.add(event); // 將聯絡人加入清單
+        notifyItemInserted(contactList.size() - 1); // 通知適配器有新項目插入
     }
 
-    private void removeContact(int position) {
+    private void deleteContact(int position) {
         contactList.remove(position);
         notifyItemRemoved(position);
     }
-
 }

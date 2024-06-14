@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
-    private List<JSONObject> eventList;
+    private final List<JSONObject> eventList;
 
     // 事件適配器的 ViewHolder 類別
     public static class EventViewHolder extends RecyclerView.ViewHolder {
@@ -69,14 +69,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         String eventId = event.optString("event_id"); // 取得事件ID
 
         // 設置編輯事件按鈕的點擊監聽器
-        holder.btnEditEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("eventDetail", event.toString()); // 將事件詳細資訊放入 Bundle
-                bundle.putString("eventId", eventId); // 將事件ID放入 Bundle
-                Navigation.findNavController(holder.itemView).navigate(R.id.nav_calender_thing_update, bundle); // 導航至編輯事件頁面
-            }
+        holder.btnEditEvent.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("eventId", eventId); // 將事件ID放入 Bundle
+            bundle.putString("account", event.optString("account"));
+            bundle.putString("thing", event.optString("thing"));
+            bundle.putString("date_up", event.optString("date_up"));
+            bundle.putString("date_end", event.optString("date_end"));
+            bundle.putString("describe", event.optString("describe"));
+            bundle.putString("people", event.optString("people"));
+            Navigation.findNavController(holder.itemView).navigate(R.id.nav_calender_thing_update, bundle); // 導航至編輯事件頁面
         });
 
         // 設置刪除事件按鈕的點擊監聽器

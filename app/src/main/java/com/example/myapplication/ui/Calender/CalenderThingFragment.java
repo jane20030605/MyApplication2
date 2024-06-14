@@ -36,8 +36,6 @@ public class CalenderThingFragment extends Fragment {
 
     private FragmentCalenderThingBinding binding;
     private CalendarAddClient apiClient;
-    private SharedPreferences sharedPreferences;
-    private SessionManager sessionManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,8 +50,8 @@ public class CalenderThingFragment extends Fragment {
         View root = binding.getRoot();
 
         // 初始化偏好設置和會話管理器
-        sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
-        sessionManager = new SessionManager(requireContext());
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        SessionManager sessionManager = new SessionManager(requireContext());
 
         // 設置陪伴者下拉清單
         setupCompanionsSpinner();
@@ -166,8 +164,6 @@ public class CalenderThingFragment extends Fragment {
                 eventName, eventDescription,
                 startDate, endDate,
                 startTime, endTime, companions, account);
-
-
 
         // 将 CalendarEvent 对象转换为 JSON 字符串
         String eventDataJson = createEventDataJson(calendarEvent);

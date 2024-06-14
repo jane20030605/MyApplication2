@@ -3,7 +3,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".ui.emergency.EmergencyContactFragment">
+	tools:context=".ui.emergency.emergency_contact">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -98,23 +98,40 @@
 				android:layout_marginTop="0dp"
 				android:layout_marginEnd="16dp" />
 		</LinearLayout>
-		<Button
-			android:id="@+id/buttonSave"
+
+		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:textSize="20sp"
-			android:text="@string/save"
-			android:background="@drawable/color"
-			tools:ignore="HardcodedText" />
+			android:layout_height="60dp"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/buttonCancel"
+				android:layout_width="175dp"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:background="@drawable/color"
+				android:text="@string/delete"
+				android:textSize="20sp"
+				tools:ignore="HardcodedText" />
+
+			<Button
+				android:id="@+id/buttonSave"
+				android:layout_width="175dp"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:background="@drawable/color"
+				android:text="@string/save"
+				android:textSize="20sp"
+				tools:ignore="HardcodedText" />
+		</LinearLayout>
 
 		<Button
-			android:id="@+id/buttonCancel"
+			android:id="@+id/buttonContact"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
 			android:textSize="20sp"
-			android:text="@string/delete"
+			android:text="緊急連絡人列表"
 			android:background="@drawable/color"
 			tools:ignore="HardcodedText" />
 

@@ -4,10 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -18,61 +16,51 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class CalendarUpdateClient {
+    private static final String TAG = "CalendarUpdateClient";
+    private static final String BASE_URL = "http://100.96.1.3/test.php";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static final String API_URL = "https://100.96.1.3/tset.php"; // 替换为你的 PHP 服务器的 URL
 
     private final OkHttpClient client;
 
     public CalendarUpdateClient() {
-        client = new OkHttpClient();
+        this.client = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
     }
 
-    public void updateEvent(String eventDataJson, CalendarCallback callback) {
-        Log.d("CalendarUpdateClient", "EventData JSON: " + eventDataJson);
-
-        RequestBody requestBody = RequestBody.create(eventDataJson, JSON);
-
+    public void updateEvent(String json, final CalendarCallback callback) {
+        RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
-                .url(API_URL)
-                .post(requestBody)
+                .url(BASE_URL)
+                .post(body)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Log.d("CalendarUpdateClient", "Response Code: " + response.code());
-                String responseBody = response.body().string();
-                Log.d("CalendarUpdateClient", "Response Body: " + responseBody);
-
-                if (response.isSuccessful()) {
-                    try {
-                        JSONObject jsonResponse = new JSONObject(responseBody);
-                        if (jsonResponse.has("status") && jsonResponse.has("message")) {
-                            String status = jsonResponse.getString("status");
-                            String message = jsonResponse.getString("message");
-                            if ("success".equals(status)) {
-                                callback.onSuccess(message);
-                            } else {
-                                callback.onError(message);
-                            }
-                        }
-                    } catch (JSONException e) {
-                        callback.onError("無效的伺服器響應: " + e.getMessage());
-                    }
-                } else {
-                    callback.onError("HTTP 錯誤碼: " + response.code());
-                }
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "Failed to update event: " + e.getMessage());
+                callback.onError("Failed to update event: " + e.getMessage());
             }
 
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                callback.onError("新增事件失敗，請稍後再試: " + e.getMessage());
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Event updated successfully: " + responseBody);
+                    callback.onSuccess("Event updated successfully");
+                } else {
+                    Log.e(TAG, "Failed to update event: " + response.message());
+                    callback.onError("Failed to update event: " + response.message());
+                }
             }
         });
     }
 
     public interface CalendarCallback {
         void onSuccess(String message);
+
         void onError(String message);
     }
 }

@@ -11,11 +11,7 @@ public class CalendarUpdateEvent {
     private String endTime;
     private String companions;
 
-    public CalendarUpdateEvent(
-            String eventName, String eventDescription,
-            String startDate, String endDate,
-            String startTime, String endTime, String companions,
-            String ACCOUNT, String event_id) {
+    public CalendarUpdateEvent() {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.startDate = startDate;
@@ -24,9 +20,10 @@ public class CalendarUpdateEvent {
         this.endTime = endTime;
         this.companions = companions;
         this.ACCOUNT = ACCOUNT;
-        this.Event_id = event_id;
+        this.Event_id = Event_id;
     }
 
+    public String getEventID() { return Event_id;}
     public String getAccount() {
         return ACCOUNT;
     }
@@ -97,5 +94,17 @@ public class CalendarUpdateEvent {
 
     public void setCompanions(String companions) {
         this.companions = companions;
+    }
+
+    public String getAllValue(){
+        return "Event ID: " + Event_id + "\n" +
+                "Thing: " + eventName + "\n" +
+                "startDate: " + startDate + "\n" +
+                "startTime: " + startTime + "\n" +
+                "endDate: " + endDate + "\n" +
+                "endTime: " + endTime + "\n" +
+                "People: " + companions + "\n" +
+                "eventDescription: " + eventDescription + "\n" +
+                "Account: " + ACCOUNT;
     }
 }

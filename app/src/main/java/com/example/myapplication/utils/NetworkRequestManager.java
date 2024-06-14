@@ -11,13 +11,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class NetworkRequestManager {
-    private static NetworkRequestManager instance;
-    private Context context;
-    private Handler handler;
+    private static NetworkRequestManager instance; // 單例模式的實例
+    private final Handler handler; // 用於在主線程上執行的 Handler
 
     // 私有構造函數，確保單例模式
     private NetworkRequestManager(Context context) {
-        this.context = context;
+        // 上下文對象
         this.handler = new Handler(Looper.getMainLooper());
     }
 

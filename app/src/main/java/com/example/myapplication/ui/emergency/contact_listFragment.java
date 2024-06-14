@@ -1,21 +1,29 @@
 package com.example.myapplication.ui.emergency;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.R;
+import com.example.myapplication.utils.NetworkRequestManager;
+import com.example.myapplication.utils.SessionManager;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -23,67 +31,125 @@ import java.util.List;
 
 public class contact_listFragment extends Fragment {
 
-    private ContactListViewModel mViewModel;
-    private RecyclerView mRecyclerView;
-    private ContactAdapter mContactAdapter;
+    private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private List<JSONObject> contactList;
+    private ContactAdapter contactAdapter;
+    private SessionManager sessionManager;
+    private Button backButton;
 
-    public static contact_listFragment newInstance() {
-        return new contact_listFragment();
-    }
-
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        // 載入布局
-        View rootView = inflater.inflate(R.layout.fragment_contact_list, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // 加載布局文件
+        View root = inflater.inflate(R.layout.fragment_contact_list, container, false);
 
-        // 初始化 RecyclerView
-        mRecyclerView = rootView.findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // 初始化視圖元素
+        recyclerView = root.findViewById(R.id.recyclerView);
+        swipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
+        backButton = root.findViewById(R.id.backbutton); // 新增回到個人檔案按鈕
+        contactList = new ArrayList<>();
+        contactAdapter = new ContactAdapter(contactList);
+        // 設置 RecyclerView 的佈局管理器和適配器
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(contactAdapter);
 
-        return rootView;
-    }
+        sessionManager = new SessionManager(requireContext());
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // 初始化 ViewModel
-        mViewModel = new ViewModelProvider(requireActivity()).get(ContactListViewModel.class);
-
-        // 獲取緊急聯絡人列表
-        new Thread(new Runnable() {
+        // 設置下拉刷新事件
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void run() {
-                try {
-                    String accountId = "Account"; // 使用者帳號ID，根據實際情況設置
-                    String response = ContactGetClient.getContact(accountId);
-                    JSONArray contactArray = new JSONArray(response);
-
-                    List<JSONObject> contactList = new ArrayList<>();
-                    for (int i = 0; i < contactArray.length(); i++) {
-                        contactList.add(contactArray.getJSONObject(i));
-                    }
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mContactAdapter = new ContactAdapter(getContext(), contactList);
-                            mRecyclerView.setAdapter(mContactAdapter);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), "獲取聯絡人時出錯: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            public void onRefresh() {
+                if (sessionManager.isLoggedIn()) {
+                    String account = sessionManager.getCurrentLoggedInAccount();
+                    fetchContacts(account);
+                } else {
+                    navigateToLogin();
                 }
             }
-        }).start();
+        });
+
+        // 檢查用戶登錄狀態
+        if (sessionManager.isLoggedIn()) {
+            String account = sessionManager.getCurrentLoggedInAccount();
+            fetchContacts(account);
+        } else {
+            navigateToLogin();
+        }
+
+        // 設置回到個人檔案按鈕的點擊事件
+        backButton.setOnClickListener(v -> {
+            // 導航到個人檔案介面
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
+            navController.navigate(R.id.nav_user_data);
+        });
+        return root;
+    }
+    // 檢查用戶是否已登錄
+    private boolean isLoggedIn() {
+        // 在此實現檢查用戶登錄狀態的邏輯
+        // 返回 true 表示已登錄，返回 false 表示尚未登錄
+        // 這裡先假設用戶已登錄，實際情況需要根據你的應用邏輯來確定
+        return true;
     }
 
-}
+    // 获取当前已登录用户的帐户
+    private String getCurrentLoggedInAccount() {
+        // 在此实现获取当前已登录用户帐户的逻辑
+        // 返回当前已登录用户的帐户
+        return "ACCOUNT";
+    }
+    private void fetchContacts(String account) {
+        String phpApiUrl = "http://100.96.1.3/api_get_contact.php" + "?account=" + account;
 
+        NetworkRequestManager.getInstance(getContext()).makeGetRequest(phpApiUrl, new NetworkRequestManager.RequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                displayContacts(response); // 成功获取联络人数据后显示
+                swipeRefreshLayout.setRefreshing(false); // 停止刷新动画
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show(); // 获取联络人数据失败时显示错误消息
+                swipeRefreshLayout.setRefreshing(false); // 停止刷新动画
+            }
+        });
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void displayContacts(String contactData) {
+        try {
+            JSONArray contactsArray = new JSONArray(contactData);
+            Log.e("ContactResponse", contactData);
+            contactList.clear(); // 清空已有的联络人列表
+            for (int i = 0; i < contactsArray.length(); i++) {
+                JSONObject contact = contactsArray.getJSONObject(i);
+                contactList.add(contact); // 将联络人加入到列表中
+            }
+            contactAdapter.notifyDataSetChanged(); // 通知 RecyclerView 更新
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onContactSaved(String contact) {
+        try {
+            JSONObject newContact = new JSONObject(contact);
+            addContact(newContact); // 添加新联络人到列表
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void addContact(JSONObject contact) {
+        contactList.add(contact); // 将联络人加入到列表中
+        contactAdapter.notifyDataSetChanged(); // 通知适配器数据集已更改
+    }
+
+    private void navigateToLogin() {
+        // 实现导航到登录界面的逻辑
+        Navigation.findNavController(requireView()).navigate(R.id.nav_login);
+    }
+}

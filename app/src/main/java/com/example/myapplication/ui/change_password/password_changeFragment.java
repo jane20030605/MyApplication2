@@ -1,11 +1,9 @@
 package com.example.myapplication.ui.change_password;
 
-import androidx.lifecycle.ViewModelProvider;
-
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +11,36 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+
 import com.example.myapplication.R;
 
-public class password_changeFragment extends Fragment {
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.mindrot.jbcrypt.BCrypt;
 
-    private PasswordChangeViewModel mViewModel;
+import java.io.IOException;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class password_changeFragment extends Fragment {
 
     private EditText etCurrentPassword;
     private EditText etNewPassword;
     private EditText etConfirmPassword;
-    private Button btnConfirmChange;
-    private Button btnSubmit;
+    private String userAccount; // 用於存儲用戶帳號
 
     public static password_changeFragment newInstance() {
         return new password_changeFragment();
@@ -38,12 +55,18 @@ public class password_changeFragment extends Fragment {
         etCurrentPassword = rootView.findViewById(R.id.et_current_password);
         etNewPassword = rootView.findViewById(R.id.et_new_password);
         etConfirmPassword = rootView.findViewById(R.id.et_confirm_password);
-        btnConfirmChange = rootView.findViewById(R.id.btn_confirm_change);
-        btnSubmit = rootView.findViewById(R.id.btn_submit);
+        Button btnConfirmChange = rootView.findViewById(R.id.btn_confirm_change);
+        Button btnSubmit = rootView.findViewById(R.id.btn_submit);
 
         // 設置按鈕點擊事件
         btnConfirmChange.setOnClickListener(v -> confirmChange());
         btnSubmit.setOnClickListener(v -> submit());
+
+        // 從SharedPreferences中獲取用戶帳號
+        @SuppressLint("UseRequireInsteadOfGet")
+        SharedPreferences preferences =
+                Objects.requireNonNull(getActivity()).getSharedPreferences("UserData", getActivity().MODE_PRIVATE);
+        userAccount = preferences.getString("ACCOUNT", ""); // 使用空字符串作為默認值
 
         return rootView;
     }
@@ -51,7 +74,7 @@ public class password_changeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(PasswordChangeViewModel.class);
+        PasswordChangeViewModel mViewModel = new ViewModelProvider(this).get(PasswordChangeViewModel.class);
         // TODO: Use the ViewModel
     }
 
@@ -67,12 +90,82 @@ public class password_changeFragment extends Fragment {
             return;
         }
 
-        // TODO: 這裡添加更多的邏輯來處理密碼變更
-        Toast.makeText(getActivity(), "確認修改按鈕被點擊", Toast.LENGTH_SHORT).show();
+        // 使用哈希函數處理新密碼
+        String hashedNewPassword = hashPassword(newPassword);
+
+        // 構建彈跳視窗顯示的文字
+        String confirmationMessage = "確認帳號為: " + userAccount + "\n修改密碼為: " + newPassword;
+
+        // 彈出確認彈跳視窗
+        new AlertDialog.Builder(requireContext())
+                .setTitle("確認修改")
+                .setMessage(confirmationMessage)
+                .setPositiveButton("是", (dialog, which) -> {
+                    // 點選了是，執行密碼變更的邏輯
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("account", userAccount); // 使用自動填充的用戶帳號
+                        jsonObject.put("current_password", currentPassword);
+                        jsonObject.put("new_password", hashedNewPassword); // 使用哈希後的密碼
+                        jsonObject.put("confirm_new_password", hashedNewPassword); // 使用哈希後的密碼
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    // 發送網絡請求
+                    sendChangePasswordRequest(jsonObject.toString());
+                })
+                .setNegativeButton("否", null) // 點選了否，不執行任何操作
+                .show();
+    }
+
+    private void sendChangePasswordRequest(String json) {
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url("http://100.96.1.3/api_change_password.php") // 替換為你的PHP API URL
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                getActivity().runOnUiThread(() ->
+                        Toast.makeText(getActivity(), "網絡請求失敗", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseData = response.body().string();
+                    try {
+                        JSONObject jsonResponse = new JSONObject(responseData);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+
+                        getActivity().runOnUiThread(() ->
+                                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show());
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    getActivity().runOnUiThread(() ->
+                            Toast.makeText(getActivity(), "密碼更新失敗", Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
     }
 
     private void submit() {
         // TODO: 提交邏輯
-        Toast.makeText(getActivity(), "提交按鈕被點擊", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "成功提交修改內容", Toast.LENGTH_SHORT).show();
+        Navigation.findNavController(requireView()).navigate(R.id.nav_user_data);
+    }
+
+    // 密碼雜湊功能
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 }

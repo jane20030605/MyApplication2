@@ -92,7 +92,6 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
     private String getCurrentLoggedInAccount() {
         // 在此实现获取当前已登录用户帐户的逻辑
         // 返回当前已登录用户的帐户
-        // 这里先假设帐户名为"example_user"
         return "ACCOUNT";
     }
 
