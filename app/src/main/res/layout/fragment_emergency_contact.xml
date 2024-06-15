@@ -15,7 +15,7 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="緊急連絡人"
+			android:text="新增緊急連絡人"
 			android:textSize="45sp"
 			android:textStyle="bold"
 			android:gravity="center"

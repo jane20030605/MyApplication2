@@ -17,9 +17,8 @@ import okhttp3.Response;
 
 public class CalendarUpdateClient {
     private static final String TAG = "CalendarUpdateClient";
-    private static final String BASE_URL = "http://100.96.1.3/test.php";
+    private static final String UPDATE_CALENDAR_URL = "http://100.96.1.3/api_update_calendar.php";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
     private final OkHttpClient client;
 
     public CalendarUpdateClient() {
@@ -30,34 +29,37 @@ public class CalendarUpdateClient {
                 .build();
     }
 
+    // 更新事件的方法
     public void updateEvent(String json, final CalendarCallback callback) {
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
-                .url(BASE_URL)
+                .url(UPDATE_CALENDAR_URL)
                 .post(body)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(TAG, "Failed to update event: " + e.getMessage());
-                callback.onError("Failed to update event: " + e.getMessage());
+                Log.e(TAG, "更新事件失敗: " + e.getMessage());
+                callback.onError("更新事件失敗: " + e.getMessage());
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     String responseBody = response.body().string();
-                    Log.d(TAG, "Event updated successfully: " + responseBody);
-                    callback.onSuccess("Event updated successfully");
+                    Log.d(TAG, "事件更新成功: " + responseBody);
+                    callback.onSuccess("事件更新成功");
                 } else {
-                    Log.e(TAG, "Failed to update event: " + response.message());
-                    callback.onError("Failed to update event: " + response.message());
+                    Log.e(TAG, "更新事件失敗: " + response.message());
+                    callback.onError("更新事件失敗: " + response.message());
                 }
             }
         });
     }
 
+    // 定義回調介面
     public interface CalendarCallback {
         void onSuccess(String message);
 

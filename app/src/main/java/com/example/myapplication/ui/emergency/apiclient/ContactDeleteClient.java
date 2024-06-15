@@ -15,7 +15,7 @@ public class ContactDeleteClient {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("DELETE");
         connection.setRequestProperty("Content-Type", "application/json; utf-8");
-        connection.setRequestProperty("Accept", "application/form-data");
+        connection.setRequestProperty("Accept", "application/json");
         connection.setDoOutput(true);
 
         try (OutputStream os = connection.getOutputStream()) {

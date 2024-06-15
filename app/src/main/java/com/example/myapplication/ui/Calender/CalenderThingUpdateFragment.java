@@ -31,14 +31,13 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 public class CalenderThingUpdateFragment extends Fragment {
 
     private FragmentCalenderThingBinding binding;
     private CalendarUpdateClient apiClient;
-    private SharedPreferences sharedPreferences;
-    private SessionManager sessionManager;
     private CalendarUpdateEvent calendarUpdateEvent;
 
     @Override
@@ -54,8 +53,8 @@ public class CalenderThingUpdateFragment extends Fragment {
         View root = binding.getRoot();
 
         // 初始化偏好设置和会话管理器
-        sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
-        sessionManager = new SessionManager(requireContext());
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        SessionManager sessionManager = new SessionManager(requireContext());
 
         // 设置陪伴者下拉列表
         setupCompanionsSpinner();
@@ -64,10 +63,10 @@ public class CalenderThingUpdateFragment extends Fragment {
 
         if (args != null && args.containsKey("eventId")) {
 
-            String date_up = args.getString("date_up").split(" ")[0];
-            String start_time = args.getString("date_up").split(" ")[1];
-            String date_end = args.getString("date_end").split(" ")[0];
-            String end_time = args.getString("date_end").split(" ")[1];
+            String date_up = Objects.requireNonNull(args.getString("date_up")).split(" ")[0];
+            String start_time = Objects.requireNonNull(args.getString("date_up")).split(" ")[1];
+            String date_end = Objects.requireNonNull(args.getString("date_end")).split(" ")[0];
+            String end_time = Objects.requireNonNull(args.getString("date_end")).split(" ")[1];
 
             // 初始化 calendarUpdateEvent 对象
             calendarUpdateEvent = new CalendarUpdateEvent();
@@ -302,7 +301,7 @@ public class CalenderThingUpdateFragment extends Fragment {
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(requireContext(), "响应解析失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "api無法使用", Toast.LENGTH_SHORT).show();
         }
     }
 }
