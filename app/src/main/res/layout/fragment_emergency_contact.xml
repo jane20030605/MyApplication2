@@ -125,15 +125,6 @@
 				tools:ignore="HardcodedText" />
 		</LinearLayout>
 
-		<Button
-			android:id="@+id/buttonContact"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="10dp"
-			android:textSize="20sp"
-			android:text="緊急連絡人列表"
-			android:background="@drawable/color"
-			tools:ignore="HardcodedText" />
 
 	</LinearLayout>
 </FrameLayout>

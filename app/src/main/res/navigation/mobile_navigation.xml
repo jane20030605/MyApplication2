@@ -101,7 +101,7 @@
         tools:layout="@layout/fragment_calender_thing" />
     <fragment
         android:id="@+id/nav_user_data"
-        android:name="com.example.myapplication.ui.user_data.user_dataFragment"
+        android:name="com.example.myapplication.ui.user_data.UserDataFragment"
         android:label="@string/menu_user_data"
         tools:layout="@layout/fragment_user_data" >
         <action
@@ -110,6 +110,9 @@
 	    <action
 		    android:id="@+id/action_nav_user_data_to_password_changeFragment"
 		    app:destination="@id/nav_password_change" />
+	    <action
+		    android:id="@+id/action_nav_user_data_to_nav_contact_list"
+		    app:destination="@id/nav_contact_list" />
     </fragment>
     <fragment
         android:id="@+id/nav_user_set"
@@ -142,11 +145,7 @@
         android:id="@+id/nav_emergency_contact"
         android:name="com.example.myapplication.ui.emergency.emergency_contact"
         android:label="@string/menu_emergency_contact"
-        tools:layout="@layout/fragment_emergency_contact" >
-	    <action
-		    android:id="@+id/action_nav_emergency_contact_to_contact_listFragment"
-		    app:destination="@id/nav_contact_list" />
-    </fragment>
+        tools:layout="@layout/fragment_emergency_contact" />
 	<fragment
 		android:id="@+id/nav_medicine_inquire"
 		android:name="com.example.myapplication.ui.Medicine_inquire.Medicine_inquireFragment"

@@ -8,7 +8,13 @@ public class UserUpdateEvent {
     private String address;
     private String account;
 
-    public UserUpdateEvent() {
+    public UserUpdateEvent(String name, String tel, String birthday, String mail, String address, String account) {
+        this.name = name;
+        this.tel = tel;
+        this.birthday = birthday;
+        this.mail = mail;
+        this.address = address;
+        this.account = account;
     }
 
     public String getName() {
@@ -59,12 +65,15 @@ public class UserUpdateEvent {
         this.account = account;
     }
 
-    public String getAllValue() {
-        return "Name: " + name + "\n" +
-                "Tel: " + tel + "\n" +
-                "Birthday: " + birthday + "\n" +
-                "Mail: " + mail + "\n" +
-                "Address: " + address + "\n" +
-                "Account: " + account;
+    @Override
+    public String toString() {
+        return "UserUpdateEvent{" +
+                "name='" + name + '\'' +
+                ", tel='" + tel + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", mail='" + mail + '\'' +
+                ", address='" + address + '\'' +
+                ", account='" + account + '\'' +
+                '}';
     }
 }

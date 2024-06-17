@@ -1,5 +1,3 @@
-// ContactUpdateClient.java
-
 package com.example.myapplication.ui.emergency.apiclient;
 
 import android.util.Log;
@@ -16,7 +14,7 @@ import okhttp3.Response;
 
 public class ContactUpdateClient {
     private static final String TAG = "ContactUpdateClient";
-    private static final String UPDATE_CONTACT_URL = "http://100.96.1.3/test.php";
+    private static final String UPDATE_CONTACT_URL = "http://100.96.1.3/api_update_contact.php";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private final OkHttpClient client;
 

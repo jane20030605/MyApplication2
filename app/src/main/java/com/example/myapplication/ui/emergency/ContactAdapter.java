@@ -3,7 +3,6 @@ package com.example.myapplication.ui.emergency;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +59,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         // 设置联系人信息
         holder.tvContactName.setText(contact.optString("contact_name")); // 联系人姓名
         holder.tvContactTel.setText(contact.optString("contact_tel")); // 联系人电话号码
-        holder.tvRelation.setText(contact.optString("relation")); // 与使用者的关系
+        holder.tvRelation.setText(mapEnglishToChinese(contact.optString("relation"))); // 与使用者的关系
 
         String contact_Id = contact.optString("contact_Id"); // 获取联系人 ID
 
@@ -71,7 +70,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             bundle.putString("relation", contact.optString("relation"));
             bundle.putString("contact_tel", contact.optString("contact_tel"));
             bundle.putString("contact_name", contact.optString("contact_name"));
-            Log.d("ContactAdapter", "點擊編輯按鈕。Bundle: " + bundle.toString());
             Navigation.findNavController(holder.itemView).navigate(R.id.nav_contact_update, bundle);
         });
 
@@ -90,36 +88,31 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     public void addContact(JSONObject event) {
         contactList.add(event); // 将联系人加入列表
         notifyItemInserted(contactList.size() - 1); // 通知适配器有新项目插入
-        Log.d("ContactAdapter", "添加聯絡人: " + event.toString());
     }
 
     // 删除联系人
     private void deleteContact(int position, String contact_Id, View view) {
         new Thread(() -> {
             try {
-                String deleteApiUrl = "http://100.96.1.3/test.php";
+                String deleteApiUrl = "http://100.96.1.3/api_delete_contact.php";
                 // 向 API 发送 POST 请求删除联系人
                 JSONObject postData = new JSONObject();
                 postData.put("contact_Id", contact_Id);
-                Log.d("ContactAdapter", "发送删除请求，contact_Id: " + contact_Id);
 
                 NetworkRequestManager.getInstance(view.getContext()).makePostRequest(
                         deleteApiUrl, postData.toString(), new NetworkRequestManager.RequestListener() {
                             @Override
                             public void onSuccess(String response) {
-                                Log.d("ContactAdapter", "成功删除聯絡人，response: " + response);
                                 // 确保在主线程上更新 UI
                                 new Handler(Looper.getMainLooper()).post(() -> {
                                     contactList.remove(position);
                                     notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position, contactList.size());
                                     Toast.makeText(view.getContext(), "聯絡人已删除", Toast.LENGTH_SHORT).show();
                                 });
                             }
 
                             @Override
                             public void onError(String error) {
-                                Log.e("ContactAdapter", "删除聯絡人失敗: " + error);
                                 // 确保在主线程上显示错误信息
                                 new Handler(Looper.getMainLooper()).post(() -> {
                                     Toast.makeText(view.getContext(), "删除失敗：" + error, Toast.LENGTH_LONG).show();
@@ -128,12 +121,31 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                         });
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.e("ContactAdapter", "刪除聯絡人異常: " + e.getMessage());
                 // 确保在主线程上显示错误信息
                 new Handler(Looper.getMainLooper()).post(() -> {
                     Toast.makeText(view.getContext(), "無法删除聯絡人：" + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }
         }).start();
+    }
+
+    // 将英文关系映射为中文显示
+    private String mapEnglishToChinese(String english) {
+        switch (english) {
+            case "":
+                return "請選擇";
+            case "children":
+                return "兒女";
+            case "relatives":
+                return "親戚";
+            case "spouse":
+                return "配偶";
+            case "friend":
+                return "朋友";
+            case "other":
+                return "其他";
+            default:
+                return ""; // 或者处理未知情况的默认值
+        }
     }
 }

@@ -58,7 +58,7 @@ public class Contact_updateFragment extends Fragment {
             contactUpdateEvent.setContactTel(args.getString("contact_tel"));
             contactUpdateEvent.setRelation(args.getString("relation"));
 
-            Log.d("ContactUpdateFragment", "接收到的參數: " + args.toString());
+            Log.e("ContactUpdateEvent", contactUpdateEvent.getAllValue());
 
             binding.editEmergencyName.setText(contactUpdateEvent.getContactName());
             binding.editTextPhone.setText(contactUpdateEvent.getContactTel());
@@ -72,7 +72,10 @@ public class Contact_updateFragment extends Fragment {
         binding.buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateEmergencyContact(v);
+                updateEmergencyContact();
+                Navigation.findNavController(v).navigate(R.id.nav_contact_list);
+                Toast.makeText(requireContext(), "更新成功，已上傳數據", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -88,10 +91,9 @@ public class Contact_updateFragment extends Fragment {
         return root;
     }
 
-    private void updateEmergencyContact(View v) {
+    private void updateEmergencyContact() {
         // 如果 contactUpdateEvent 为 null，直接返回
         if (contactUpdateEvent == null) {
-            Log.e("ContactUpdateFragment", "ContactUpdateEvent 為空");
             return;
         }
 
@@ -110,28 +112,26 @@ public class Contact_updateFragment extends Fragment {
 
         try {
             String eventDataJson = createContactDataJson(contactUpdateEvent);
-            Log.d("ContactUpdateFragment", "正在更新聯絡人資料: " + eventDataJson);// 调试日志，确保 eventDataJson 正确构建
+            Log.d("eventDataJson", eventDataJson); // 调试日志，确保 eventDataJson 正确构建
 
             apiClient.updateContact(eventDataJson, new ContactUpdateClient.ContactUpdateCallback() {
                 @Override
                 public void onSuccess(String message) {
                     requireActivity().runOnUiThread(() -> {
-                        Log.d("ContactUpdateFragment", "保存成功，已上传数据");
                         Toast.makeText(requireContext(), "保存成功，已上传数据", Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(v).navigate(R.id.nav_contact_list);
+                        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
+                        navController.navigate(R.id.nav_contact_list);
                     });
                 }
 
                 @Override
                 public void onError(String message) {
                     requireActivity().runOnUiThread(() -> {
-                        Log.e("ContactUpdateFragment", "保存失敗: " + message);
                         Toast.makeText(requireContext(), "保存失败：" + message, Toast.LENGTH_SHORT).show();
                     });
                 }
             });
         } catch (JSONException e) {
-            Log.e("ContactUpdateFragment", "JSONException: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

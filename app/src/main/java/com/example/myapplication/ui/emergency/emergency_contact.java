@@ -49,10 +49,12 @@ public class emergency_contact extends Fragment {
             public void onClick(View v) {
                 try {
                     saveEmergencyContact();
+                    Toast.makeText(requireContext(), "保存成功，已上傳資料" , Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(v).navigate(R.id.nav_user_data);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
+
                 }
-                Toast.makeText(requireContext(), "保存成功，已上傳資料", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -64,13 +66,6 @@ public class emergency_contact extends Fragment {
             }
         });
 
-        // 點擊緊急連絡人列表按鈕的動作
-        binding.buttonContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToContactList();
-            }
-        });
 
         // 初始化下拉式選單的選項
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
@@ -85,14 +80,15 @@ public class emergency_contact extends Fragment {
         // 獲取輸入的緊急連絡人信息
         String name = binding.editEmergencyName.getText().toString();
         String phone = binding.editTextPhone.getText().toString();
-        String relation = binding.spinnerContact.getSelectedItem().toString();
+        String relationChinese = binding.spinnerContact.getSelectedItem().toString();
+        String relationEnglish = mapChineseToEnglish(relationChinese);
 
         // 從 SharedPreferences 中讀取帳戶信息
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         String account = sharedPreferences.getString("ACCOUNT", "");
 
         // 創建 ContactEvent 對象並添加帳戶信息
-        ContactEvent contactEvent = new ContactEvent(name, phone, relation, account);
+        ContactEvent contactEvent = new ContactEvent(name, phone, relationEnglish, account);
 
         // 將 ContactEvent 對象轉換為 JSON 字符串
         String eventDataJson = createContactDataJson(contactEvent);
@@ -114,7 +110,7 @@ public class emergency_contact extends Fragment {
                 requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(requireContext(), "保存失敗：" + message, Toast.LENGTH_SHORT).show();
+
                     }
                 });
             }
@@ -137,6 +133,44 @@ public class emergency_contact extends Fragment {
         // 導航到個人檔案介面
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
         navController.navigate(R.id.nav_user_data);
+    }
+
+    private String mapChineseToEnglish(String chinese) {
+        switch (chinese) {
+            case "請選擇":
+                return ""; // 或者你可以根据业务逻辑返回适当的默认值
+            case "兒女":
+                return "children";
+            case "親戚":
+                return "relatives";
+            case "配偶":
+                return "spouse";
+            case "朋友":
+                return "friend";
+            case "其他":
+                return "other";
+            default:
+                return "";
+        }
+    }
+
+    private String mapEnglishToChinese(String english) {
+        switch (english) {
+            case "":
+                return "請選擇";
+            case "children":
+                return "兒女";
+            case "relatives":
+                return "親戚";
+            case "spouse":
+                return "配偶";
+            case "friend":
+                return "朋友";
+            case "other":
+                return "其他";
+            default:
+                return "";
+        }
     }
 
     private void navigateToContactList() {

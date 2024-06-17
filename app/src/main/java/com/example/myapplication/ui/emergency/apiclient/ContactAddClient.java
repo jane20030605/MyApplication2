@@ -1,7 +1,5 @@
 package com.example.myapplication.ui.emergency.apiclient;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
@@ -29,7 +27,7 @@ public class ContactAddClient {
     }
 
     public void addContact(String eventDataJson, final ContactAddCallback callback) {
-        Log.d("ContactAddClient", "EventData JSON: " + eventDataJson); // 記錄事件資料
+        //Log.d("ContactAddClient", "EventData JSON: " + eventDataJson); // 記錄事件資料
 
         // 建立請求本文
         RequestBody requestBody = RequestBody.create(eventDataJson, JSON);
@@ -42,9 +40,9 @@ public class ContactAddClient {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Log.d("ContactAddClient", "Response Code: " + response.code());
+                //Log.d("ContactAddClient", "Response Code: " + response.code());
                 String responseBody = response.body().string();
-                Log.d("ContactAddClient", "Response Body: " + responseBody);
+                //Log.d("ContactAddClient", "Response Body: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {

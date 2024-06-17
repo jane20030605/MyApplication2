@@ -1,12 +1,11 @@
 package com.example.myapplication.ui.user_data;
 
 import android.util.Log;
-
+import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-
+import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -17,53 +16,60 @@ import okhttp3.Response;
 
 public class UserUpdateClient {
 
-    private static final String TAG = UserUpdateClient.class.getSimpleName();
-    private static final String BASE_URL = "https://100.96.1.3/api_update_userdata.php"; // 替換成你的後端API的基本URL
+    // 定義日誌標籤和使用者資料更新URL
+    private static final String TAG = "UserUpdateClient";
+    private static final String USER_DATA_UPDATE_URL = "https://100.96.1.3/api_update_userdata.php";
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final OkHttpClient client;
 
-    private OkHttpClient client;
-
+    // 建構子初始化OkHttpClient，設置超時時間
     public UserUpdateClient() {
-        client = new OkHttpClient();
+        this.client = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
     }
 
-    // 更新使用者資料到後端API
-    public void updateUser(String username, String email, String phone, String address, String birthday, String account,
-                           final UserUpdateCallback callback) {
-        // 創建 JSON 對象
+    // 更新使用者資料的方法
+    public void updateUser(
+            String username, String email, String phone,
+            String address, String birthday, String account,
+            final UserUpdateCallback callback) {
+        // 創建JSON物件，並將使用者資料放入
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("username", username);
-            jsonObject.put("email", email);
-            jsonObject.put("phone", phone);
+            jsonObject.put("name", username);
+            jsonObject.put("mail", email);
+            jsonObject.put("tel", phone);
             jsonObject.put("address", address);
             jsonObject.put("birthday", birthday);
-            jsonObject.put("account", account); // 假設你需要使用者的帳戶資訊來識別身份
+            jsonObject.put("account", account);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        // 設置 POST 請求主體，這裡假設後端 API 接受的是 JSON 格式
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        // 創建RequestBody並設置請求內容為JSON
         RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
-
-        // 創建 POST 請求
+        // 創建請求
         Request request = new Request.Builder()
-                .url(BASE_URL + "/updateUser") // 替換成你的後端API的實際端點
+                .url(USER_DATA_UPDATE_URL)
                 .post(body)
                 .build();
 
-        // 執行異步請求
+        // 發送請求
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
                 Log.e(TAG, "更新使用者資料失敗：" + e.getMessage());
                 callback.onError("更新使用者資料失敗：" + e.getMessage());
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     String responseBody = response.body().string();
                     Log.d(TAG, "更新使用者資料成功：" + responseBody);
                     callback.onSuccess("使用者資料已成功更新");
@@ -76,7 +82,10 @@ public class UserUpdateClient {
         });
     }
 
-    // 定義回調介面，用於通知更新結果
+    public void updateUser(UserUpdateEvent userUpdateEvent, UserUpdateCallback userUpdateCallback) {
+    }
+
+    // 定義回調接口
     public interface UserUpdateCallback {
         void onSuccess(String message);
         void onError(String message);

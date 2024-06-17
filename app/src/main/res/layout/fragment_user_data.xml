@@ -3,7 +3,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".ui.user_data.user_dataFragment">
+	tools:context=".ui.user_data.UserDataFragment">
 
 	<ScrollView
 		android:layout_width="match_parent"
@@ -167,28 +167,7 @@
 
 			</LinearLayout>
 			<!-- 緊急聯絡人 -->
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal">
 
-				<TextView
-					android:id="@+id/textViewEmergencyContact"
-					android:layout_width="130dp"
-					android:layout_height="wrap_content"
-					android:text="緊急聯絡人"
-					android:textSize="20sp"
-					tools:ignore="HardcodedText" />
-
-				<Button
-					android:id="@+id/button_EmergencyContact"
-					android:layout_width="wrap_content"
-					android:layout_height="50dp"
-					android:background="@drawable/color"
-					android:text="新增緊急聯絡人"
-					android:textSize="20sp"
-					tools:ignore="HardcodedText" />
-			</LinearLayout>
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -216,6 +195,25 @@
 					android:textSize="20sp"
 					tools:ignore="ButtonStyle,HardcodedText" />
 			</LinearLayout>
+			<Button
+				android:id="@+id/button_EmergencyContact"
+				android:layout_width="match_parent"
+				android:layout_marginTop="10dp"
+				android:layout_height="wrap_content"
+				android:background="@drawable/color"
+				android:text="新增緊急聯絡人"
+				android:textSize="20sp"
+				tools:ignore="HardcodedText" />
+
+			<Button
+				android:id="@+id/buttonContact"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:textSize="20sp"
+				android:text="緊急連絡人列表"
+				android:background="@drawable/color"
+				tools:ignore="HardcodedText" />
 		</LinearLayout>
 	</ScrollView>
 </FrameLayout>
