@@ -27,7 +27,7 @@ public class Contact_updateFragment extends Fragment {
 
     private FragmentEmergencyContactBinding binding;
     private ContactUpdateClient apiClient;
-    private ContactUpdateEvent contactUpdateEvent = new ContactUpdateEvent();
+    private final ContactUpdateEvent contactUpdateEvent = new ContactUpdateEvent();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

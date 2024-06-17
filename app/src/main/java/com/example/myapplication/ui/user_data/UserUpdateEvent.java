@@ -8,13 +8,14 @@ public class UserUpdateEvent {
     private String address;
     private String account;
 
-    public UserUpdateEvent(String name, String tel, String birthday, String mail, String address, String account) {
-        this.name = name;
-        this.tel = tel;
-        this.birthday = birthday;
-        this.mail = mail;
-        this.address = address;
-        this.account = account;
+    public UserUpdateEvent() {
+        // 初始化字段
+        this.name = "";
+        this.tel = "";
+        this.birthday = "";
+        this.mail = "";
+        this.address = "";
+        this.account = "";
     }
 
     public String getName() {
@@ -63,17 +64,5 @@ public class UserUpdateEvent {
 
     public void setAccount(String account) {
         this.account = account;
-    }
-
-    @Override
-    public String toString() {
-        return "UserUpdateEvent{" +
-                "name='" + name + '\'' +
-                ", tel='" + tel + '\'' +
-                ", birthday='" + birthday + '\'' +
-                ", mail='" + mail + '\'' +
-                ", address='" + address + '\'' +
-                ", account='" + account + '\'' +
-                '}';
     }
 }
