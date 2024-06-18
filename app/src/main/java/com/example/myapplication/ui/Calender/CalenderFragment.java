@@ -148,7 +148,6 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
     }
 
     private void navigateToLogin() {
-        // 在此實現導航到登錄界面的邏輯
-        Navigation.findNavController(requireView()).navigate(R.id.nav_login);
+        Toast.makeText(getContext(), "登入後即可查看行事曆事件\n請先進行登入", Toast.LENGTH_SHORT).show();
     }
 }

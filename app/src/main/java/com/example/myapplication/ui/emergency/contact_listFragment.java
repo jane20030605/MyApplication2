@@ -149,7 +149,6 @@ public class contact_listFragment extends Fragment {
     }
 
     private void navigateToLogin() {
-        // 实现导航到登录界面的逻辑
-        Navigation.findNavController(requireView()).navigate(R.id.nav_login);
+        Toast.makeText(getContext(), "登入後即可查看緊急連絡人\n請先進行登入", Toast.LENGTH_SHORT).show();
     }
 }

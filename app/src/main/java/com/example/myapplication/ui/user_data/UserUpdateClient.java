@@ -1,58 +1,69 @@
 package com.example.myapplication.ui.user_data;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import android.util.Log;
+import androidx.annotation.NonNull;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class UserUpdateClient {
+    private static final String TAG = "UserDataUpdateClient";
+    private static final String UPDATE_USER_DATA_URL = "http://100.96.1.3/api_update_userdata.php"; // 根據實際情況修改URL
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final OkHttpClient client;
 
-    private static final String API_URL = "http://100.96.1.3/api_update_userdata.php";
-
-    public interface UserUpdateCallback {
-        void onSuccess(String message);
-        void onError(String message);
+    public UserUpdateClient() {
+        this.client = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
     }
 
-    public void updateUser(String jsonEventData, UserUpdateCallback callback) {
-        new Thread(() -> {
-            HttpURLConnection connection = null;
-            try {
-                URL url = new URL(API_URL);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setDoOutput(true);
+    // 更新個人檔案資料的方法
+    public void updateUserData(String json, final UserDataUpdateCallback callback) {
 
-                try (OutputStream os = connection.getOutputStream()) {
-                    byte[] input = jsonEventData.getBytes(StandardCharsets.UTF_8);
-                    os.write(input, 0, input.length);
-                }
+        // RequestBody body = RequestBody.create(JSON, jsonstr);
+        RequestBody body = RequestBody.create(JSON , json);
+        Request request = new Request.Builder()
+                .url(UPDATE_USER_DATA_URL)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "更新用戶數據失敗: " + e.getMessage());
+                callback.onError("更新用戶數據失敗: " + e.getMessage());
+            }
 
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    try (BufferedReader br = new BufferedReader(
-                            new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                        StringBuilder response = new StringBuilder();
-                        String responseLine;
-                        while ((responseLine = br.readLine()) != null) {
-                            response.append(responseLine.trim());
-                        }
-                        callback.onSuccess(response.toString());
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "用戶數據更新成功: " + responseBody); // 调试日志，确保服务器返回的数据正确
+                        callback.onSuccess("用戶數據更新成功");
+                    } else {
+                        Log.e(TAG, "更新用戶數據失敗: " + response.message());
+                        callback.onError("更新用戶數據失敗: " + response.message());
                     }
-                } else {
-                    callback.onError("HTTP error code: " + responseCode);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                callback.onError("Error: " + e.getMessage());
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
+                } catch (IOException e) {
+                    Log.e(TAG, "更新用戶數據失敗: " + e.getMessage());
+                    callback.onError("更新用戶數據失敗: " + e.getMessage());
                 }
             }
-        }).start();
+        });
+    }
+
+    public interface UserDataUpdateCallback {
+        void onSuccess(String message);
+
+        void onError(String message);
     }
 }

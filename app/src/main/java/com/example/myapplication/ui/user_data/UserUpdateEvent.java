@@ -3,19 +3,12 @@ package com.example.myapplication.ui.user_data;
 public class UserUpdateEvent {
     private String name;
     private String tel;
-    private String birthday;
     private String mail;
     private String address;
+    private String birthday;
     private String account;
 
     public UserUpdateEvent() {
-        // 初始化字段
-        this.name = "";
-        this.tel = "";
-        this.birthday = "";
-        this.mail = "";
-        this.address = "";
-        this.account = "";
     }
 
     public String getName() {
@@ -34,14 +27,6 @@ public class UserUpdateEvent {
         this.tel = tel;
     }
 
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
-    }
-
     public String getMail() {
         return mail;
     }
@@ -58,11 +43,28 @@ public class UserUpdateEvent {
         this.address = address;
     }
 
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
     public String getAccount() {
         return account;
     }
 
     public void setAccount(String account) {
         this.account = account;
+    }
+
+    public String getAllValue() {
+        return "Name: " + name + "\n" +
+                "Tel: " + tel + "\n" +
+                "Mail: " + mail + "\n" +
+                "Address: " + address + "\n" +
+                "Birthday: " + birthday + "\n" +
+                "Account: " + account;
     }
 }

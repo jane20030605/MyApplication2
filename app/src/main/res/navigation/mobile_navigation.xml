@@ -128,7 +128,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_medicine_allbox"
-        android:name="com.example.myapplication.ui.medicine_allbox.medicine_allboxFragment"
+        android:name="com.example.myapplication.ui.Medicine_allbox.Medicine_allboxFragment"
         android:label="@string/menu_medicine_allbox"
         tools:layout="@layout/fragment_medicine_allbox" />
 	<fragment

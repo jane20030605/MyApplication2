@@ -5,7 +5,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".ui.medicine_allbox.medicine_allboxFragment" >
+	tools:context=".ui.Medicine_allbox.Medicine_allboxFragment" >
 
 	<TextView
 		android:id="@+id/text_medicine_box"
