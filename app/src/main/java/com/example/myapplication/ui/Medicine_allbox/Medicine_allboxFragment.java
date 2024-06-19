@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,6 +34,7 @@ public class Medicine_allboxFragment extends Fragment {
     private List<MedicineAllbox> medicineList;
 
     private static final String MEDICINE_ALLBOX_URL = "http://100.96.1.3/api_medication.php";
+    private static final String IMAGE_BASE_URL = "http://100.96.1.3/medimage/"; // 使用你的本地服务器URL
 
     public static Medicine_allboxFragment newInstance() {
         return new Medicine_allboxFragment();
@@ -101,7 +103,7 @@ public class Medicine_allboxFragment extends Fragment {
                             MedicineAllbox medicine = new MedicineAllbox(
                                     medId,
                                     medication.getString("drug_name"),
-                                    getImageResourceByMedId(medId), // 根據藥物ID設置對應的圖像資源
+                                    IMAGE_BASE_URL + medication.getString("atccode") + ".JPG", // 動態設置圖片URL
                                     medication.getString("atccode"),
                                     medication.getString("manufacturer"),
                                     medication.getString("indications"),
@@ -138,26 +140,11 @@ public class Medicine_allboxFragment extends Fragment {
         }).start();
     }
 
-    // 根據藥物 ID 獲取對應的圖像資源 ID
-    private int getImageResourceByMedId(int medId) {
-        switch (medId) {
-            case 1: return R.drawable.medicine_1;
-            case 2: return R.drawable.medicine_2;
-            case 3: return R.drawable.medicine_3;
-            case 4: return R.drawable.medicine_4;
-            case 5: return R.drawable.medicine_5;
-            case 6: return R.drawable.medicine_6;
-            case 7: return R.drawable.medicine_7;
-            case 8: return R.drawable.medicine_8;
-            default: return R.drawable.medicine_1; // 默認圖像
-        }
-    }
-
     // 靜態內部類，表示一個藥品項目
     static class MedicineAllbox {
         private final int medId; // 添加藥物 ID
         private final String name;
-        private final int imageResId;
+        private final String imageUrl; // 修改为URL
         private final String atccode;
         private final String manufacturer;
         private final String indications;
@@ -167,11 +154,11 @@ public class Medicine_allboxFragment extends Fragment {
         private final String nick;
         private final String strip;
 
-        public MedicineAllbox(int medId, String name, int imageResId, String atccode, String manufacturer, String indications,
+        public MedicineAllbox(int medId, String name, String imageUrl, String atccode, String manufacturer, String indications,
                               String shape, String color, String mark, String nick, String strip) {
             this.medId = medId;
             this.name = name;
-            this.imageResId = imageResId;
+            this.imageUrl = imageUrl;
             this.atccode = atccode;
             this.manufacturer = manufacturer;
             this.indications = indications;
@@ -190,8 +177,8 @@ public class Medicine_allboxFragment extends Fragment {
             return name;
         }
 
-        public int getImageResId() {
-            return imageResId;
+        public String getImageUrl() {
+            return imageUrl;
         }
 
         public String getAtccode() {
@@ -268,33 +255,31 @@ public class Medicine_allboxFragment extends Fragment {
 
             public void bind(MedicineAllbox medicine) {
                 nameTextView.setText(medicine.getName());
-                imageView.setImageResource(medicine.getImageResId()); // 在這裡設置圖像
+                Picasso.get().load(medicine.getImageUrl()).into(imageView); // 使用Picasso動態加載圖片
             }
 
             @Override
             public void onClick(View v) {
                 int position = getAdapterPosition();
                 MedicineAllbox medicine = medicineList.get(position);
-                showMedicineDetailDialog(medicine);
+                showMedicineDetails(medicine);
             }
         }
-    }
 
-    // 顯示藥品詳細信息的方法
-    private void showMedicineDetailDialog(MedicineAllbox medicine) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(medicine.getName());
-        builder.setMessage(
-                "許可證字號:\n" + medicine.getAtccode() + "\n" +
-                        "藥物名稱:\n" + medicine.getName() + "\n" +
-                        "製造廠商:\n" + medicine.getIndications()  + "\n" +
-                        "適應症:\n" + medicine.getManufacturer() + "\n" +
-                        "形狀: " + medicine.getShape() + "   " +
-                        "顏色: " + medicine.getColor() + "\n" +
-                        "標記: " + medicine.getMark() + "\n" +
-                        "是否有別名: " + medicine.getNick() + "\n" +
-                        "是否在同一包裝: " + medicine.getStrip());
-        builder.setPositiveButton("確定", null);
-        builder.show();
+        private void showMedicineDetails(MedicineAllbox medicine) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(medicine.getName());
+            builder.setMessage("藥品名稱: " + medicine.getName() + "\n" +
+                    "ATC代碼: " + medicine.getAtccode() + "\n" +
+                    "製造商: " + medicine.getManufacturer() + "\n" +
+                    "適應症: " + medicine.getIndications() + "\n" +
+                    "形狀: " + medicine.getShape() + "\n" +
+                    "顏色: " + medicine.getColor() + "\n" +
+                    "標記: " + medicine.getMark() + "\n" +
+                    "是否有別名: " + medicine.getNick() + "\n" +
+                    "是否在同一包裝: " + medicine.getStrip());
+            builder.setPositiveButton("確定", null);
+            builder.show();
+        }
     }
 }

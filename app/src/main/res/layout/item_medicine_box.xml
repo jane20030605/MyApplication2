@@ -8,14 +8,14 @@
 
 	<ImageView
 		android:id="@+id/medicine_image"
-		android:layout_width="200dp"
-		android:layout_height="200dp"
+		android:layout_width="186dp"
+		android:layout_height="192dp"
 		android:layout_weight="1"
 		android:src="@drawable/medicine_3" />
 
 	<TextView
 		android:id="@+id/medicine_name"
-		android:layout_width="200dp"
+		android:layout_width="187dp"
 		android:layout_height="wrap_content"
 		android:gravity="center"
 		android:text="大豐普樂非林錠 "
