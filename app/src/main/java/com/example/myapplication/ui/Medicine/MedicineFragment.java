@@ -35,7 +35,6 @@ public class MedicineFragment extends Fragment {
         final Spinner spinner_notch = binding.spinnerNotch;
         final Spinner spinner_color = binding.spinnerColor;
         final Spinner spinner_symbol = binding.spinnerSymbol;
-        final Spinner spinner_markings = binding.spinnerMarkings;
         final Button query_button = binding.queryButton;
         final Button medicine_allbox_button = binding.medicineAllboxButton;
 
@@ -48,7 +47,6 @@ public class MedicineFragment extends Fragment {
         setSpinnerItems(spinner_notch, R.array.notches);
         setSpinnerItems(spinner_color, R.array.colors);
         setSpinnerItems(spinner_symbol, R.array.symbols);
-        setSpinnerItems(spinner_markings, R.array.markings);
 
         // 設置按鈕點擊監聽器
         query_button.setOnClickListener(new View.OnClickListener() {

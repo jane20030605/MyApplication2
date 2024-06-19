@@ -269,14 +269,14 @@ public class Medicine_allboxFragment extends Fragment {
         private void showMedicineDetails(MedicineAllbox medicine) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(medicine.getName());
-            builder.setMessage("藥品名稱: " + medicine.getName() + "\n" +
-                    "ATC代碼: " + medicine.getAtccode() + "\n" +
-                    "製造商: " + medicine.getManufacturer() + "\n" +
+            builder.setMessage("藥物名稱: " + medicine.getName() + "\n" +
+                    "許可證字號: " + medicine.getAtccode() + "\n" +
+                    "製造公司: " + medicine.getManufacturer() + "\n" +
                     "適應症: " + medicine.getIndications() + "\n" +
                     "形狀: " + medicine.getShape() + "\n" +
                     "顏色: " + medicine.getColor() + "\n" +
                     "標記: " + medicine.getMark() + "\n" +
-                    "是否有別名: " + medicine.getNick() + "\n" +
+                    "是否有别名: " + medicine.getNick() + "\n" +
                     "是否在同一包裝: " + medicine.getStrip());
             builder.setPositiveButton("確定", null);
             builder.show();
