@@ -25,7 +25,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="8dp"
 				android:text="事件說明:"
-				android:textColor="#000"
+
 				android:textSize="16sp"
 				android:textStyle="bold" />
 
@@ -51,7 +51,6 @@
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="8dp"
 				android:text="開始日期:"
-				android:textColor="#000"
 				android:textSize="16sp"
 				android:textStyle="bold" />
 
@@ -61,7 +60,6 @@
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="8dp"
 				android:text=""
-				android:textColor="#000"
 				android:textSize="16sp"
 				android:textStyle="bold" />
 
@@ -78,7 +76,6 @@
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="8dp"
 				android:text="結束日期:"
-				android:textColor="#000"
 				android:textSize="16sp"
 				android:textStyle="bold" />
 
@@ -105,7 +102,6 @@
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="8dp"
 				android:text="陪伴對象:"
-				android:textColor="#000"
 				android:textSize="16sp" />
 
 			<TextView
@@ -129,7 +125,6 @@
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="8dp"
 				android:text="事件詳情:"
-				android:textColor="#000"
 				android:textSize="16sp"
 				android:textStyle="bold" />
 

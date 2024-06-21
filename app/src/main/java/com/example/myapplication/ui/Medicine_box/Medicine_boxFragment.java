@@ -57,7 +57,7 @@ public class Medicine_boxFragment extends Fragment {
         return view;
     }
 
-    static class Medicine {
+    public static class Medicine {
         private String name;
         private int imageResId;
         private String description;

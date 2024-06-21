@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.emergency;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -63,6 +65,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
         String contact_Id = contact.optString("contact_Id"); // 获取联系人 ID
 
+        // 根据当前日夜间模式设置文本颜色
+        int textColor = getTextColor(holder.itemView.getContext());
+        holder.tvContactName.setTextColor(textColor);
+        holder.tvContactTel.setTextColor(textColor);
+        holder.tvRelation.setTextColor(textColor);
+
         holder.btnEditContact.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("contact_Id", contact_Id);
@@ -77,6 +85,15 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             int positionToDelete = holder.getAdapterPosition();
             deleteContact(positionToDelete, contact_Id, v);
         });
+    }
+
+    private int getTextColor(Context context) {
+        int currentNightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            return context.getResources().getColor(R.color.white); // 夜间模式下的文本颜色
+        } else {
+            return context.getResources().getColor(R.color.textColorPrimary); // 日间模式下的文本颜色
+        }
     }
 
     @Override

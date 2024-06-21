@@ -1,6 +1,10 @@
 package com.example.myapplication.ui.Calender;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +31,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         public TextView tvStartDate; // 開始日期
         public TextView tvEndDate;   // 結束日期
         public TextView tvCompanions; // 同伴
-        public TextView tvEventthing; //事件詳情
+        public TextView tvEventthing; // 事件詳情
         public Button btnEditEvent;  // 編輯事件按鈕
         public Button btnDeleteEvent; // 刪除事件按鈕
 
@@ -68,6 +72,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         String eventId = event.optString("event_id"); // 取得事件ID
 
+        // 根据当前日夜间模式设置文本颜色
+        int textColor = getTextColor(holder.itemView.getContext());
+        holder.tvEventName.setTextColor(textColor);
+        holder.tvStartDate.setTextColor(textColor);
+        holder.tvEndDate.setTextColor(textColor);
+        holder.tvCompanions.setTextColor(textColor);
+        holder.tvEventthing.setTextColor(textColor);
+
         // 設置編輯事件按鈕的點擊監聽器
         holder.btnEditEvent.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -93,8 +105,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         try {
                             String deleteApiUrl = "http://100.96.1.3/api_delete_calendar.php";
                             // 向 API 發送 POST 請求刪除事件
-                            NetworkRequestManager.getInstance(v.getContext()).makePostRequest
-                                    (deleteApiUrl, "event_id=" + eventId, new NetworkRequestManager.RequestListener() {
+                            NetworkRequestManager.getInstance(v.getContext()).makePostRequest(deleteApiUrl, "event_id=" + eventId, new NetworkRequestManager.RequestListener() {
                                 @Override
                                 public void onSuccess(String response) {
                                     removeEvent(position); // 從清單中移除事件
@@ -102,7 +113,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
                                 @Override
                                 public void onError(String error) {
-                                    // 顯示錯誤消息
+                                    // 確保在主線程上顯示錯誤信息
+                                    new Handler(Looper.getMainLooper()).post(() -> {
+                                        // 顯示錯誤消息
+                                    });
                                 }
                             });
                         } catch (Exception e) {
@@ -112,6 +126,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 }).start();
             }
         });
+    }
+
+    private int getTextColor(Context context) {
+        int currentNightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            return context.getResources().getColor(R.color.white); // 夜间模式下的文本颜色
+        } else {
+            return context.getResources().getColor(R.color.textColorPrimary); // 日间模式下的文本颜色
+        }
     }
 
     @Override

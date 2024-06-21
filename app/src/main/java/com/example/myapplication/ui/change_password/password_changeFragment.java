@@ -1,9 +1,10 @@
 package com.example.myapplication.ui.change_password;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,6 @@ import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,7 +40,7 @@ public class password_changeFragment extends Fragment {
     private EditText etCurrentPassword;
     private EditText etNewPassword;
     private EditText etConfirmPassword;
-    private String userAccount; // 用於存儲用戶帳號
+    private String account; // 用於存儲用戶帳號
 
     public static password_changeFragment newInstance() {
         return new password_changeFragment();
@@ -62,11 +62,8 @@ public class password_changeFragment extends Fragment {
         btnConfirmChange.setOnClickListener(v -> confirmChange());
         btnSubmit.setOnClickListener(v -> submit());
 
-        // 從SharedPreferences中獲取用戶帳號
-        @SuppressLint("UseRequireInsteadOfGet")
-        SharedPreferences preferences =
-                Objects.requireNonNull(getActivity()).getSharedPreferences("UserData", getActivity().MODE_PRIVATE);
-        userAccount = preferences.getString("ACCOUNT", ""); // 使用空字符串作為默認值
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        account = sharedPreferences.getString("ACCOUNT", "");
 
         return rootView;
     }
@@ -74,7 +71,8 @@ public class password_changeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        PasswordChangeViewModel mViewModel = new ViewModelProvider(this).get(PasswordChangeViewModel.class);
+        PasswordChangeViewModel mViewModel =
+                new ViewModelProvider(this).get(PasswordChangeViewModel.class);
         // TODO: Use the ViewModel
     }
 
@@ -94,7 +92,7 @@ public class password_changeFragment extends Fragment {
         String hashedNewPassword = hashPassword(newPassword);
 
         // 構建彈跳視窗顯示的文字
-        String confirmationMessage = "確認帳號為: " + userAccount + "\n修改密碼為: " + newPassword;
+        String confirmationMessage = "確認帳號為: " + account + "\n修改密碼為: " + newPassword;
 
         // 彈出確認彈跳視窗
         new AlertDialog.Builder(requireContext())
@@ -102,9 +100,11 @@ public class password_changeFragment extends Fragment {
                 .setMessage(confirmationMessage)
                 .setPositiveButton("是", (dialog, which) -> {
                     // 點選了是，執行密碼變更的邏輯
+                    Log.d("PasswordChangeFragment", "Confirm change dialog - Yes button clicked");
+
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put("account", userAccount); // 使用自動填充的用戶帳號
+                        jsonObject.put("account", account); // 使用自動填充的用戶帳號
                         jsonObject.put("current_password", currentPassword);
                         jsonObject.put("new_password", hashedNewPassword); // 使用哈希後的密碼
                         jsonObject.put("confirm_new_password", hashedNewPassword); // 使用哈希後的密碼
@@ -114,7 +114,10 @@ public class password_changeFragment extends Fragment {
                     // 發送網絡請求
                     sendChangePasswordRequest(jsonObject.toString());
                 })
-                .setNegativeButton("否", null) // 點選了否，不執行任何操作
+                .setNegativeButton("否", (dialog, which) -> {
+                    // 點選了否，取消操作
+                    Log.d("PasswordChangeFragment", "Confirm change dialog - No button clicked");
+                })
                 .show();
     }
 
@@ -131,6 +134,7 @@ public class password_changeFragment extends Fragment {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("PasswordChangeFragment", "Network request failed", e);
                 getActivity().runOnUiThread(() ->
                         Toast.makeText(getActivity(), "網絡請求失敗", Toast.LENGTH_SHORT).show());
             }
@@ -144,13 +148,18 @@ public class password_changeFragment extends Fragment {
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
 
-                        getActivity().runOnUiThread(() ->
-                                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show());
+                        getActivity().runOnUiThread(() -> {
+                            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                            // 更新成功，顯示新密碼狀態
+                            String updatedPassword = etNewPassword.getText().toString();
+                            Log.d("PasswordChangeFragment", "Password updated successfully to: " + updatedPassword);
+                        });
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 } else {
+                    Log.e("PasswordChangeFragment", "Password update failed: " + response.code());
                     getActivity().runOnUiThread(() ->
                             Toast.makeText(getActivity(), "密碼更新失敗", Toast.LENGTH_SHORT).show());
                 }
@@ -160,7 +169,7 @@ public class password_changeFragment extends Fragment {
 
     private void submit() {
         // TODO: 提交邏輯
-        Toast.makeText(getActivity(), "成功提交修改內容", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "取消修改密碼", Toast.LENGTH_SHORT).show();
         Navigation.findNavController(requireView()).navigate(R.id.nav_user_data);
     }
 

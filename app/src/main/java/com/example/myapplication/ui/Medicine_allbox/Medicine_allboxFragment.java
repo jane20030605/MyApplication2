@@ -255,7 +255,11 @@ public class Medicine_allboxFragment extends Fragment {
 
             public void bind(MedicineAllbox medicine) {
                 nameTextView.setText(medicine.getName());
-                Picasso.get().load(medicine.getImageUrl()).into(imageView); // 使用Picasso動態加載圖片
+                if (!medicine.getImageUrl().isEmpty()) {
+                    Picasso.get().load(medicine.getImageUrl()).into(imageView);
+                } else {
+                    imageView.setImageResource(R.drawable.medicine_1); // 使用佔位符圖片
+                }
             }
 
             @Override
@@ -269,10 +273,10 @@ public class Medicine_allboxFragment extends Fragment {
         private void showMedicineDetails(MedicineAllbox medicine) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(medicine.getName());
-            builder.setMessage("藥物名稱: " + medicine.getName() + "\n" +
-                    "許可證字號: " + medicine.getAtccode() + "\n" +
-                    "製造公司: " + medicine.getManufacturer() + "\n" +
-                    "適應症: " + medicine.getIndications() + "\n" +
+            builder.setMessage("藥物名稱: "  + "\n" + medicine.getName() + "\n" +
+                    "許可證字號: "  + "\n" + medicine.getAtccode() + "\n" +
+                    "製造公司: "  + "\n" + medicine.getIndications() +"\n" +
+                    "適應症: " +" "+ medicine.getManufacturer()   + "\n" +
                     "形狀: " + medicine.getShape() + "\n" +
                     "顏色: " + medicine.getColor() + "\n" +
                     "標記: " + medicine.getMark() + "\n" +

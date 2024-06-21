@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="license_numbers">medicine_license_numbers
+	    <item>請選擇證別</item>
         <item>衛署藥製</item>
         <item>衛部藥製</item>
         <item>衛署藥輸</item>
