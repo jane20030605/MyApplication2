@@ -1,6 +1,8 @@
 package com.example.myapplication.ui.Medicine_inquire;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,11 +69,11 @@ public class Medicine_inquireFragment extends Fragment {
             if (searchResults != null && !searchResults.isEmpty()) {
                 try {
                     JSONArray dataArray = new JSONArray(searchResults);
-                    Log.d("Medicine_inquireFragment", "Search results received: " + searchResults);
+                    Log.d("Medicine_inquireFragment", "收到搜尋結果: " + searchResults);
                     parseMedicineData(dataArray);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.e("Medicine_inquireFragment", "JSONException: " + e.getMessage());
+                    Log.e("Medicine_inquireFragment", "JSON 解析錯誤: " + e.getMessage());
                 }
             }
         }
@@ -76,7 +84,7 @@ public class Medicine_inquireFragment extends Fragment {
     private void parseMedicineData(JSONArray dataArray) {
         try {
             medicineList.clear(); // 清空現有列表
-            Log.d("Medicine_inquireFragment", "Parsing medicine data");
+            Log.d("Medicine_inquireFragment", "解析藥品數據");
 
             // 解析 JSON 數據並填充到列表中
             for (int i = 0; i < dataArray.length(); i++) {
@@ -100,16 +108,16 @@ public class Medicine_inquireFragment extends Fragment {
                         medication.getString("strip")
                 );
                 medicineList.add(medicine);
-                Log.d("Medicine_inquireFragment", "Added medicine: " + medicine.getName());
+                Log.d("Medicine_inquireFragment", "添加藥品: " + medicine.getName());
             }
 
             adapter = new MedicineInquireAdapter(medicineList);
             recyclerView.setAdapter(adapter);
-            Log.d("Medicine_inquireFragment", "Adapter set with medicine list");
+            Log.d("Medicine_inquireFragment", "設置適配器並填充藥品列表");
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("Medicine_inquireFragment", "JSONException while parsing data: " + e.getMessage());
+            Log.e("Medicine_inquireFragment", "JSON 解析數據時出錯: " + e.getMessage());
         }
     }
 
@@ -259,17 +267,94 @@ public class Medicine_inquireFragment extends Fragment {
 
             // 顯示藥物詳細信息的對話框
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle(medicine.getName());
             builder.setMessage(
-                    "藥物名稱: " + "\n" +  medicine.getName() + "\n" +
-                            "許可證字號: " + "\n" +  medicine.getAtccode() + "\n" +
-                            "製造公司: " + "\n" +   medicine.getIndications()  + "\n" +
-                            "適應症: " + "\n" +  medicine.getManufacturer() + "\n" +
-                            "形狀: " + medicine.getShape() + "\n" +
-                            "顏色: " + medicine.getColor() + "\n" +
-                            "標記: " + medicine.getMark() );
-            builder.setPositiveButton("確定", null);
-            builder.show();
+                            "藥物名稱: " + "\n" +  medicine.getName() + "\n" +
+                                    "許可證字號: " + "\n" +  medicine.getAtccode() + "\n" +
+                                    "製造商: " + "\n" + medicine.getManufacturer() + "\n" +
+                                    "適應症: " + "\n" + medicine.getIndications() + "\n" +
+                                    "形狀: " + " " + medicine.getShape() + "\n" +
+                                    "顏色: " + " " + medicine.getColor() + "\n" +
+                                    "標記: " + " " + medicine.getMark()
+                    )
+                    .setView(dialogView)
+                    .setPositiveButton("加入藥物庫", (dialog, which) -> {
+                        String time = timeSpinner.getSelectedItem().toString();
+                        String dosage = dosageEditText.getText().toString().trim();
+                        addToMedicineCabinet(medicine, time, dosage);
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton("取消", (dialog, which) -> dialog.dismiss())
+                    .show();
         }
     }
+
+    private void addToMedicineCabinet(MedicineInquire medicine, String time, String dosage) {
+        new Thread(() -> {
+            try {
+                SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+                String account = sharedPreferences.getString("ACCOUNT", "");
+
+                if (account.isEmpty()) {
+                    Log.e("Medicine_inquireFragment", "帳戶資訊為空");
+                    return;
+                }
+
+                JSONObject postData = new JSONObject();
+                postData.put("atccode", medicine.getAtccode());
+                postData.put("drugName", medicine.getName());
+                postData.put("manufacturer", medicine.getManufacturer());
+                postData.put("medTime", time);
+                postData.put("medQuantity", dosage);
+                postData.put("account", account);
+
+                Log.d("Medicine_inquireFragment", "準備發送 POST 請求，資料: " + postData.toString());
+
+                URL url = new URL("http://100.96.1.3/api_add_to_my_medication.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                conn.setConnectTimeout(15000); // 連接超時為 15 秒
+                conn.setReadTimeout(15000); // 讀取超時為 15 秒
+                conn.setDoOutput(true);
+
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(postData.toString().getBytes("UTF-8"));
+                    os.flush();
+                }
+
+                int responseCode = conn.getResponseCode();
+                Log.d("Medicine_inquireFragment", "POST 響應碼: " + responseCode);
+
+                InputStream inputStream;
+                if (responseCode >= 200 && responseCode < 400) {
+                    inputStream = conn.getInputStream();
+                } else {
+                    inputStream = conn.getErrorStream();
+                }
+
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d("Medicine_inquireFragment", "POST 響應: " + response.toString());
+
+                    // 通知 Medicine_boxFragment 更新數據
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("data_updated", true);
+                    editor.apply();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("Medicine_inquireFragment", "讀取響應時出錯: " + e.getMessage());
+                }
+
+                conn.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("Medicine_inquireFragment", "發送 POST 請求時出錯: " + e.getMessage());
+            }
+        }).start();
+    }
+
 }
