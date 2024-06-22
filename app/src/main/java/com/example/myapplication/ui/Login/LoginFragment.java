@@ -1,9 +1,7 @@
 package com.example.myapplication.ui.Login;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -57,6 +55,9 @@ public class LoginFragment extends Fragment {
         final Button forgotPasswordButton = root.findViewById(R.id.forgot_password);
         final CheckBox rememberPasswordCheckBox = root.findViewById(R.id.remember_password);
 
+        // 在这里加载保存的用户名和密码
+        loadSavedCredentials(editText, passwordEditText, rememberPasswordCheckBox);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,42 +87,22 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    String username = editText.getText().toString();
-                    boolean rememberPassword = sharedPreferences.getBoolean("remember_password", false);
-                    if (rememberPassword) {
-                        showFillPasswordDialog(passwordEditText);
-                    }
-                }
-            }
-        });
-
         return root;
     }
 
-    // 顯示填充密碼的對話框
-    private void showFillPasswordDialog(EditText passwordEditText) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("填充密碼");
-        builder.setMessage("是否填充保存的密碼？");
-        builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String savedPassword = sharedPreferences.getString("密碼", "");
-                passwordEditText.setText(savedPassword);
-                dialog.dismiss();
-            }
-        });
-        builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
+    // 加载保存的用户名和密码
+    private void loadSavedCredentials(EditText editText, EditText passwordEditText, CheckBox rememberPasswordCheckBox) {
+        String savedUsername = sharedPreferences.getString("username", null);
+        String savedPassword = sharedPreferences.getString("password", null);
+        boolean rememberPassword = sharedPreferences.getBoolean("remember_password", false);
+
+        if (savedUsername != null) {
+            editText.setText(savedUsername);
+        }
+        if (savedPassword != null) {
+            passwordEditText.setText(savedPassword);
+        }
+        rememberPasswordCheckBox.setChecked(rememberPassword);
     }
 
     // 登入方法
@@ -193,15 +174,19 @@ public class LoginFragment extends Fragment {
 
         // 如果需要記住密碼，保存使用者名稱和密碼到偏好設置
         CheckBox rememberPasswordCheckBox = requireView().findViewById(R.id.remember_password);
+        editor = sharedPreferences.edit();
         if (rememberPasswordCheckBox.isChecked()) {
             sessionManager.login(username);
-            editor = sharedPreferences.edit();
-            editor.putString("使用者名稱", username);
-            editor.putString("密碼", password);
-            editor.putBoolean("記住密碼", true);
+            editor.putString("username", username);
+            editor.putString("password", password);
+            editor.putBoolean("remember_password", true);
             editor.apply();
         } else {
             sessionManager.login(username);
+            editor.remove("username");
+            editor.remove("password");
+            editor.putBoolean("remember_password", false);
+            editor.apply();
         }
     }
 

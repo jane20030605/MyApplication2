@@ -42,7 +42,7 @@
 
 	<string name="enter_email">請輸入您的電子郵件地址</string>
 	<string name="send_out">發送</string>
-	<string name="please_enter_email">請輸入您的電子郵件以接收重置密碼指示</string>
+	<string name="please_enter_email">請輸入您的電子郵件進行重置密碼</string>
 
 	<string name="Calender_thing">行事曆事件輸入</string>
 	<string name="thing_name">事件名稱</string>
@@ -88,6 +88,8 @@
 	<string name="Enter_comments">點選下方提交按鈕 \n 並輸入您的意見</string>
 	<string name="Submit_comments">提交意見</string>
 	<string name="Not_submit_comments">取消</string>
+
+
 
 	<string name="Emergency_contact_information">緊急聯絡人資料</string>
 	<string name="Name">姓名:</string>

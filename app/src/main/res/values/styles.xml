@@ -7,12 +7,6 @@
 		<item name="colorAccent">@color/colorAccent</item>
 	</style>
 
-	<style name="AppTheme.Night" parent="Theme.AppCompat.DayNight.DarkActionBar">
-		<item name="colorPrimary">@color/colorPrimary</item>
-		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-		<item name="colorAccent">@color/colorAccent</item>
-	</style>
-
 	<color name="colorPrimary">#03A9F4</color>
 	<color name="colorPrimaryDark">#3F51B5</color>
 	<color name="colorAccent">#FFEB3B</color>

@@ -158,7 +158,7 @@
 		tools:layout="@layout/fragment_forget_password" />
 	<fragment
 		android:id="@+id/videoFragment2"
-		android:name="com.example.myapplication.ui.Video.VideoFragment"
+		android:name="com.example.myapplication.ui.Memory.VideoFragment"
 		android:label="@string/menu_video"
 		tools:layout="@layout/fragment_video" />
 	<fragment

@@ -61,14 +61,22 @@ public class UserDataFragment extends Fragment {
 
         // 初始化Session管理器
         SessionManager sessionManager = new SessionManager(requireContext());
-        Log.d("UserDataFragment", "onCreateView: 初始化 sessionManager");
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         String account = sharedPreferences.getString("ACCOUNT", "");
+
+        // 檢查是否已登入，若未登入則導航到登入頁面
+        if (account == null || account.isEmpty()) {
+            Navigation.findNavController(root).navigate(R.id.nav_login); // 請確保在導航圖中有相應的登入頁面的ID
+            return root; // 返回視圖，避免進一步執行
+        }
+
+        // 當使用者已登入時，繼續執行
         Log.d("UserDataFragment", "登入帳戶為:" + account);
+
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"account\": \"" +  account +   "\"}");
+        RequestBody body = RequestBody.create(mediaType, "{\"account\": \"" + account + "\"}");
         Request request = new Request.Builder()
                 .url("http://100.96.1.3/api_update_userdata.php")
                 .method("POST", body)
@@ -77,42 +85,48 @@ public class UserDataFragment extends Fragment {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-               System.out.println("account is null ");
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "網路請求失敗", Toast.LENGTH_SHORT).show();
+                });
+                Log.e("UserDataFragment", "網路請求失敗", e);
             }
+
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-               if (!response.isSuccessful()){
-                   throw new IOException("Unexpected code "  + response);
-               }
-               String responseBody = response.body().string();
-               Log.e("Body:" , responseBody);
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+                String responseBody = response.body().string();
+                Log.e("Body:", responseBody);
 
-               try {
-                   JSONObject jsonObject = new JSONObject(responseBody);
-                   JSONObject data = jsonObject.getJSONObject("data");
-                   String name = data.getString("name");
-                   userUpdateEvent = new UserUpdateEvent();
-                   userUpdateEvent.setAccount(account);
-                   userUpdateEvent.setAddress(data.getString("address"));
-                   userUpdateEvent.setBirthday(data.getString("birthday"));
-                   userUpdateEvent.setMail(data.getString("mail"));
-                   userUpdateEvent.setTel(data.getString("tel"));
-                   userUpdateEvent.setName(data.getString("name"));
-                   // 記錄從args中獲取的數據
-                   Log.e("UserDataFragment", userUpdateEvent.getAllValue());
-                   // 將數據設置到視圖中
-                   binding.editTextAddress.setText(userUpdateEvent.getAddress());
-                   binding.editTextBirthday.setText(userUpdateEvent.getBirthday());
-                   binding.editTextMail.setText(userUpdateEvent.getMail());
-                   binding.editTextName.setText(userUpdateEvent.getName());
-                   binding.editTextTel.setText(userUpdateEvent.getTel());
-                   Log.d("UserDataFragment", "從 args 中獲取數據並設置到視圖中");
-               } catch (JSONException e) {
-                   Log.e("JSON Parsing Error: " , e.getMessage());
-                   throw new RuntimeException(e);
-               }
+                requireActivity().runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        userUpdateEvent = new UserUpdateEvent();
+                        userUpdateEvent.setAccount(account);
+                        userUpdateEvent.setAddress(data.getString("address"));
+                        userUpdateEvent.setBirthday(data.getString("birthday"));
+                        userUpdateEvent.setMail(data.getString("mail"));
+                        userUpdateEvent.setTel(data.getString("tel"));
+                        userUpdateEvent.setName(data.getString("name"));
+                        // 記錄從args中獲取的數據
+                        Log.e("UserDataFragment", userUpdateEvent.getAllValue());
+                        // 將數據設置到視圖中
+                        binding.editTextAddress.setText(userUpdateEvent.getAddress());
+                        binding.editTextBirthday.setText(userUpdateEvent.getBirthday());
+                        binding.editTextMail.setText(userUpdateEvent.getMail());
+                        binding.editTextName.setText(userUpdateEvent.getName());
+                        binding.editTextTel.setText(userUpdateEvent.getTel());
+                        Log.d("UserDataFragment", "從 args 中獲取數據並設置到視圖中");
+                    } catch (JSONException e) {
+                        Log.e("JSON Parsing Error:", e.getMessage());
+                        Toast.makeText(requireContext(), "解析數據失敗", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
+
         // 設置UI監聽器
         setupUIListeners();
         return root;
@@ -189,82 +203,81 @@ public class UserDataFragment extends Fragment {
 
         // 檢查是否有任何字段是空的
         if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || birthday.isEmpty()) {
-            Toast.makeText(requireContext(), "請填寫所有數據", Toast.LENGTH_SHORT).show();
-            Log.d("UserDataFragment", "saveEvent: 數據不完整");
+            Toast.makeText(requireContext(), "請填寫所有字段", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 檢查郵件地址格式是否正確
-        if (!isValidEmail(email)) {
-            Toast.makeText(requireContext(), "郵件地址格式不正確", Toast.LENGTH_SHORT).show();
-            Log.d("UserDataFragment", "saveEvent: 郵件地址格式不正確");
-            return;
-        }
-
-        // 設置UserUpdateEvent對象的數據
+        // 更新 userUpdateEvent 的數據
         userUpdateEvent.setName(username);
-        userUpdateEvent.setTel(phone);
         userUpdateEvent.setMail(email);
+        userUpdateEvent.setTel(phone);
         userUpdateEvent.setAddress(address);
         userUpdateEvent.setBirthday(birthday);
-        userUpdateEvent.setAccount(account);
 
-        // 創建要發送到API的JSON數據
-        String saveUserData = createEventDataJson(userUpdateEvent);
-        Log.d("UserDataFragment", "saveEvent: eventDataJson = " + saveUserData);
+        // 記錄所有更新的數據
+        Log.d("UserDataFragment", "保存的所有更新數據: " + userUpdateEvent.getAllValue());
 
-        // 調用API客戶端進行用戶數據更新
-        apiClient.updateUserData(saveUserData, new UserUpdateClient.UserDataUpdateCallback() {
+        // 將更新的數據上傳到伺服器
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, new JSONObject()
+                .put("account", account)
+                .put("name", username)
+                .put("mail", email)
+                .put("tel", phone)
+                .put("address", address)
+                .put("birthday", birthday)
+                .toString());
+        Request request = new Request.Builder()
+                .url("http://100.96.1.3/api_update_userdata.php")
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onSuccess(String message) {
-                Log.d("UserDataFragment", "onSuccess: " + message);
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "網路請求失敗", Toast.LENGTH_SHORT).show();
+                });
+                Log.e("UserDataFragment", "網路請求失敗", e);
             }
 
             @Override
-            public void onError(String message) {
-                Log.e("UserDataFragment", "onError: " + message);
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "更新失敗", Toast.LENGTH_SHORT).show();
+                    });
+                    throw new IOException("Unexpected code " + response);
+                }
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "資料更新成功", Toast.LENGTH_SHORT).show();
+                });
+                Log.d("UserDataFragment", "資料更新成功");
             }
         });
     }
 
-    private String createEventDataJson(UserUpdateEvent event) throws JSONException {
-        // 創建一個JSON對象，並將用戶數據放入其中
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", event.getName());
-        jsonObject.put("tel", event.getTel());
-        jsonObject.put("mail", event.getMail());
-        jsonObject.put("address", event.getAddress());
-        jsonObject.put("birthday", event.getBirthday());
-        jsonObject.put("account", event.getAccount());
-        return jsonObject.toString();  // 返回JSON字符串
-    }
-
-    private void showDatePickerDialog(TextView editText) {
-        // 獲取當前日期
+    private void showDatePickerDialog(TextView textView) {
         final Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, monthOfYear);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            String format = "yyyy-MM-dd";  // 設置日期格式
+            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.TAIWAN);  // 設置日期格式
+            textView.setText(sdf.format(calendar.getTime()));  // 顯示選擇的日期
+        };
 
-        // 創建並顯示日期選擇對話框
-        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
-                (view, year1, monthOfYear, dayOfMonth) -> {
-                    // 設置選中的日期到日曆中
-                    calendar.set(year1, monthOfYear, dayOfMonth);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    editText.setText(sdf.format(calendar.getTime()));  // 將日期設置到TextView中
-                }, year, month, day);
-        datePickerDialog.show();  // 顯示對話框
-    }
-
-    private boolean isValidEmail(CharSequence target) {
-        // 檢查郵件地址格式是否正確
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        new DatePickerDialog(requireContext(), dateSetListener,
+                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;  // 清理綁定
+        binding = null;
     }
 }

@@ -58,8 +58,20 @@ dependencies {
     //noinspection UseTomlInstead
     implementation ("com.android.volley:volley:1.2.1")
 
+    //noinspection UseTomlInstead
+    implementation ("com.google.android.exoplayer:exoplayer-core:2.19.1")
+    //noinspection UseTomlInstead
+    implementation ("com.google.android.exoplayer:exoplayer-ui:2.19.1")
+    //noinspection UseTomlInstead
+    implementation ("com.google.android.exoplayer:exoplayer-dash:2.19.1")
+    //noinspection UseTomlInstead
+    implementation ("com.google.android.exoplayer:exoplayer-hls:2.19.1")
+
+    //noinspection UseTomlInstead
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    //noinspection UseTomlInstead
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    //noinspection UseTomlInstead
     implementation ("com.squareup.picasso:picasso:2.71828")
 
     //noinspection UseTomlInstead

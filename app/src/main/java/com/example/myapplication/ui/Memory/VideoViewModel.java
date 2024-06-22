@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.Video;
+package com.example.myapplication.ui.Memory;
 
 import androidx.lifecycle.ViewModel;
 

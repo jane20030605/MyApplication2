@@ -7,6 +7,7 @@
 	android:layout_height="match_parent"
 	tools:context=".ui.Memory.MemoryFragment">
 
+	<!-- TextView 跌倒影像 -->
 	<TextView
 		android:id="@+id/text_memory_down"
 		android:layout_width="match_parent"
@@ -22,40 +23,38 @@
 		app:layout_constraintTop_toTopOf="parent"
 		tools:ignore="HardcodedText" />
 
-	<ImageView
-		android:id="@+id/imageView2"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="36dp"
-		android:layout_marginTop="12dp"
-		android:src="@drawable/down"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/text_memory_down" />
-
-	<androidx.core.widget.NestedScrollView
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_marginStart="8dp"
-		android:layout_marginTop="16dp"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/imageView2"
-		app:layout_constraintBottom_toTopOf="@+id/button_open_video">
-
-		<androidx.recyclerview.widget.RecyclerView
-			android:id="@+id/down_list"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content" />
-	</androidx.core.widget.NestedScrollView>
-
+	<!-- Button 開啟即時影像 -->
 	<Button
 		android:id="@+id/button_open_video"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="200dp"
+		android:layout_height="60dp"
 		android:text="開啟即時影像"
+		app:layout_constraintTop_toBottomOf="@id/text_memory_down"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintBottom_toBottomOf="parent"
-		android:layout_marginBottom="16dp"
-		tools:ignore="HardcodedText,MissingConstraints,NotSibling" />
+		tools:ignore="HardcodedText,MissingConstraints"
+		tools:layout_editor_absoluteY="667dp" />
+
+	<!-- SwipeRefreshLayout 元件 -->
+	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+		android:id="@+id/swipe_refresh_layout_memory"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintTop_toBottomOf="@id/button_open_video"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent">
+
+		<androidx.core.widget.NestedScrollView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/down_list"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</androidx.core.widget.NestedScrollView>
+
+	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

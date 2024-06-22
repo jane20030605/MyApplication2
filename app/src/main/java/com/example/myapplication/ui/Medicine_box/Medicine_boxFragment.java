@@ -159,9 +159,9 @@ public class Medicine_boxFragment extends Fragment {
                     String atccode = medication.getString("atccode");
                     String drugName = medication.getString("drug_name");
                     String manufacturer = medication.getString("manufacturer");
-                    String imageUrl = IMAGE_BASE_URL + atccode + ".JPG";
                     String timee = medication.getString("timee");
                     String num = medication.getString("num");
+                    String imageUrl = IMAGE_BASE_URL + atccode + ".JPG";
 
                     // 檢查是否已經存在相同 atccode 的藥物
                     boolean found = false;

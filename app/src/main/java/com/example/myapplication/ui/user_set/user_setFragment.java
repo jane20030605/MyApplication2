@@ -54,10 +54,8 @@ public class user_setFragment extends Fragment {
         final Button Button_guidedTour = binding.ButtonGuidedTour;
         final Switch Switch_notification = binding.SwitchNotification;
 
-        // 读取当前模式并设置初始选择
+        // 设置初始的日夜模式选择
         int savedNightMode = getSavedNightMode();
-        AppCompatDelegate.setDefaultNightMode(savedNightMode);
-
         if (savedNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
             RadioButton_nightMode.setChecked(true);
         } else {
@@ -66,11 +64,17 @@ public class user_setFragment extends Fragment {
 
         // 设置RadioButton的点击事件
         RadioButton_dayMode.setOnClickListener(v -> {
-            saveNightModeSetting(AppCompatDelegate.MODE_NIGHT_NO);
+            if (savedNightMode != AppCompatDelegate.MODE_NIGHT_NO) {
+                saveNightModeSetting(AppCompatDelegate.MODE_NIGHT_NO);
+                setDayNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
         });
 
         RadioButton_nightMode.setOnClickListener(v -> {
-            saveNightModeSetting(AppCompatDelegate.MODE_NIGHT_YES);
+            if (savedNightMode != AppCompatDelegate.MODE_NIGHT_YES) {
+                saveNightModeSetting(AppCompatDelegate.MODE_NIGHT_YES);
+                setDayNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
         });
 
         // 读取当前通知状态并设置初始选择
@@ -91,16 +95,12 @@ public class user_setFragment extends Fragment {
             }
 
             // 显示Toast消息
-            if (isChecked) {
-                Toast.makeText(requireContext(), "通知已啟用", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(requireContext(), "通知已關閉", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(requireContext(), isChecked ? "通知已启用" : "通知已关闭", Toast.LENGTH_SHORT).show();
         });
 
         // 用户反馈按钮的点击事件
         Button_feedback.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "進行意見反饋", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "进行意见反馈", Toast.LENGTH_SHORT).show();
             Navigation.findNavController(v).navigate(R.id.nav_feedback);
         });
 
@@ -127,6 +127,12 @@ public class user_setFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("night_mode", nightMode);
         editor.apply();
+    }
+
+    // 设置日夜模式
+    private void setDayNightMode(int nightMode) {
+        AppCompatDelegate.setDefaultNightMode(nightMode);
+        requireActivity().recreate();
     }
 
     // 读取保存的夜间模式设置，默认为跟随系统

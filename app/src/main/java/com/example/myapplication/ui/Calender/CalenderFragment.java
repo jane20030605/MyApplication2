@@ -149,5 +149,6 @@ public class CalenderFragment extends Fragment implements CalenderThingFragment.
 
     private void navigateToLogin() {
         Toast.makeText(getContext(), "登入後即可查看行事曆事件\n請先進行登入", Toast.LENGTH_SHORT).show();
+
     }
 }
