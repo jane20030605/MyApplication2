@@ -16,4 +16,5 @@ public class MemoryViewModel extends ViewModel {
     public LiveData<String> getText() {
         return mText;
     }
+
 }

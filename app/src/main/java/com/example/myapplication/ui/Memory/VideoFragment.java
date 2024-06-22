@@ -1,130 +1,197 @@
 package com.example.myapplication.ui.Memory;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapplication.databinding.FragmentVideoBinding;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.example.myapplication.R;
 
-public class VideoFragment extends Fragment {
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
+
     private static final String TAG = "VideoFragment";
-    private FragmentVideoBinding binding;
-    private ExoPlayer player;
-    private ConnectivityManager.NetworkCallback networkCallback;
 
-    public static VideoFragment newInstance() {
-        return new VideoFragment();
+    private SurfaceView surfaceView;
+    private SurfaceHolder surfaceHolder;
+    private boolean running = true;
+
+    private String videoUrl = "http://26.136.217.149:5000/video_feed/";
+    private HttpURLConnection urlConnection;
+    private InputStream inputStream;
+    private Bitmap bitmap;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // 載入此片段的佈局檔案
+        View view = inflater.inflate(R.layout.fragment_video, container, false);
+
+        // 尋找 SurfaceView 並設置 SurfaceHolder 的回調
+        surfaceView = view.findViewById(R.id.surfaceView);
+        surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.addCallback(this);
+
+        return view;
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: 正在加載佈局");
-        binding = FragmentVideoBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    public void surfaceCreated(@NonNull SurfaceHolder holder) {
+        // Surface 創建後，啟動後台任務來獲取並顯示視頻幀
+        new VideoStreamTask().execute(videoUrl);
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated: 正在初始化 ViewModel");
-        VideoViewModel mViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
-
-        // 初始化 ExoPlayer
-        initializePlayer();
-
-        // 監聽網路狀態
-        registerNetworkCallback();
+    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+        // Surface 大小改變時，如果需要處理，請在此處處理
     }
 
-    private void initializePlayer() {
-        Log.d(TAG, "initializePlayer: 正在初始化 ExoPlayer");
-        player = new ExoPlayer.Builder(requireContext()).build();
-        PlayerView playerView = binding.videoView;
-        playerView.setPlayer(player);
-
-        // 創建自定義的視訊源
-        CustomVideoSource videoSource = new CustomVideoSource();
-        player.setMediaSource(videoSource.buildMediaSource());
-        player.prepare();
-        player.play();
-        Log.d(TAG, "initializePlayer: 播放器已啟動");
-    }
-
-
-    @SuppressLint("ObsoleteSdkInt")
-    private void registerNetworkCallback() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            ConnectivityManager connectivityManager = (ConnectivityManager) requireContext()
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkRequest request = new NetworkRequest.Builder()
-                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    .build();
-
-            networkCallback = new ConnectivityManager.NetworkCallback() {
-                @Override
-                public void onLost(@NonNull Network network) {
-                    super.onLost(network);
-                    Log.d(TAG, "onLost: 網路連接已中斷");
-                    // 在此處理網路連接中斷的情況，可以暫停播放器或顯示錯誤訊息
-                }
-
-                @Override
-                public void onUnavailable() {
-                    super.onUnavailable();
-                    Log.d(TAG, "onUnavailable: 網路不可用");
-                    // 在此處理網路不可用的情況，可以暫停播放器或顯示錯誤訊息
-                }
-
-                @Override
-                public void onAvailable(@NonNull Network network) {
-                    super.onAvailable(network);
-                    Log.d(TAG, "onAvailable: 網路已連接");
-                    // 在此處理網路重新連接的情況，可以恢復播放器或隱藏錯誤訊息
-                }
-            };
-
-            connectivityManager.registerNetworkCallback(request, networkCallback);
+    @Override
+    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+        // Surface 被銷毀時，停止後台任務並釋放資源
+        running = false;
+        if (urlConnection != null) {
+            urlConnection.disconnect();
+        }
+        try {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: 正在釋放播放器");
-        if (player != null) {
-            player.release();
-            player = null;
-            Log.d(TAG, "onStop: 播放器已釋放");
+    private class VideoStreamTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            int retryCount = 0;
+            final int maxRetries = 3;
+
+            while (retryCount < maxRetries && running && !isCancelled()) {
+                try {
+                    // 打開與視頻源URL的連接
+                    URL url = new URL(params[0]);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Connection", "close"); // 避免持久連接
+                    inputStream = urlConnection.getInputStream();
+
+                    Log.d(TAG, "doInBackground: Connected to video stream.");
+
+                    // 持續讀取視頻幀直到停止
+                    while (running) {
+                        if (isCancelled()) {
+                            break;
+                        }
+
+                        // 從輸入流解碼位圖
+                        bitmap = readNextFrame(inputStream);
+                        if (bitmap != null) {
+                            // 在 SurfaceView 上繪製位圖
+                            drawOnSurfaceView(bitmap);
+                        }
+                    }
+
+                } catch (IOException e) {
+                    Log.e(TAG, "doInBackground: Error reading stream: " + e.getMessage());
+                    e.printStackTrace();
+
+                    retryCount++;
+                    Log.d(TAG, "doInBackground: Retrying... Attempt " + retryCount);
+
+                    // Delay before retrying
+                    try {
+                        Thread.sleep(1000); // 1 second delay
+                    } catch (InterruptedException ie) {
+                        ie.printStackTrace();
+                    }
+
+                } finally {
+                    // Close connection and release resources
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    try {
+                        if (inputStream != null) {
+                            inputStream.close();
+                            Log.d(TAG, "doInBackground: InputStream closed.");
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "doInBackground: Error closing inputStream: " + e.getMessage());
+                    }
+                }
+            }
+
+            return null;
         }
 
-        // 解除網路狀態監聽器
-        unregisterNetworkCallback();
-    }
+        private Bitmap readNextFrame(InputStream inputStream) throws IOException {
+            Bitmap frameBitmap = null;
+            boolean foundBoundary = false;
 
-    @SuppressLint("ObsoleteSdkInt")
-    private void unregisterNetworkCallback() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            ConnectivityManager connectivityManager = (ConnectivityManager) requireContext()
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (networkCallback != null) {
-                connectivityManager.unregisterNetworkCallback(networkCallback);
-                networkCallback = null;
+            // 用來標記分界線的字符串
+            String boundary = "--frame";
+
+            // 讀取每一個部分直到找到下一個分界線
+            while (!foundBoundary && running) {
+                String line = readLine(inputStream);
+
+                // 找到分界線，開始處理下一幀圖像
+                if (line.startsWith(boundary)) {
+                    // 讀取圖像數據，這裡假設是 jpeg 格式
+                    StringBuilder imageData = new StringBuilder();
+                    while ((line = readLine(inputStream)) != null && !line.startsWith(boundary)) {
+                        imageData.append(line).append("\r\n");
+                    }
+
+                    // 將數據轉換為 Bitmap
+                    byte[] imageBytes = imageData.toString().getBytes();
+                    frameBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                }
+            }
+
+            return frameBitmap;
+        }
+
+        private String readLine(InputStream inputStream) throws IOException {
+            StringBuilder stringBuilder = new StringBuilder();
+            int value;
+            while ((value = inputStream.read()) != -1) {
+                char c = (char) value;
+                if (c == '\n') {
+                    break;
+                }
+                stringBuilder.append(c);
+            }
+            return stringBuilder.toString().trim();
+        }
+
+        private void drawOnSurfaceView(Bitmap bitmap) {
+            try {
+                // 鎖定 SurfaceView 的畫布並繪製位圖
+                Canvas canvas = surfaceHolder.lockCanvas();
+                if (canvas != null) {
+                    canvas.drawBitmap(bitmap, 0, 0, null);
+                    surfaceHolder.unlockCanvasAndPost(canvas);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
