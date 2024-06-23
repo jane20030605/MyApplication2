@@ -268,7 +268,7 @@ public class Medicine_boxFragment extends Fragment {
         }
     }
 
-    class MedicineBoxAdapter extends RecyclerView.Adapter<MedicineBoxAdapter.ViewHolder> {
+    public class MedicineBoxAdapter extends RecyclerView.Adapter<MedicineBoxAdapter.ViewHolder> {
         private final List<Medicine> medicineList;
 
         public MedicineBoxAdapter(List<Medicine> medicineList) {
@@ -306,7 +306,13 @@ public class Medicine_boxFragment extends Fragment {
             }
 
             public void bind(Medicine medicine) {
-                Picasso.get().load(medicine.getImageUrl()).into(imageView);
+                Picasso.get()
+                        .load(medicine.getImageUrl())
+                        .resize(200, 200) // 調整為適合你UI的尺寸
+                        .centerCrop()
+                        .placeholder(R.drawable.loding) // 添加佔位圖
+                        .error(R.drawable.error) // 添加錯誤圖像
+                        .into(imageView);
                 textView.setText(medicine.getName());
             }
 
@@ -318,6 +324,7 @@ public class Medicine_boxFragment extends Fragment {
             }
         }
     }
+
 
     private void showMedicineDetailDialog(Medicine medicine) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

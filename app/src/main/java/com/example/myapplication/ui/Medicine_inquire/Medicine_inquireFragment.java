@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -33,12 +34,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 
 public class Medicine_inquireFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private MedicineInquireAdapter adapter;
     private List<MedicineInquire> medicineList;
+    private Picasso picasso;
 
     public Medicine_inquireFragment() {
         // 必須的空公共構造函數
@@ -62,6 +68,19 @@ public class Medicine_inquireFragment extends Fragment {
 
         // 初始化空的藥品列表
         medicineList = new ArrayList<>();
+
+        // 配置Picasso快取
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cache(new Cache(Objects.requireNonNull(getContext()).getCacheDir(), 10 * 1024 * 1024)) // 10 MB快取
+                .build();
+
+        Picasso.Builder builder = new Picasso.Builder(getContext());
+        builder.downloader(new OkHttp3Downloader(client));
+        Picasso builtPicasso = builder.build();
+
+        // 使用builder創建的Picasso實例
+        adapter = new MedicineInquireAdapter(medicineList);
+        recyclerView.setAdapter(adapter);
 
         // 檢查參數中是否包含查詢結果
         if (getArguments() != null) {
@@ -216,7 +235,7 @@ public class Medicine_inquireFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             // 綁定數據到 ViewHolder
             MedicineInquire medicine = medicineList.get(position);
-            holder.bind(medicine);
+            holder.bind(medicine, picasso);
         }
 
         @Override
@@ -238,14 +257,16 @@ public class Medicine_inquireFragment extends Fragment {
                 itemView.setOnClickListener(this);
             }
 
-            public void bind(MedicineInquire medicine) {
+            public void bind(MedicineInquire medicine, Picasso picasso) {
                 // 將數據綁定到視圖
                 nameTextView.setText(medicine.getName());
-                if (!medicine.getImageUrl().isEmpty()) {
-                    Picasso.get().load(medicine.getImageUrl()).into(imageView);
-                } else {
-                    imageView.setImageResource(R.drawable.medicine_1); // 使用佔位符圖片
-                }
+                Picasso.get()
+                        .load(medicine.getImageUrl())
+                        .resize(200, 200) // 調整為適合你UI的尺寸
+                        .centerCrop()
+                        .placeholder(R.drawable.loding) // 添加佔位圖
+                        .error(R.drawable.error) // 添加錯誤圖像
+                        .into(imageView);
             }
 
             @Override

@@ -1,9 +1,9 @@
 package com.example.myapplication.ui.Memory;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,8 +19,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.R;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -29,8 +31,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
     private static final String TAG = "VideoFragment";
 
     private SurfaceHolder surfaceHolder;
-    private boolean running = true;
-
+    private boolean running = true; // 記錄視頻流是否運行
     private HttpURLConnection urlConnection;
     private InputStream inputStream;
 
@@ -50,19 +51,136 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        // Surface 創建後，啟動後台任務來獲取並顯示視頻幀
+        // 當 Surface 創建後，啟動後台任務來獲取並顯示視頻幀
         String videoUrl = "http://100.96.1.3:5000/video_feed/";
         new VideoStreamTask().execute(videoUrl);
     }
 
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-        // Surface 大小改變時，如果需要處理，請在此處處理
+        // 可根據需要處理 Surface 大小改變事件
     }
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-        // Surface 被銷毀時，停止後台任務並釋放資源
+        // 當 Surface 被銷毀時，停止後台任務並釋放資源
+        running = false;
+        if (urlConnection != null) {
+            urlConnection.disconnect();
+        }
+        try {
+            if (inputStream != null) {
+                inputStream.close();
+                Log.d(TAG, "surfaceDestroyed: InputStream 關閉.");
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "surfaceDestroyed: 關閉 InputStream 時出現錯誤: " + e.getMessage());
+        }
+    }
+
+    private class VideoStreamTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                // 打開與視頻源 URL 的連接
+                URL url = new URL(params[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestProperty("Connection", "close"); // 避免持久連接
+                urlConnection.setConnectTimeout(10000); // 設置連接超時為10秒
+                urlConnection.setReadTimeout(10000); // 設置讀取超時為10秒
+                inputStream = urlConnection.getInputStream();
+
+                Log.d(TAG, "doInBackground: 連接到視頻流成功.");
+
+                // 讀取視頻幀
+                readVideoStream(inputStream);
+
+            } catch (IOException e) {
+                Log.e(TAG, "doInBackground: 連接到視頻流時出現錯誤: " + e.getMessage());
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                        Log.d(TAG, "doInBackground: InputStream 關閉.");
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "doInBackground: 關閉 InputStream 時出現錯誤: " + e.getMessage());
+                }
+            }
+            return null;
+        }
+
+        private void readVideoStream(InputStream inputStream) {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                String boundary = "--frame";
+
+                // 持續讀取直到結束或運行標誌為 false
+                while (running && (line = reader.readLine()) != null) {
+                    if (line.startsWith(boundary)) {
+                        // 讀取圖像數據直到下一個分界線
+                        StringBuilder imageData = new StringBuilder();
+                        while ((line = reader.readLine()) != null && !line.startsWith(boundary)) {
+                            imageData.append(line).append("\r\n");
+                        }
+
+                        // 將圖像數據轉換為 Bitmap
+                        byte[] imageBytes = imageData.toString().getBytes();
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+                        // 在 SurfaceView 上繪製位圖
+                        if (bitmap != null) {
+                            drawOnSurfaceView(bitmap);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "readVideoStream: 讀取視頻流時出現錯誤: " + e.getMessage());
+            }
+        }
+
+        private void drawOnSurfaceView(Bitmap bitmap) {
+            try {
+                Canvas canvas = surfaceHolder.lockCanvas();
+                if (canvas != null) {
+                    // 調整位圖大小
+                    int surfaceWidth = canvas.getWidth();
+                    int surfaceHeight = canvas.getHeight();
+                    int videoWidth = bitmap.getWidth();
+                    int videoHeight = bitmap.getHeight();
+
+                    // 計算縮放比例
+                    float scaleX = (float) surfaceWidth / videoWidth;
+                    float scaleY = (float) surfaceHeight / videoHeight;
+
+                    Matrix matrix = new Matrix();
+                    matrix.postScale(scaleX, scaleY);
+
+                    // 創建縮放後的位圖
+                    Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, videoWidth, videoHeight, matrix, true);
+
+                    // 在畫布上繪製位圖
+                    canvas.drawBitmap(scaledBitmap, 0, 0, null);
+
+                    // 解鎖並提交畫布
+                    surfaceHolder.unlockCanvasAndPost(canvas);
+
+                    Log.d(TAG, "drawOnSurfaceView: 位圖繪製完成.");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "drawOnSurfaceView: 在 SurfaceView 上繪製位圖時出現錯誤: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         running = false;
         if (urlConnection != null) {
             urlConnection.disconnect();
@@ -73,126 +191,6 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class VideoStreamTask extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... params) {
-            int retryCount = 0;
-            final int maxRetries = 3;
-
-            while (retryCount < maxRetries && running && !isCancelled()) {
-                try {
-                    // 打開與視頻源URL的連接
-                    URL url = new URL(params[0]);
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestProperty("Connection", "close"); // 避免持久連接
-                    inputStream = urlConnection.getInputStream();
-
-                    Log.d(TAG, "doInBackground: Connected to video stream.");
-
-                    // 持續讀取視頻幀直到停止
-                    while (running) {
-                        if (isCancelled()) {
-                            break;
-                        }
-
-                        // 從輸入流解碼位圖
-                        Bitmap bitmap = readNextFrame(inputStream);
-                        if (bitmap != null) {
-                            // 在 SurfaceView 上繪製位圖
-                            drawOnSurfaceView(bitmap);
-                        }
-                    }
-
-                } catch (IOException e) {
-                    Log.e(TAG, "doInBackground: Error reading stream: " + e.getMessage());
-                    e.printStackTrace();
-
-                    retryCount++;
-                    Log.d(TAG, "doInBackground: Retrying... Attempt " + retryCount);
-
-                    // Delay before retrying
-                    try {
-                        Thread.sleep(1000); // 1 second delay
-                    } catch (InterruptedException ie) {
-                        ie.printStackTrace();
-                    }
-
-                } finally {
-                    // Close connection and release resources
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                    try {
-                        if (inputStream != null) {
-                            inputStream.close();
-                            Log.d(TAG, "doInBackground: InputStream closed.");
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, "doInBackground: Error closing inputStream: " + e.getMessage());
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private Bitmap readNextFrame(InputStream inputStream) throws IOException {
-            Bitmap frameBitmap = null;
-            boolean foundBoundary = false;
-
-            // 用來標記分界線的字符串
-            String boundary = "--frame";
-
-            // 讀取每一個部分直到找到下一個分界線
-            while (!foundBoundary && running) {
-                String line = readLine(inputStream);
-
-                // 找到分界線，開始處理下一幀圖像
-                if (line.startsWith(boundary)) {
-                    // 讀取圖像數據，這裡假設是 jpeg 格式
-                    StringBuilder imageData = new StringBuilder();
-                    while ((line = readLine(inputStream)) != null && !line.startsWith(boundary)) {
-                        imageData.append(line).append("\r\n");
-                    }
-
-                    // 將數據轉換為 Bitmap
-                    byte[] imageBytes = imageData.toString().getBytes();
-                    frameBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                }
-            }
-
-            return frameBitmap;
-        }
-
-        private String readLine(InputStream inputStream) throws IOException {
-            StringBuilder stringBuilder = new StringBuilder();
-            int value;
-            while ((value = inputStream.read()) != -1) {
-                char c = (char) value;
-                if (c == '\n') {
-                    break;
-                }
-                stringBuilder.append(c);
-            }
-            return stringBuilder.toString().trim();
-        }
-
-        private void drawOnSurfaceView(Bitmap bitmap) {
-            try {
-                // 鎖定 SurfaceView 的畫布並繪製位圖
-                Canvas canvas = surfaceHolder.lockCanvas();
-                if (canvas != null) {
-                    canvas.drawBitmap(bitmap, 0, 0, null);
-                    surfaceHolder.unlockCanvasAndPost(canvas);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 }

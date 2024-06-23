@@ -15,17 +15,25 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 
 public class Medicine_allboxFragment extends Fragment {
 
@@ -34,7 +42,7 @@ public class Medicine_allboxFragment extends Fragment {
     private List<MedicineAllbox> medicineList;
 
     private static final String MEDICINE_ALLBOX_URL = "http://100.96.1.3/api_medication.php";
-    private static final String IMAGE_BASE_URL = "http://100.96.1.3/medimage/"; // 使用你的本地服务器URL
+    private static final String IMAGE_BASE_URL = "http://100.96.1.3/medimage/"; // 使用你的本地伺服器URL
 
     public static Medicine_allboxFragment newInstance() {
         return new Medicine_allboxFragment();
@@ -52,6 +60,19 @@ public class Medicine_allboxFragment extends Fragment {
         // 初始化空的藥品列表
         medicineList = new ArrayList<>();
 
+        // 配置Picasso快取
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cache(new Cache(Objects.requireNonNull(getContext()).getCacheDir(), 10 * 1024 * 1024)) // 10 MB快取
+                .build();
+
+        Picasso.Builder builder = new Picasso.Builder(getContext());
+        builder.downloader(new OkHttp3Downloader(client));
+        Picasso builtPicasso = builder.build();
+
+        // 使用builder創建的Picasso實例
+        adapter = new MedicineAllboxAdapter(medicineList, builtPicasso);
+        recyclerView.setAdapter(adapter);
+
         // 調用方法從網絡獲取藥品數據
         fetchMedicineData();
 
@@ -64,80 +85,129 @@ public class Medicine_allboxFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    // 創建URL對象
-                    URL url = new URL(MEDICINE_ALLBOX_URL);
+                    // 嘗試從本地快取讀取數據
+                    String cachedData = readFromCache();
+                    if (cachedData != null) {
+                        parseAndLoadData(cachedData);
+                    } else {
+                        // 創建URL對象
+                        URL url = new URL(MEDICINE_ALLBOX_URL);
 
-                    // 打開連接
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        // 打開連接
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-                    // 設置請求方法為GET
-                    connection.setRequestMethod("GET");
+                        // 設置請求方法為GET
+                        connection.setRequestMethod("GET");
 
-                    // 設置請求屬性
-                    connection.setRequestProperty("Content-Type", "application/json; utf-8");
-                    connection.setRequestProperty("Accept", "application/json");
+                        // 設置請求屬性
+                        connection.setRequestProperty("Content-Type", "application/json; utf-8");
+                        connection.setRequestProperty("Accept", "application/json");
 
-                    // 獲取響應代碼
-                    int responseCode = connection.getResponseCode();
+                        // 獲取響應代碼
+                        int responseCode = connection.getResponseCode();
 
-                    if (responseCode == HttpURLConnection.HTTP_OK) { // 成功回應
-                        // 讀取響應
-                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        String inputLine;
-                        StringBuilder content = new StringBuilder();
+                        if (responseCode == HttpURLConnection.HTTP_OK) { // 成功回應
+                            // 讀取響應
+                            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            String inputLine;
+                            StringBuilder content = new StringBuilder();
 
-                        while ((inputLine = in.readLine()) != null) {
-                            content.append(inputLine);
-                        }
-
-                        // 關閉BufferedReader
-                        in.close();
-
-                        // 將響應內容轉換為JSON數組
-                        JSONArray jsonResponse = new JSONArray(content.toString());
-
-                        // 遍歷JSON數組並添加到藥品列表中
-                        for (int i = 0; i < jsonResponse.length(); i++) {
-                            JSONObject medication = jsonResponse.getJSONObject(i);
-                            int medId = medication.getInt("med_id"); // 獲取藥物ID
-                            MedicineAllbox medicine = new MedicineAllbox(
-                                    medId,
-                                    medication.getString("drug_name"),
-                                    IMAGE_BASE_URL + medication.getString("atccode") + ".JPG", // 動態設置圖片URL
-                                    medication.getString("atccode"),
-                                    medication.getString("manufacturer"),
-                                    medication.getString("indications"),
-                                    medication.getString("shape"),
-                                    medication.getString("color"),
-                                    medication.getString("mark"),
-                                    medication.getString("nick"),
-                                    medication.getString("strip")
-                            );
-                            medicineList.add(medicine);
-                        }
-
-                        // 在UI線程上更新RecyclerView
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // 初始化並設置 Adapter
-                                adapter = new MedicineAllboxAdapter(medicineList);
-                                recyclerView.setAdapter(adapter);
+                            while ((inputLine = in.readLine()) != null) {
+                                content.append(inputLine);
                             }
-                        });
 
-                    } else { // 錯誤回應
-                        Log.e("Medicine_allboxFragment", "GET request failed. Response Code: " + responseCode);
+                            // 關閉BufferedReader
+                            in.close();
+
+                            String jsonResponse = content.toString();
+
+                            // 快取數據到本地存儲
+                            writeToCache(jsonResponse);
+
+                            // 解析並加載數據
+                            parseAndLoadData(jsonResponse);
+                        } else { // 錯誤回應
+                            Log.e("Medicine_allboxFragment", "GET request failed. Response Code: " + responseCode);
+                        }
+
+                        // 斷開連接
+                        connection.disconnect();
                     }
-
-                    // 斷開連接
-                    connection.disconnect();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+    }
+
+    // 將JSON數據寫入快取
+    private void writeToCache(String data) {
+        try {
+            File cacheFile = new File(Objects.requireNonNull(getContext()).getCacheDir(), "medicine_cache.json");
+            FileWriter writer = new FileWriter(cacheFile);
+            writer.write(data);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 從快取中讀取JSON數據
+    private String readFromCache() {
+        try {
+            File cacheFile = new File(Objects.requireNonNull(getContext()).getCacheDir(), "medicine_cache.json");
+            if (cacheFile.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(cacheFile));
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line);
+                }
+                reader.close();
+                return content.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // 解析並加載數據到RecyclerView
+    private void parseAndLoadData(String data) {
+        try {
+            // 將響應內容轉換為JSON數組
+            JSONArray jsonResponse = new JSONArray(data);
+
+            // 遍歷JSON數組並添加到藥品列表中
+            for (int i = 0; i < jsonResponse.length(); i++) {
+                JSONObject medication = jsonResponse.getJSONObject(i);
+                int medId = medication.getInt("med_id"); // 獲取藥物ID
+                MedicineAllbox medicine = new MedicineAllbox(
+                        medId,
+                        medication.getString("drug_name"),
+                        IMAGE_BASE_URL + medication.getString("atccode") + ".JPG", // 動態設置圖片URL
+                        medication.getString("atccode"),
+                        medication.getString("manufacturer"),
+                        medication.getString("indications"),
+                        medication.getString("shape"),
+                        medication.getString("color"),
+                        medication.getString("mark"),
+                        medication.getString("nick"),
+                        medication.getString("strip")
+                );
+                medicineList.add(medicine);
+            }
+
+            // 在UI線程上更新RecyclerView
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 靜態內部類，表示一個藥品項目
@@ -217,9 +287,11 @@ public class Medicine_allboxFragment extends Fragment {
     // RecyclerView適配器類
     class MedicineAllboxAdapter extends RecyclerView.Adapter<MedicineAllboxAdapter.ViewHolder> {
         private final List<MedicineAllbox> medicineList;
+        private final Picasso picasso; // 添加Picasso實例變量
 
-        public MedicineAllboxAdapter(List<MedicineAllbox> medicineList) {
+        public MedicineAllboxAdapter(List<MedicineAllbox> medicineList, Picasso picasso) {
             this.medicineList = medicineList;
+            this.picasso = picasso;
         }
 
         @NonNull
@@ -233,7 +305,7 @@ public class Medicine_allboxFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             MedicineAllbox medicine = medicineList.get(position);
-            holder.bind(medicine);
+            holder.bind(medicine, picasso);
         }
 
         @Override
@@ -253,17 +325,16 @@ public class Medicine_allboxFragment extends Fragment {
                 itemView.setOnClickListener(this);
             }
 
-            public void bind(MedicineAllbox medicine) {
+            public void bind(MedicineAllbox medicine, Picasso picasso) {
+                // 將數據綁定到視圖
                 nameTextView.setText(medicine.getName());
-                if (!medicine.getImageUrl().isEmpty()) {
-                    Picasso.get()
-                            .load(medicine.getImageUrl())
-                            .resize(400, 400) // 設置圖片的寬高像素大小
-                            .centerInside() // 縮放圖片並在ImageView中央顯示
-                            .into(imageView);
-                } else {
-                    imageView.setImageResource(R.drawable.medicine_1); // 使用佔位符圖片
-                }
+                Picasso.get()
+                        .load(medicine.getImageUrl())
+                        .resize(200, 200) // 調整為適合你UI的尺寸
+                        .centerCrop()
+                        .placeholder(R.drawable.loding) // 添加佔位圖
+                        .error(R.drawable.error) // 添加錯誤圖像
+                        .into(imageView);
             }
 
             @Override
@@ -304,4 +375,3 @@ public class Medicine_allboxFragment extends Fragment {
         }
     }
 }
-
