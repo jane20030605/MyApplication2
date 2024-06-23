@@ -133,7 +133,10 @@ public class MedicineFragment extends Fragment {
 
     private void performMedicationQuery(String licenseNumber, String chineseName, String shape,
                                         String notch, String color, String symbol, String mark) {
-        new MedicationQueryTask(licenseNumber, chineseName, shape, notch, color, symbol, mark).execute();
+        String notchEnglish = mapChineseToEnglish(notch);
+        String symbolEnglish = mapChineseToEnglish(symbol);
+
+        new MedicationQueryTask(licenseNumber, chineseName, shape, notchEnglish, color, symbolEnglish, mark).execute();
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -177,8 +180,8 @@ public class MedicineFragment extends Fragment {
                 requestData.put("s_shape", shape);
                 requestData.put("s_color", color);
                 requestData.put("s_mark", mark);
-                requestData.put("s_nick", notch);
-                requestData.put("s_strip", symbol);
+                requestData.put("s_nick", symbol);
+                requestData.put("s_strip", notch );
 
                 Log.d(TAG, "執行藥物查詢：傳遞的數據：" + requestData.toString());
             } catch (JSONException e) {
@@ -244,6 +247,20 @@ public class MedicineFragment extends Fragment {
                 Log.e(TAG, "執行藥物查詢：解析失敗: " + e.getMessage(), e);
                 Toast.makeText(requireContext(), "查詢失敗，請稍後再試", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+    private String mapChineseToEnglish(String chinese) {
+        switch (chinese) {
+            case "無":
+                return "no";
+            case "直線":
+                return "one";
+            case "十字":
+                return "ten";
+            case "有":
+                return "yes";
+            default:
+                return ""; // 或者根据需要处理未知情况的默认值
         }
     }
 }

@@ -3,18 +3,16 @@ package com.example.myapplication.ui.Memory;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import java.util.List;
 
 public class MemoryViewModel extends ViewModel {
+    private final MutableLiveData<List<Memory>> memories = new MutableLiveData<>();
 
-    private final MutableLiveData<String> mText;
-
-    public MemoryViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is Memory fragment");
+    public LiveData<List<Memory>> getMemories() {
+        return memories;
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void setMemories(List<Memory> memoryList) {
+        memories.setValue(memoryList);
     }
-
 }

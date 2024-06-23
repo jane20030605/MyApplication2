@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.Memory;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -27,14 +28,11 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
 
     private static final String TAG = "VideoFragment";
 
-    private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
     private boolean running = true;
 
-    private String videoUrl = "http://26.136.217.149:5000/video_feed/";
     private HttpURLConnection urlConnection;
     private InputStream inputStream;
-    private Bitmap bitmap;
 
     @Nullable
     @Override
@@ -43,7 +41,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
 
         // 尋找 SurfaceView 並設置 SurfaceHolder 的回調
-        surfaceView = view.findViewById(R.id.surfaceView);
+        SurfaceView surfaceView = view.findViewById(R.id.surfaceView);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
 
@@ -53,6 +51,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
         // Surface 創建後，啟動後台任務來獲取並顯示視頻幀
+        String videoUrl = "http://100.96.1.3:5000/video_feed/";
         new VideoStreamTask().execute(videoUrl);
     }
 
@@ -77,6 +76,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class VideoStreamTask extends AsyncTask<String, Void, Void> {
 
         @Override
@@ -101,7 +101,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
                         }
 
                         // 從輸入流解碼位圖
-                        bitmap = readNextFrame(inputStream);
+                        Bitmap bitmap = readNextFrame(inputStream);
                         if (bitmap != null) {
                             // 在 SurfaceView 上繪製位圖
                             drawOnSurfaceView(bitmap);

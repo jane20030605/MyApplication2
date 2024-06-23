@@ -144,7 +144,7 @@ public class Medicine_allboxFragment extends Fragment {
     static class MedicineAllbox {
         private final int medId; // 添加藥物 ID
         private final String name;
-        private final String imageUrl; // 修改为URL
+        private final String imageUrl; // 修改為URL
         private final String atccode;
         private final String manufacturer;
         private final String indications;
@@ -256,7 +256,11 @@ public class Medicine_allboxFragment extends Fragment {
             public void bind(MedicineAllbox medicine) {
                 nameTextView.setText(medicine.getName());
                 if (!medicine.getImageUrl().isEmpty()) {
-                    Picasso.get().load(medicine.getImageUrl()).into(imageView);
+                    Picasso.get()
+                            .load(medicine.getImageUrl())
+                            .resize(400, 400) // 設置圖片的寬高像素大小
+                            .centerInside() // 縮放圖片並在ImageView中央顯示
+                            .into(imageView);
                 } else {
                     imageView.setImageResource(R.drawable.medicine_1); // 使用佔位符圖片
                 }
@@ -279,10 +283,25 @@ public class Medicine_allboxFragment extends Fragment {
                     "形狀: " + medicine.getShape() + "\n" +
                     "顏色: " + medicine.getColor() + "\n" +
                     "標記: " + medicine.getMark() + "\n" +
-                    "是否有别名: " + medicine.getNick() + "\n" +
-                    "是否在同一包裝: " + medicine.getStrip());
+                    "是否有刻痕: " + mapEnglishToChinese(medicine.getStrip()) + "\n" +
+                    "是否有符號: " + mapEnglishToChinese(medicine.getNick()));
             builder.setPositiveButton("確定", null);
             builder.show();
         }
     }
+    private String mapEnglishToChinese(String english) {
+        switch (english) {
+            case "no":
+                return "無";
+            case "one":
+                return "直線";
+            case "ten":
+                return "十字";
+            case "yes":
+                return "有";
+            default:
+                return ""; // 或者處理未知情況的默認值
+        }
+    }
 }
+
