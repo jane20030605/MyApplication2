@@ -83,14 +83,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             username = sharedPreferences.getString("ACCOUNT", "User");
         }
 
-        // 獲取從註冊介面傳遞過來的郵箱，如果為空則為預設
+       /* // 獲取從註冊介面傳遞過來的郵箱，如果為空則為預設
         userEmail = getIntent().getStringExtra("EMAIL");
         if (userEmail == null) {
             // 從SharedPreferences中獲取郵箱
-            SharedPreferences sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
+            SharedPreferences sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);;
             userEmail = sharedPreferences.getString("EMAIL", "Android@example.gmail.com");
 
-        }
+        }*/
         // 調用獲取行事曆資料的方法
         fetchCalendarData(username);
 
@@ -285,5 +285,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+
+    public void updateNavHeaderEmail(String email) {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navEmail = headerView.findViewById(R.id.text_mail);
+        navEmail.setText(email);
     }
 }

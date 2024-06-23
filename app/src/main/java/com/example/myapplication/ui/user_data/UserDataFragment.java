@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.user_data;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentUserDataBinding;
 import com.example.myapplication.utils.SessionManager;
@@ -91,6 +93,7 @@ public class UserDataFragment extends Fragment {
                 Log.e("UserDataFragment", "網路請求失敗", e);
             }
 
+            // 在 onResponse 方法中更新导航头部
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
@@ -110,9 +113,9 @@ public class UserDataFragment extends Fragment {
                         userUpdateEvent.setMail(data.getString("mail"));
                         userUpdateEvent.setTel(data.getString("tel"));
                         userUpdateEvent.setName(data.getString("name"));
-                        // 記錄從args中獲取的數據
-                        Log.e("UserDataFragment", userUpdateEvent.getAllValue());
-                        // 將數據設置到視圖中
+                        // 更新导航头部
+                        updateNavHeaderMail(requireActivity(), userUpdateEvent.getMail());
+                        // 更新视图
                         binding.editTextAddress.setText(userUpdateEvent.getAddress());
                         binding.editTextBirthday.setText(userUpdateEvent.getBirthday());
                         binding.editTextMail.setText(userUpdateEvent.getMail());
@@ -124,6 +127,12 @@ public class UserDataFragment extends Fragment {
                         Toast.makeText(requireContext(), "解析數據失敗", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+
+            private void updateNavHeaderMail(Activity activity, String email) {
+                if (activity instanceof MainActivity) {
+                    ((MainActivity) activity).updateNavHeaderEmail(email);
+                }
             }
         });
 
@@ -280,4 +289,5 @@ public class UserDataFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
 }

@@ -2,7 +2,6 @@ package com.example.myapplication.ui.user_set;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,13 +44,11 @@ public class user_setFragment extends Fragment {
 
         // 绑定控件
         final TextView Text_function_set = binding.TextFunctionSet;
-        final TextView Text_message_reminder = binding.TextMessageReminder;
         final TextView Text_day_and_night_model = binding.TextDayAndNightModel;
         final RadioButton RadioButton_dayMode = binding.RadioButtonDayMode;
         final RadioButton RadioButton_nightMode = binding.RadioButtonNightMode;
         final Button Button_feedback = binding.ButtonFeedback;
         final Button Button_guidedTour = binding.ButtonGuidedTour;
-        final Switch Switch_notification = binding.SwitchNotification;
 
         // 设置初始的日夜模式选择
         int savedNightMode = getSavedNightMode();
@@ -79,34 +75,16 @@ public class user_setFragment extends Fragment {
 
         // 读取当前通知状态并设置初始选择
         boolean isNotificationEnabled = sharedPreferences.getBoolean("notifications_enabled", false);
-        Switch_notification.setChecked(isNotificationEnabled);
-
-        // 设置Switch的点击事件
-        Switch_notification.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            saveNotificationState(isChecked);
-
-            // 启用或禁用广播接收器
-            toggleAppStateReceiver(isChecked);
-
-            // 发送广播
-            if (isChecked) {
-                Intent intent = new Intent("com.example.myapplication.NOTIFY");
-                requireContext().sendBroadcast(intent);
-            }
-
-            // 显示Toast消息
-            Toast.makeText(requireContext(), isChecked ? "通知已启用" : "通知已关闭", Toast.LENGTH_SHORT).show();
-        });
 
         // 用户反馈按钮的点击事件
         Button_feedback.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "进行意见反馈", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "進行意見反饋", Toast.LENGTH_SHORT).show();
             Navigation.findNavController(v).navigate(R.id.nav_feedback);
         });
 
         // 使用说明按钮的点击事件
         Button_guidedTour.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "新手上路，使用手册", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "新手上路，使用手冊", Toast.LENGTH_SHORT).show();
             Navigation.findNavController(v).navigate(R.id.nav_guidedTour);
         });
 
