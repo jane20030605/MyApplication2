@@ -71,7 +71,7 @@ public class Medicine_inquireFragment extends Fragment {
 
         // 配置Picasso快取
         OkHttpClient client = new OkHttpClient.Builder()
-                .cache(new Cache(Objects.requireNonNull(getContext()).getCacheDir(), 10 * 1024 * 1024)) // 10 MB快取
+                .cache(new Cache(Objects.requireNonNull(getContext()).getCacheDir(), 1024)) //1KB快取
                 .build();
 
         Picasso.Builder builder = new Picasso.Builder(getContext());

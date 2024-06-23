@@ -62,7 +62,7 @@ public class Medicine_allboxFragment extends Fragment {
 
         // 配置Picasso快取
         OkHttpClient client = new OkHttpClient.Builder()
-                .cache(new Cache(Objects.requireNonNull(getContext()).getCacheDir(), 10 * 1024 * 1024)) // 10 MB快取
+                .cache(new Cache(Objects.requireNonNull(getContext()).getCacheDir(),  1024)) // 將快取大小設置為100K
                 .build();
 
         Picasso.Builder builder = new Picasso.Builder(getContext());
@@ -336,6 +336,7 @@ public class Medicine_allboxFragment extends Fragment {
                         .error(R.drawable.error) // 添加錯誤圖像
                         .into(imageView);
             }
+
 
             @Override
             public void onClick(View v) {

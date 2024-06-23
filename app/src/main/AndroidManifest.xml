@@ -51,6 +51,7 @@
 			</intent-filter>
 		</activity>
 
+
 		<receiver
 			android:name=".AppStateReceiver"
 			android:enabled="false"

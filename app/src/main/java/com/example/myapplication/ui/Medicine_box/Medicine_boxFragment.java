@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.R;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -35,6 +36,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 
 public class Medicine_boxFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -66,6 +71,14 @@ public class Medicine_boxFragment extends Fragment {
 
         // 初始化空的藥品列表
         medicineList = new ArrayList<>();
+        // 配置Picasso快取
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cache(new Cache(Objects.requireNonNull(getContext()).getCacheDir(), 1024)) //1KB快取
+                .build();
+
+        Picasso.Builder builder = new Picasso.Builder(getContext());
+        builder.downloader(new OkHttp3Downloader(client));
+        Picasso builtPicasso = builder.build();
 
         // 加載藥品數據
         loadMedicineData();
@@ -328,7 +341,6 @@ public class Medicine_boxFragment extends Fragment {
 
     private void showMedicineDetailDialog(Medicine medicine) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(medicine.getName());
 
         // 構建藥物詳情文本
         StringBuilder messageBuilder = new StringBuilder();
@@ -484,6 +496,12 @@ public class Medicine_boxFragment extends Fragment {
                         }
                         in.close();
                         Log.d("Medicine_boxFragment", "刪除成功: " + response.toString());
+
+                        // 删除成功后重新加载数据以刷新界面
+                        getActivity().runOnUiThread(() -> {
+                            loadMedicineData();
+                        });
+
                     } else {
                         Log.e("Medicine_boxFragment", "刪除失敗，響應碼: " + responseCode);
                     }

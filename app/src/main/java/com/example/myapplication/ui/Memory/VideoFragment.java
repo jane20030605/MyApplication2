@@ -19,62 +19,60 @@ import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.R;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
 
     private static final String TAG = "VideoFragment";
-
     private SurfaceHolder surfaceHolder;
-    private boolean running = true; // 記錄視頻流是否運行
+    private boolean running = true;
     private HttpURLConnection urlConnection;
     private InputStream inputStream;
+    private static final String BOUNDARY_PREFIX = "--frame";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // 載入此片段的佈局檔案
         View view = inflater.inflate(R.layout.fragment_video, container, false);
-
-        // 尋找 SurfaceView 並設置 SurfaceHolder 的回調
         SurfaceView surfaceView = view.findViewById(R.id.surfaceView);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
-
         return view;
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        // 當 Surface 創建後，啟動後台任務來獲取並顯示視頻幀
-        String videoUrl = "http://100.96.1.3:5000/video_feed/";
+        String videoUrl = "http://26.136.217.149:5000/video_feed";
         new VideoStreamTask().execute(videoUrl);
     }
 
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-        // 可根據需要處理 Surface 大小改變事件
+        Log.d(TAG, "Surface 大小已更改，新大小：" + width + " x " + height);
     }
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-        // 當 Surface 被銷毀時，停止後台任務並釋放資源
+        stopStream();
+    }
+
+    private void stopStream() {
         running = false;
         if (urlConnection != null) {
             urlConnection.disconnect();
+            Log.d(TAG, "已斷開視訊流的連接.");
         }
         try {
             if (inputStream != null) {
                 inputStream.close();
-                Log.d(TAG, "surfaceDestroyed: InputStream 關閉.");
+                Log.d(TAG, "InputStream 關閉.");
             }
         } catch (IOException e) {
-            Log.e(TAG, "surfaceDestroyed: 關閉 InputStream 時出現錯誤: " + e.getMessage());
+            Log.e(TAG, "關閉 InputStream 時出現錯誤: " + e.getMessage());
         }
     }
 
@@ -83,32 +81,33 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
         @Override
         protected Void doInBackground(String... params) {
             try {
-                // 打開與視頻源 URL 的連接
                 URL url = new URL(params[0]);
+                Log.d(TAG, "連接到視頻流 URL: " + url.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestProperty("Connection", "close"); // 避免持久連接
-                urlConnection.setConnectTimeout(10000); // 設置連接超時為10秒
-                urlConnection.setReadTimeout(10000); // 設置讀取超時為10秒
-                inputStream = urlConnection.getInputStream();
+                urlConnection.setRequestProperty("Connection", "close");
+                urlConnection.setConnectTimeout(300000);
+                urlConnection.setReadTimeout(300000);
+                urlConnection.setRequestProperty("Accept", "multipart/x-mixed-replace");
 
-                Log.d(TAG, "doInBackground: 連接到視頻流成功.");
+                inputStream = new BufferedInputStream(urlConnection.getInputStream());
+                Log.d(TAG, "連接到視頻流成功.");
 
-                // 讀取視頻幀
                 readVideoStream(inputStream);
 
             } catch (IOException e) {
-                Log.e(TAG, "doInBackground: 連接到視頻流時出現錯誤: " + e.getMessage());
+                Log.e(TAG, "連接到視頻流時出現錯誤: " + e.getMessage());
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
+                    Log.d(TAG, "已斷開視訊流的連接.");
                 }
                 try {
                     if (inputStream != null) {
                         inputStream.close();
-                        Log.d(TAG, "doInBackground: InputStream 關閉.");
+                        Log.d(TAG, "InputStream 關閉.");
                     }
                 } catch (IOException e) {
-                    Log.e(TAG, "doInBackground: 關閉 InputStream 時出現錯誤: " + e.getMessage());
+                    Log.e(TAG, "關閉 InputStream 時出現錯誤: " + e.getMessage());
                 }
             }
             return null;
@@ -116,64 +115,83 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
 
         private void readVideoStream(InputStream inputStream) {
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                String boundary = "--frame";
+                byte[] boundaryBytes = BOUNDARY_PREFIX.getBytes();
+                int boundaryLength = boundaryBytes.length;
 
-                // 持續讀取直到結束或運行標誌為 false
-                while (running && (line = reader.readLine()) != null) {
-                    if (line.startsWith(boundary)) {
-                        // 讀取圖像數據直到下一個分界線
-                        StringBuilder imageData = new StringBuilder();
-                        while ((line = reader.readLine()) != null && !line.startsWith(boundary)) {
-                            imageData.append(line).append("\r\n");
+                while (running) {
+                    StringBuilder header = new StringBuilder();
+                    int current;
+                    while ((current = inputStream.read()) != -1) {
+                        header.append((char) current);
+                        int headerLength = header.length();
+                        if (headerLength >= boundaryLength) {
+                            boolean isBoundary = true;
+                            for (int i = 0; i < boundaryLength; i++) {
+                                if (header.charAt(headerLength - boundaryLength + i) != boundaryBytes[i]) {
+                                    isBoundary = false;
+                                    break;
+                                }
+                            }
+                            if (isBoundary) {
+                                break;
+                            }
                         }
+                    }
 
-                        // 將圖像數據轉換為 Bitmap
-                        byte[] imageBytes = imageData.toString().getBytes();
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-
-                        // 在 SurfaceView 上繪製位圖
-                        if (bitmap != null) {
-                            drawOnSurfaceView(bitmap);
+                    StringBuilder imageData = new StringBuilder();
+                    while ((current = inputStream.read()) != -1) {
+                        imageData.append((char) current);
+                        int imageDataLength = imageData.length();
+                        if (imageDataLength >= boundaryLength + 4) {
+                            boolean isBoundary = true;
+                            for (int i = 0; i < boundaryLength; i++) {
+                                if (imageData.charAt(imageDataLength - boundaryLength + i) != boundaryBytes[i]) {
+                                    isBoundary = false;
+                                    break;
+                                }
+                            }
+                            if (isBoundary) {
+                                break;
+                            }
                         }
+                    }
+
+                    byte[] imageBytes = imageData.toString().getBytes();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                    if (bitmap != null) {
+                        drawOnSurfaceView(bitmap);
                     }
                 }
             } catch (IOException e) {
-                Log.e(TAG, "readVideoStream: 讀取視頻流時出現錯誤: " + e.getMessage());
+                Log.e(TAG, "讀取視頻流時出現錯誤: " + e.getMessage());
             }
         }
 
         private void drawOnSurfaceView(Bitmap bitmap) {
-            try {
-                Canvas canvas = surfaceHolder.lockCanvas();
-                if (canvas != null) {
-                    // 調整位圖大小
+            Canvas canvas = surfaceHolder.lockCanvas();
+            if (canvas != null) {
+                try {
+                    canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
                     int surfaceWidth = canvas.getWidth();
                     int surfaceHeight = canvas.getHeight();
                     int videoWidth = bitmap.getWidth();
                     int videoHeight = bitmap.getHeight();
 
-                    // 計算縮放比例
                     float scaleX = (float) surfaceWidth / videoWidth;
                     float scaleY = (float) surfaceHeight / videoHeight;
 
                     Matrix matrix = new Matrix();
                     matrix.postScale(scaleX, scaleY);
 
-                    // 創建縮放後的位圖
                     Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, videoWidth, videoHeight, matrix, true);
 
-                    // 在畫布上繪製位圖
                     canvas.drawBitmap(scaledBitmap, 0, 0, null);
-
-                    // 解鎖並提交畫布
+                    Log.d(TAG, "位圖繪製完成.");
+                } catch (Exception e) {
+                    Log.e(TAG, "在 SurfaceView 上繪製位圖時出現錯誤: " + e.getMessage());
+                } finally {
                     surfaceHolder.unlockCanvasAndPost(canvas);
-
-                    Log.d(TAG, "drawOnSurfaceView: 位圖繪製完成.");
                 }
-            } catch (Exception e) {
-                Log.e(TAG, "drawOnSurfaceView: 在 SurfaceView 上繪製位圖時出現錯誤: " + e.getMessage());
             }
         }
     }
@@ -181,16 +199,6 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        running = false;
-        if (urlConnection != null) {
-            urlConnection.disconnect();
-        }
-        try {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        stopStream();
     }
 }
