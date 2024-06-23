@@ -1,15 +1,10 @@
 package com.example.myapplication.ui.Memory;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,187 +13,94 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.R;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+public class VideoFragment extends Fragment {
 
-public class VideoFragment extends Fragment implements SurfaceHolder.Callback {
-
+    private SimpleExoPlayer player;
+    private PlayerView playerView;
     private static final String TAG = "VideoFragment";
-    private SurfaceHolder surfaceHolder;
-    private boolean running = true;
-    private HttpURLConnection urlConnection;
-    private InputStream inputStream;
-    private static final String BOUNDARY_PREFIX = "--frame";
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_video, container, false);
-        SurfaceView surfaceView = view.findViewById(R.id.surfaceView);
-        surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(this);
-        return view;
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_video, container, false);
     }
 
     @Override
-    public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        String videoUrl = "http://26.136.217.149:5000/video_feed";
-        new VideoStreamTask().execute(videoUrl);
-    }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        playerView = view.findViewById(R.id.player_view);
 
-    @Override
-    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-        Log.d(TAG, "Surface 大小已更改，新大小：" + width + " x " + height);
-    }
+        player = new SimpleExoPlayer.Builder(requireContext()).build();
+        playerView.setPlayer(player);
 
-    @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-        stopStream();
-    }
+        Uri uri = Uri.parse("http://26.136.217.149:5000/video_feed");
+        DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(
+                Util.getUserAgent(requireContext(), "MainActivity"));
 
-    private void stopStream() {
-        running = false;
-        if (urlConnection != null) {
-            urlConnection.disconnect();
-            Log.d(TAG, "已斷開視訊流的連接.");
-        }
-        try {
-            if (inputStream != null) {
-                inputStream.close();
-                Log.d(TAG, "InputStream 關閉.");
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "關閉 InputStream 時出現錯誤: " + e.getMessage());
-        }
-    }
+        ProgressiveMediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(uri));
 
-    private class VideoStreamTask extends AsyncTask<String, Void, Void> {
+        // 检查 SimpleExoPlayer 对象是否为空
+        if (player != null) {
+            player.setMediaSource(mediaSource);
+            player.prepare();
+            player.play();
 
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-                URL url = new URL(params[0]);
-                Log.d(TAG, "連接到視頻流 URL: " + url.toString());
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestProperty("Connection", "close");
-                urlConnection.setConnectTimeout(300000);
-                urlConnection.setReadTimeout(300000);
-                urlConnection.setRequestProperty("Accept", "multipart/x-mixed-replace");
-
-                inputStream = new BufferedInputStream(urlConnection.getInputStream());
-                Log.d(TAG, "連接到視頻流成功.");
-
-                readVideoStream(inputStream);
-
-            } catch (IOException e) {
-                Log.e(TAG, "連接到視頻流時出現錯誤: " + e.getMessage());
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                    Log.d(TAG, "已斷開視訊流的連接.");
+            // 使用 Handler 定期更新 ProgressiveMediaSource
+            Handler handler = new Handler();
+            Runnable updateRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    // 重新創建 ProgressiveMediaSource，這樣可以處理新的影片串流
+                    ProgressiveMediaSource newSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
+                            .createMediaSource(MediaItem.fromUri(uri));
+                    player.setMediaSource(newSource);
+                    player.prepare();
+                    handler.postDelayed(this, 10000); // 每 10 秒更新一次
                 }
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                        Log.d(TAG, "InputStream 關閉.");
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, "關閉 InputStream 時出現錯誤: " + e.getMessage());
-                }
-            }
-            return null;
-        }
+            };
+            handler.postDelayed(updateRunnable, 10000); // 第一次延遲 10 秒後執行
 
-        private void readVideoStream(InputStream inputStream) {
-            try {
-                byte[] boundaryBytes = BOUNDARY_PREFIX.getBytes();
-                int boundaryLength = boundaryBytes.length;
-
-                while (running) {
-                    StringBuilder header = new StringBuilder();
-                    int current;
-                    while ((current = inputStream.read()) != -1) {
-                        header.append((char) current);
-                        int headerLength = header.length();
-                        if (headerLength >= boundaryLength) {
-                            boolean isBoundary = true;
-                            for (int i = 0; i < boundaryLength; i++) {
-                                if (header.charAt(headerLength - boundaryLength + i) != boundaryBytes[i]) {
-                                    isBoundary = false;
-                                    break;
-                                }
-                            }
-                            if (isBoundary) {
-                                break;
-                            }
-                        }
-                    }
-
-                    StringBuilder imageData = new StringBuilder();
-                    while ((current = inputStream.read()) != -1) {
-                        imageData.append((char) current);
-                        int imageDataLength = imageData.length();
-                        if (imageDataLength >= boundaryLength + 4) {
-                            boolean isBoundary = true;
-                            for (int i = 0; i < boundaryLength; i++) {
-                                if (imageData.charAt(imageDataLength - boundaryLength + i) != boundaryBytes[i]) {
-                                    isBoundary = false;
-                                    break;
-                                }
-                            }
-                            if (isBoundary) {
-                                break;
-                            }
-                        }
-                    }
-
-                    byte[] imageBytes = imageData.toString().getBytes();
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                    if (bitmap != null) {
-                        drawOnSurfaceView(bitmap);
-                    }
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "讀取視頻流時出現錯誤: " + e.getMessage());
-            }
-        }
-
-        private void drawOnSurfaceView(Bitmap bitmap) {
-            Canvas canvas = surfaceHolder.lockCanvas();
-            if (canvas != null) {
-                try {
-                    canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-                    int surfaceWidth = canvas.getWidth();
-                    int surfaceHeight = canvas.getHeight();
-                    int videoWidth = bitmap.getWidth();
-                    int videoHeight = bitmap.getHeight();
-
-                    float scaleX = (float) surfaceWidth / videoWidth;
-                    float scaleY = (float) surfaceHeight / videoHeight;
-
-                    Matrix matrix = new Matrix();
-                    matrix.postScale(scaleX, scaleY);
-
-                    Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, videoWidth, videoHeight, matrix, true);
-
-                    canvas.drawBitmap(scaledBitmap, 0, 0, null);
-                    Log.d(TAG, "位圖繪製完成.");
-                } catch (Exception e) {
-                    Log.e(TAG, "在 SurfaceView 上繪製位圖時出現錯誤: " + e.getMessage());
-                } finally {
-                    surfaceHolder.unlockCanvasAndPost(canvas);
-                }
-            }
+            Log.d(TAG, "ExoPlayer 初始化完成並開始播放影片串流");
+        } else {
+            Log.e(TAG, "SimpleExoPlayer object is null, unable to set initial media source.");
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopStream();
+        if (player != null) {
+            player.release();
+            player = null;
+            Log.d(TAG, "ExoPlayer 已釋放");
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (player != null) {
+            player.pause();
+            Log.d(TAG, "ExoPlayer 已暫停");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (player != null) {
+            player.play();
+            Log.d(TAG, "ExoPlayer 已恢復播放");
+        }
     }
 }

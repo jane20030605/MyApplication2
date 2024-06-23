@@ -30,14 +30,6 @@
 			android:visible="false"
 			tools:ignore="HardcodedText" />
 		<item
-			android:id="@+id/nav_medicine_box"
-			android:icon="@android:drawable/ic_menu_save"
-			android:title="@string/menu_medicine_box"
-			android:layout_width="match_parent"
-			android:layout_height="40dp"
-			android:text="個人藥物資料庫"
-			tools:ignore="HardcodedText" />
-		<item
 			android:id="@+id/nav_medicine"
 			android:icon="@android:drawable/ic_menu_search"
 			android:title="@string/menu_medicine"
@@ -45,6 +37,16 @@
 			android:layout_height="40dp"
 			android:text="藥物資料查詢"
 			tools:ignore="HardcodedText" />
+
+		<item
+			android:id="@+id/nav_medicine_box"
+			android:icon="@android:drawable/ic_menu_save"
+			android:title="@string/menu_medicine_box"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="個人藥物資料庫"
+			tools:ignore="HardcodedText" />
+
 		<item
 			android:id="@+id/nav_memory"
 			android:icon="@android:drawable/ic_dialog_dialer"
@@ -52,6 +54,15 @@
 			android:layout_width="match_parent"
 			android:layout_height="40dp"
 			android:text="跌倒紀錄查詢"
+			tools:ignore="HardcodedText" />
+
+		<item
+			android:id="@+id/nav_video"
+			android:icon="@android:drawable/ic_media_play"
+			android:title="即時影像"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:text="即時影像"
 			tools:ignore="HardcodedText" />
 		<item
 			android:id="@+id/nav_calender"
