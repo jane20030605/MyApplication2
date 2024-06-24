@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -143,8 +144,9 @@ public class password_changeFragment extends Fragment {
                             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
                             Log.d("PasswordChangeFragment", "網絡請求成功, onResponse: " + responseData);
                             if (status.equals("success")) {
-                                // 密碼更新成功，執行登出操作
+                                // 密碼更新成功，執行重新登入操作
                                 logout();
+                                Navigation.findNavController(etNewPassword).navigate(R.id.nav_login);
                             }
                         });
 
@@ -161,13 +163,65 @@ public class password_changeFragment extends Fragment {
     }
 
     private void logout() {
-        // 清除SharedPreferences中的用戶信息
+        // 保存新密码到 SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.apply();
+
+        // 清除SharedPreferences中的用戶信息，这里可根据需要选择清除其他数据
         editor.clear();
         editor.apply();
 
-        // 導航到登入畫面
-        Navigation.findNavController(requireView()).navigate(R.id.nav_login);
+    }
+
+    private void login(String username, String password) {
+        // 建立 OkHttpClient
+        OkHttpClient client = new OkHttpClient();
+
+        // 建立 FormBody，將使用者名稱和密碼添加到請求中
+        RequestBody formBody = new FormBody.Builder()
+                .add("account", username)
+                .add("password", password)
+                .build();
+
+        // 建立 POST 請求
+        Request request = new Request.Builder()
+                .url("http://100.96.1.3/api_login.php")
+                .post(formBody)
+                .build();
+
+        // 執行請求
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(), "登入失敗，請檢查網路連接", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String responseData = response.body().string();
+                if (responseData.contains("登入成功")) {
+                    requireActivity().runOnUiThread(() -> {
+                        // 登入成功，執行相應操作
+                        handleLoginSuccess(username, password);
+                    });
+                } else {
+                }
+            }
+        });
+    }
+
+    private void handleLoginSuccess(String username, String password) {
+        // 保存使用者名稱到偏好設置
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("ACCOUNT", username); // 保存帳戶信息
+        editor.putString("password", password); // 保存新密碼
+        editor.apply();
+
+        // 導航到 MainActivity
+        Navigation.findNavController(requireView()).navigate(R.id.nav_user_data);
+        Toast.makeText(requireContext(), "密碼修改成功並重新登入", Toast.LENGTH_SHORT).show();
     }
 
     private void submit() {

@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_medicine_box, R.id.nav_medicine, R.id.nav_user_data,
                 R.id.nav_calender, R.id.nav_login, R.id.nav_memory, R.id.nav_logout,
-                R.id.nav_user_set, R.id.nav_mail_for_developer,R.id.nav_video)
+                R.id.nav_user_set, R.id.nav_mail_for_developer/*,R.id.nav_video*/)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -83,14 +84,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             username = sharedPreferences.getString("ACCOUNT", "User");
         }
 
-       /* // 獲取從註冊介面傳遞過來的郵箱，如果為空則為預設
+        // 獲取從註冊介面傳遞過來的郵箱，如果為空則為預設
         userEmail = getIntent().getStringExtra("EMAIL");
         if (userEmail == null) {
             // 從SharedPreferences中獲取郵箱
             SharedPreferences sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);;
             userEmail = sharedPreferences.getString("EMAIL", "Android@example.gmail.com");
 
-        }*/
+        }
         // 調用獲取行事曆資料的方法
         fetchCalendarData(username);
 
@@ -142,6 +143,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 
+        if (id != R.id.nav_medicine && id != R.id.nav_setting && id != R.id.nav_home && id != R.id.nav_mail_for_developer) {
+            // 如果使用者尚未登入，導航到登入介面
+            if (!sessionManager.isLoggedIn()) {
+                navController.navigate(R.id.nav_login);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        }
+
         if (id == R.id.nav_setting) {
             // 跳到設置介面
             navController.navigate(R.id.nav_user_set);
@@ -191,10 +202,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // 跳轉到使用者資料介面
             navController.navigate(R.id.nav_user_data);
 
-        }else if (id == R.id.nav_video) {
+        }/*else if (id == R.id.nav_video) {
             // 跳轉到视频片段
             navController.navigate(R.id.nav_video);
-        }
+        }*/
+
         // 在任何選項被點擊後關閉抽屜佈局
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

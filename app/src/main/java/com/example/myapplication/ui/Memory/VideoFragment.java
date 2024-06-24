@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.Memory;
 
 import android.annotation.SuppressLint;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -37,7 +38,7 @@ public class VideoFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // 加載 fragment_video.xml 作為此 Fragment 的布局
+        // 加載 fragment_video.xml 作為此 Fragment 的佈局
         return inflater.inflate(R.layout.fragment_video, container, false);
     }
 
@@ -45,6 +46,9 @@ public class VideoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // 啟用自動旋轉
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
         // 找到 WebView 並啟用 JavaScript
         webView = view.findViewById(R.id.web_view);
@@ -56,7 +60,7 @@ public class VideoFragment extends Fragment {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
 
-        // 自適應屏幕
+        // 自適應螢幕
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
 
@@ -102,8 +106,8 @@ public class VideoFragment extends Fragment {
             }
         });
 
-        // 加載動態生成的圖像或視頻流 URL
-        String streamUrl = "http://100.96.1.2:5000/video_feed"; // 替換為你的流媒體 URL
+        // 加載動態生成的圖像或視訊流 URL
+        String streamUrl = "http://192.168.137.1:5000/video_feed"; // 替換為你的流媒體 URL
         Log.d(TAG, "開始加載視訊流: " + streamUrl);
         webView.loadUrl(streamUrl);
         webView.setWebViewClient(new MyWebViewClient());
@@ -114,6 +118,8 @@ public class VideoFragment extends Fragment {
     public void onDestroyView() {
         // 避免 WebView 活動在 Fragment 被銷毀時仍在運行
         if (webView != null) {
+            webView.stopLoading(); // 停止加載
+            webView.setWebViewClient(null); // 移除 WebViewClient
             webView.destroy();
             Log.d(TAG, "WebView 已銷毀");
         }
@@ -126,7 +132,7 @@ public class VideoFragment extends Fragment {
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             // 檢查是否為視訊流 URL
             String url = request.getUrl().toString();
-            if (url.startsWith("http://100.96.1.2:5000/video_feed")) {
+            if (url.startsWith("http://192.168.137.1:5000/video_feed")) {
                 try {
                     // 打開連線並獲取視訊流資源
                     Log.d(TAG, "處理視訊流請求: " + url);
@@ -156,42 +162,23 @@ public class VideoFragment extends Fragment {
 
         // 處理 multipart/x-mixed-replace 格式的視訊流
         private void handleMultipartXMixedReplaceStream(InputStream inputStream) {
-            // 在後台執行此邏輯以避免主線程阻塞
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        // 讀取視訊流部分
-                        byte[] boundaryBytes = "\r\n".getBytes(); // 分隔每個部分的邊界
-                        byte[] headerBytes = ("Content-Type: image/jpeg" + "\r\n\r\n"+ "frame_bytes" + "\r\n").getBytes(); // JPEG 圖像的標頭
-                        int headerLength = headerBytes.length;
-                        byte[] buffer = new byte[1024];
+                        byte[] boundaryBytes = "\r\n--boundary\r\n".getBytes(); // 假設邊界字符串
+                        byte[] buffer = new byte[8192]; // 增加緩衝區大小
                         int bytesRead;
 
-                        // 連續讀取視訊流
                         while (true) {
-                            // 尋找每個部分的開始
-                            int endIndex = findBytes(inputStream, boundaryBytes);
-                            if (endIndex == -1) {
-                                // 未找到分隔符號，退出迴圈
-                                break;
-                            }
-                            // 跳過分隔符號
-                            inputStream.skip(boundaryBytes.length);
-
-                            // 找到 JPEG 圖像的開始位置
-                            int startIndex = findBytes(inputStream, headerBytes);
+                            int startIndex = findBytes(inputStream, boundaryBytes);
                             if (startIndex == -1) {
-                                // 未找到 JPEG 圖像的標頭，退出迴圈
-                                break;
+                                break; // 沒有找到邊界，退出循環
                             }
 
-                            // 讀取 JPEG 圖像
-                            inputStream.skip(headerLength); // 跳過標頭
                             ByteArrayOutputStream imageBuffer = new ByteArrayOutputStream();
                             while ((bytesRead = inputStream.read(buffer)) != -1) {
                                 if (isEndOfImage(buffer, bytesRead, boundaryBytes)) {
-                                    // 到達 JPEG 圖像的結束
                                     imageBuffer.write(buffer, 0, bytesRead - boundaryBytes.length);
                                     break;
                                 } else {
@@ -199,31 +186,26 @@ public class VideoFragment extends Fragment {
                                 }
                             }
 
-                            // 轉換為位圖
                             byte[] imageBytes = imageBuffer.toByteArray();
                             Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
-                            // 在主線程更新 WebView
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    // 將位圖顯示在 WebView 中
                                     if (webView != null) {
                                         String base64Image = Base64.encodeToString(imageBytes, Base64.DEFAULT);
                                         String imageHtml = "<html><body><img src=\"data:image/jpeg;base64," + base64Image + "\" width=\"100%\"/></body></html>";
-                                        webView.loadData(imageHtml, "text/html", "utf-8");
+                                        webView.loadData(imageHtml, "image/jpeg", "utf-8");
                                     }
                                 }
                             });
-                            // 添加延遲以控制抓取速度
+
+                            // 減少幀間延遲
                             try {
-                                Thread.sleep(10); // 10毫秒的延遲，可以根據需要調整
+                                Thread.sleep(1); // 調整延遲以提高流暢度
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-
-                            // 跳過分隔符號以準備下一個部分
-                            inputStream.skip(boundaryBytes.length);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -232,7 +214,6 @@ public class VideoFragment extends Fragment {
             }).start();
         }
 
-        // 尋找指定的位元組在輸入流中的位置
         private int findBytes(InputStream inputStream, byte[] bytes) throws IOException {
             int index = 0;
             int b;
@@ -249,7 +230,6 @@ public class VideoFragment extends Fragment {
             return -1;
         }
 
-        // 檢查是否到達 JPEG 圖像的結束
         private boolean isEndOfImage(byte[] buffer, int bytesRead, byte[] boundaryBytes) {
             if (bytesRead >= boundaryBytes.length) {
                 for (int i = 0; i < boundaryBytes.length; i++) {
@@ -262,6 +242,4 @@ public class VideoFragment extends Fragment {
             return false;
         }
     }
-
 }
-

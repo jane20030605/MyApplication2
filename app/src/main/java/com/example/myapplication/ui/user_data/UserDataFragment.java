@@ -57,23 +57,23 @@ public class UserDataFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // 綁定視圖
         binding = FragmentUserDataBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // 初始化Session管理器
+        // Initialize SessionManager
         SessionManager sessionManager = new SessionManager(requireContext());
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         String account = sharedPreferences.getString("ACCOUNT", "");
 
-        // 檢查是否已登入，若未登入則導航到登入頁面
+        // Check if logged in, navigate to login page if not
         if (account == null || account.isEmpty()) {
-            Navigation.findNavController(root).navigate(R.id.nav_login); // 請確保在導航圖中有相應的登入頁面的ID
-            return root; // 返回視圖，避免進一步執行
+            if (getActivity() != null) {
+                Navigation.findNavController(getActivity(), R.id.nav_user_data).navigate(R.id.nav_login);
+            }
+            return root;
         }
 
-        // 當使用者已登入時，繼續執行
-        Log.d("UserDataFragment", "登入帳戶為:" + account);
+        Log.d("UserDataFragment", "Logged in account: " + account);
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -88,14 +88,13 @@ public class UserDataFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "網路請求失敗", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Network request failed", Toast.LENGTH_SHORT).show();
                 });
-                Log.e("UserDataFragment", "網路請求失敗", e);
+                Log.e("UserDataFragment", "Network request failed", e);
             }
 
-            // 在 onResponse 方法中更新导航头部
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 }
@@ -113,18 +112,18 @@ public class UserDataFragment extends Fragment {
                         userUpdateEvent.setMail(data.getString("mail"));
                         userUpdateEvent.setTel(data.getString("tel"));
                         userUpdateEvent.setName(data.getString("name"));
-                        // 更新导航头部
+
                         updateNavHeaderMail(requireActivity(), userUpdateEvent.getMail());
-                        // 更新视图
+
                         binding.editTextAddress.setText(userUpdateEvent.getAddress());
                         binding.editTextBirthday.setText(userUpdateEvent.getBirthday());
                         binding.editTextMail.setText(userUpdateEvent.getMail());
                         binding.editTextName.setText(userUpdateEvent.getName());
                         binding.editTextTel.setText(userUpdateEvent.getTel());
-                        Log.d("UserDataFragment", "從 args 中獲取數據並設置到視圖中");
+                        Log.d("UserDataFragment", "Data loaded from args and set into views");
                     } catch (JSONException e) {
                         Log.e("JSON Parsing Error:", e.getMessage());
-                        Toast.makeText(requireContext(), "解析數據失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Failed to parse data", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -136,10 +135,10 @@ public class UserDataFragment extends Fragment {
             }
         });
 
-        // 設置UI監聽器
         setupUIListeners();
         return root;
     }
+
 
     private void setupUIListeners() {
         // 點擊保存按鈕的事件處理

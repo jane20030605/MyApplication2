@@ -13,52 +13,68 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.utils.SessionManager;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private SessionManager sessionManager;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // 初始化 SessionManager
+        sessionManager = new SessionManager(requireContext());
+
         CalendarView calendarView = binding.calendarView;
         // 在這裡可以對 CalendarView 做任何初始化或設定
 
-        //布局設計
+        // 布局設計
         final Button Button_medicine = binding.ButtonMedicine;
         final Button Button_memory = binding.ButtonMemory;
         final Button Button_userdata = binding.ButtonUserdata;
         final Button Button_medicine_box = binding.ButtonMedicineBox;
 
-        // 在這裡可以設置按鈕的監聽器，並執行相應的操作
         // 設置按鈕點擊事件
-        Button_medicine.setOnClickListener(new View.OnClickListener() {
+        Button_medicine_box.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.nav_medicine);
+                if (sessionManager.isLoggedIn()) {
+                    Navigation.findNavController(view).navigate(R.id.nav_medicine_box);
+                } else {
+                    Navigation.findNavController(view).navigate(R.id.nav_login);
+                }
             }
         });
 
         Button_memory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.nav_memory);
+                if (sessionManager.isLoggedIn()) {
+                    Navigation.findNavController(view).navigate(R.id.nav_memory);
+                } else {
+                    Navigation.findNavController(view).navigate(R.id.nav_login);
+                }
             }
         });
 
         Button_userdata.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.nav_user_data);
+                if (sessionManager.isLoggedIn()) {
+                    Navigation.findNavController(view).navigate(R.id.nav_user_data);
+                } else {
+                    Navigation.findNavController(view).navigate(R.id.nav_login);
+                }
             }
         });
 
-        Button_medicine_box.setOnClickListener(new View.OnClickListener() {
+        Button_medicine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.nav_medicine_box);
+                Navigation.findNavController(view).navigate(R.id.nav_medicine);
             }
         });
 

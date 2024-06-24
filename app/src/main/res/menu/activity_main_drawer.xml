@@ -56,6 +56,7 @@
 			android:text="跌倒紀錄查詢"
 			tools:ignore="HardcodedText" />
 
+		<!--
 		<item
 			android:id="@+id/nav_video"
 			android:icon="@android:drawable/ic_media_play"
@@ -64,6 +65,8 @@
 			android:layout_height="40dp"
 			android:text="即時影像"
 			tools:ignore="HardcodedText" />
+		-->
+
 		<item
 			android:id="@+id/nav_calender"
 			android:icon="@android:drawable/ic_menu_month"
