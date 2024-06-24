@@ -76,6 +76,30 @@
 				tools:ignore="Autofill,HardcodedText,TextFields"/>
 
 		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="60dp"
+			android:orientation="horizontal">
+
+			<TextView
+				android:layout_width="120dp"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+				android:text="電子信箱"
+				tools:ignore="HardcodedText" />
+
+			<EditText
+				android:id="@+id/editTextEmail"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textSize="20sp"
+				android:hint="請輸入電子信箱"
+				android:imeOptions="actionNext"
+				android:inputType="textEmailAddress"
+				tools:ignore="Autofill,HardcodedText,TextFields" />
+		</LinearLayout>
+
 		<!-- 形狀下拉式選單 -->
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -91,8 +115,8 @@
 				tools:ignore="HardcodedText" />
 
 			<Spinner
-				android:id="@+id/spinner_contact"
-				android:layout_width="250dp"
+				android:id="@+id/spinnerContact"
+				android:layout_width="257dp"
 				android:layout_height="50dp"
 				android:layout_marginStart="0dp"
 				android:layout_marginTop="0dp"
@@ -124,7 +148,5 @@
 				android:textSize="20sp"
 				tools:ignore="HardcodedText" />
 		</LinearLayout>
-
-
 	</LinearLayout>
 </FrameLayout>

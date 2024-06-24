@@ -56,12 +56,14 @@ public class Contact_updateFragment extends Fragment {
             contactUpdateEvent.setAccount(args.getString("account"));
             contactUpdateEvent.setContactName(args.getString("contact_name"));
             contactUpdateEvent.setContactTel(args.getString("contact_tel"));
+            contactUpdateEvent.setContactMail(args.getString("contact_mail")); // 新增的email欄位
             contactUpdateEvent.setRelation(args.getString("relation"));
 
             Log.e("ContactUpdateEvent", contactUpdateEvent.getAllValue());
 
             binding.editEmergencyName.setText(contactUpdateEvent.getContactName());
             binding.editTextPhone.setText(contactUpdateEvent.getContactTel());
+            binding.editTextEmail.setText(contactUpdateEvent.getContactMail()); // 設置email
 
             // 确保下拉列表适配器不为空后获取选项位置
             adapter = (ArrayAdapter<CharSequence>) binding.spinnerContact.getAdapter();
@@ -75,7 +77,6 @@ public class Contact_updateFragment extends Fragment {
                 updateEmergencyContact();
                 Navigation.findNavController(v).navigate(R.id.nav_contact_list);
                 Toast.makeText(requireContext(), "更新成功，已上傳數據", Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -99,6 +100,7 @@ public class Contact_updateFragment extends Fragment {
 
         String name = binding.editEmergencyName.getText().toString();
         String phone = binding.editTextPhone.getText().toString();
+        String mail = binding.editTextEmail.getText().toString(); // 新增的email欄位
         String relation = mapChineseToEnglish(binding.spinnerContact.getSelectedItem().toString());
 
         // 从 SharedPreferences 中读取账户信息
@@ -107,6 +109,7 @@ public class Contact_updateFragment extends Fragment {
 
         contactUpdateEvent.setContactName(name);
         contactUpdateEvent.setContactTel(phone);
+        contactUpdateEvent.setContactMail(mail); // 設置email
         contactUpdateEvent.setRelation(relation);
         contactUpdateEvent.setAccount(account);
 
@@ -141,6 +144,7 @@ public class Contact_updateFragment extends Fragment {
         eventDataJson.put("contact_Id", contactUpdateEvent.getContactId());
         eventDataJson.put("contact_name", contactUpdateEvent.getContactName());
         eventDataJson.put("contact_tel", contactUpdateEvent.getContactTel());
+        eventDataJson.put("contact_mail", contactUpdateEvent.getContactMail()); // 新增的email欄位
         eventDataJson.put("relation", contactUpdateEvent.getRelation());
         eventDataJson.put("account", contactUpdateEvent.getAccount());
         return eventDataJson.toString();

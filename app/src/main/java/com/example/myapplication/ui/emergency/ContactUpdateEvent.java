@@ -8,6 +8,7 @@ public class ContactUpdateEvent {
     private String relation;
     private String contactId;  // 修正命名
     private String account;    // 修正命名
+    private String contactMail;
 
     public ContactUpdateEvent() {
     }
@@ -51,11 +52,19 @@ public class ContactUpdateEvent {
     public void setRelation(String relation) {
         this.relation = relation;
     }
+    public String getContactMail() {
+        return contactMail;
+    }
+
+    public void setContactMail(String contactMail) {
+        this.contactMail = contactMail;
+    }
 
     public String getAllValue() {
         return "Contact Name: " + contactName + "\n" +
                 "Contact Tel: " + contactTel + "\n" +
                 "Relation: " + relation + "\n" +
+                "Contact Email" + contactMail+"\n"+
                 "Contact ID: " + contactId + "\n" +
                 "Account: " + account;
     }

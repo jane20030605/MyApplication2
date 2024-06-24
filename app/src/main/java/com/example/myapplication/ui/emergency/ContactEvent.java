@@ -3,22 +3,18 @@ package com.example.myapplication.ui.emergency;
 public class ContactEvent {
     private String contactName;
     private String contactTel;
+    private String contactMail; // 新增的電子郵件欄位
     private String relation;
-    private String ACCOUNT;
+    private String account;
 
-    public ContactEvent(String contactName, String contactTel, String relation,String ACCOUNT) {
+    public ContactEvent(String contactName, String contactTel, String contactMail, String relation, String account) {
         this.contactName = contactName;
         this.contactTel = contactTel;
+        this.contactMail = contactMail; // 初始化電子郵件欄位
         this.relation = relation;
-        this.ACCOUNT = ACCOUNT;
-    }
-    public String getAccount() {
-        return ACCOUNT;
+        this.account = account;
     }
 
-    public void setAccount(String ACCOUNT) {
-        this.ACCOUNT = ACCOUNT;
-    }
     public String getContactName() {
         return contactName;
     }
@@ -35,11 +31,27 @@ public class ContactEvent {
         this.contactTel = contactTel;
     }
 
+    public String getContactMail() {
+        return contactMail;
+    }
+
+    public void setContactMail(String contactMail) {
+        this.contactMail = contactMail;
+    }
+
     public String getRelation() {
         return relation;
     }
 
     public void setRelation(String relation) {
         this.relation = relation;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
     }
 }

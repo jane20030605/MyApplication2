@@ -53,7 +53,6 @@ public class emergency_contact extends Fragment {
                     Navigation.findNavController(v).navigate(R.id.nav_user_data);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
-
                 }
             }
         });
@@ -65,7 +64,6 @@ public class emergency_contact extends Fragment {
                 cancelAddingContact();
             }
         });
-
 
         // 初始化下拉式選單的選項
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
@@ -80,6 +78,7 @@ public class emergency_contact extends Fragment {
         // 獲取輸入的緊急連絡人信息
         String name = binding.editEmergencyName.getText().toString();
         String phone = binding.editTextPhone.getText().toString();
+        String email = binding.editTextEmail.getText().toString(); // 獲取電子郵件
         String relationChinese = binding.spinnerContact.getSelectedItem().toString();
         String relationEnglish = mapChineseToEnglish(relationChinese);
 
@@ -88,7 +87,7 @@ public class emergency_contact extends Fragment {
         String account = sharedPreferences.getString("ACCOUNT", "");
 
         // 創建 ContactEvent 對象並添加帳戶信息
-        ContactEvent contactEvent = new ContactEvent(name, phone, relationEnglish, account);
+        ContactEvent contactEvent = new ContactEvent(name, phone, email, relationEnglish, account);
 
         // 將 ContactEvent 對象轉換為 JSON 字符串
         String eventDataJson = createContactDataJson(contactEvent);
@@ -110,7 +109,7 @@ public class emergency_contact extends Fragment {
                 requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        Toast.makeText(requireContext(), "保存失敗：" + message, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -121,6 +120,7 @@ public class emergency_contact extends Fragment {
         JSONObject eventDataJson = new JSONObject();
         eventDataJson.put("contact_name", contactEvent.getContactName());
         eventDataJson.put("contact_tel", contactEvent.getContactTel());
+        eventDataJson.put("contact_mail", contactEvent.getContactMail()); // 添加電子郵件欄位
         eventDataJson.put("relation", contactEvent.getRelation());
         eventDataJson.put("account", contactEvent.getAccount());
         return eventDataJson.toString();

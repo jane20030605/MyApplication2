@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.emergency;
 
+// 導入必要的包
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         public TextView tvContactName;
         public TextView tvContactTel;
         public TextView tvRelation;
+        public TextView tvContactMail; // 新增欄位
         public Button btnEditContact;
         public Button btnDeleteContact;
 
@@ -38,6 +40,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             tvContactName = itemView.findViewById(R.id.tvContactName);
             tvContactTel = itemView.findViewById(R.id.tvContactTel);
             tvRelation = itemView.findViewById(R.id.tvRelation);
+            tvContactMail = itemView.findViewById(R.id.tvContactMail); // 綁定新的 TextView
             btnEditContact = itemView.findViewById(R.id.btnEditContact);
             btnDeleteContact = itemView.findViewById(R.id.btnDeleteContact);
         }
@@ -58,18 +61,20 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         JSONObject contact = contactList.get(position);
 
-        // 设置联系人信息
-        holder.tvContactName.setText(contact.optString("contact_name")); // 联系人姓名
-        holder.tvContactTel.setText(contact.optString("contact_tel")); // 联系人电话号码
-        holder.tvRelation.setText(mapEnglishToChinese(contact.optString("relation"))); // 与使用者的关系
+        // 設置聯絡人信息
+        holder.tvContactName.setText(contact.optString("contact_name"));
+        holder.tvContactTel.setText(contact.optString("contact_tel"));
+        holder.tvRelation.setText(mapEnglishToChinese(contact.optString("relation")));
+        holder.tvContactMail.setText(contact.optString("contact_mail")); // 設置聯絡人郵箱
 
-        String contact_Id = contact.optString("contact_Id"); // 获取联系人 ID
+        String contact_Id = contact.optString("contact_Id");
 
-        // 根据当前日夜间模式设置文本颜色
+        // 根據當前日夜間模式設置文本顏色
         int textColor = getTextColor(holder.itemView.getContext());
         holder.tvContactName.setTextColor(textColor);
         holder.tvContactTel.setTextColor(textColor);
         holder.tvRelation.setTextColor(textColor);
+        holder.tvContactMail.setTextColor(textColor); // 設置文本顏色
 
         holder.btnEditContact.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -78,6 +83,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             bundle.putString("relation", contact.optString("relation"));
             bundle.putString("contact_tel", contact.optString("contact_tel"));
             bundle.putString("contact_name", contact.optString("contact_name"));
+            bundle.putString("contact_mail", contact.optString("contact_mail")); // 傳遞聯絡人郵箱
             Navigation.findNavController(holder.itemView).navigate(R.id.nav_contact_update, bundle);
         });
 
@@ -86,6 +92,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             deleteContact(positionToDelete, contact_Id, v);
         });
     }
+
 
     private int getTextColor(Context context) {
         int currentNightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
