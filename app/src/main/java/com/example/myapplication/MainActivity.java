@@ -143,15 +143,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 
-        if (id != R.id.nav_medicine && id != R.id.nav_setting && id != R.id.nav_home && id != R.id.nav_mail_for_developer) {
-            // 如果使用者尚未登入，導航到登入介面
+        // 檢查點擊的導航選項，如果不是特定幾個選項，執行以下操作
+        if (id != R.id.nav_medicine && id != R.id.nav_setting &&
+                id != R.id.nav_home && id != R.id.nav_mail_for_developer) {
+            // 如果使用者尚未登入
             if (!sessionManager.isLoggedIn()) {
+                // 導航到登入介面
                 navController.navigate(R.id.nav_login);
+                // 取得抽屜佈局
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                // 關閉左側導航選單
                 drawer.closeDrawer(GravityCompat.START);
+                // 返回true表示已處理導航事件
                 return true;
             }
         }
+
 
         if (id == R.id.nav_setting) {
             // 跳到設置介面
@@ -215,13 +222,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // 發送反饋郵件
+    // 發送反饋郵件的方法
     private void sendFeedbackEmail() {
+        // 創建一個意圖來發送郵件到指定地址
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto", "lsofeveryone@gmail.com", null));
+        // 設置郵件主題為「用戶意見反饋」
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "用戶意見反饋");
+        // 設置郵件內容暫時為空
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+        // 啟動一個選擇器來選擇郵件客戶端，並顯示標題為「選擇郵件客戶端」
         startActivity(Intent.createChooser(emailIntent, "選擇郵件客戶端"));
     }
+
 
     // 更新菜單項目的可見性
     public void updateMenuItems() {

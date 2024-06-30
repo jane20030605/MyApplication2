@@ -173,21 +173,34 @@ public class LoginFragment extends Fragment {
         Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show();
 
         // 如果需要記住密碼，保存使用者名稱和密碼到偏好設置
-        CheckBox rememberPasswordCheckBox = requireView().findViewById(R.id.remember_password);
+        CheckBox rememberPasswordCheckBox =
+                requireView().findViewById(R.id.remember_password);
+        // 獲取偏好設置的編輯器
         editor = sharedPreferences.edit();
+        // 檢查是否選中了「記住密碼」的選擇框
         if (rememberPasswordCheckBox.isChecked()) {
+            // 使用 SessionManager 登入
             sessionManager.login(username);
+            // 將使用者名稱和密碼保存到偏好設置中
             editor.putString("username", username);
             editor.putString("password", password);
+            // 設置「記住密碼」的標誌為 true
             editor.putBoolean("remember_password", true);
+            // 提交修改
             editor.apply();
         } else {
+            // 如果沒有選中「記住密碼」，則執行以下操作
+            // 使用 SessionManager 登入
             sessionManager.login(username);
+            // 從偏好設置中移除使用者名稱和密碼
             editor.remove("username");
             editor.remove("password");
+            // 設置「記住密碼」的標誌為 false
             editor.putBoolean("remember_password", false);
+            // 提交修改
             editor.apply();
         }
+
     }
 
     @Override

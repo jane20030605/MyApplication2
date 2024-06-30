@@ -71,13 +71,11 @@ public class VideoFragment extends Fragment {
                 super.onPageStarted(view, url, favicon);
                 Log.d(TAG, "開始加載網頁: " + url);
             }
-
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 Log.d(TAG, "網頁加載完成: " + url);
             }
-
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
@@ -107,7 +105,7 @@ public class VideoFragment extends Fragment {
         });
 
         // 加載動態生成的圖像或視訊流 URL
-        String streamUrl = "http://192.168.137.1:5000/video_feed"; // 替換為你的流媒體 URL
+        String streamUrl = "http://100.96.1.2:5000/video_feed"; // 替換為你的流媒體 URL
         Log.d(TAG, "開始加載視訊流: " + streamUrl);
         webView.loadUrl(streamUrl);
         webView.setWebViewClient(new MyWebViewClient());
@@ -132,7 +130,7 @@ public class VideoFragment extends Fragment {
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             // 檢查是否為視訊流 URL
             String url = request.getUrl().toString();
-            if (url.startsWith("http://192.168.137.1:5000/video_feed")) {
+            if (url.startsWith("http://100.96.1.2:5000/video_feed")) {
                 try {
                     // 打開連線並獲取視訊流資源
                     Log.d(TAG, "處理視訊流請求: " + url);
@@ -166,22 +164,32 @@ public class VideoFragment extends Fragment {
                 @Override
                 public void run() {
                     try {
-                        byte[] boundaryBytes = "\r\n--boundary\r\n".getBytes(); // 假設邊界字符串
-                        byte[] buffer = new byte[8192]; // 增加緩衝區大小
+                        // 設置邊界字符串，假設用於多部分數據
+                        byte[] boundaryBytes = "\r\n--boundary\r\n".getBytes();
+                        // 增加緩衝區大小
+                        byte[] buffer = new byte[8192];
                         int bytesRead;
 
+                        // 無限循環以處理輸入流數據
                         while (true) {
+                            // 查找邊界字符串在輸入流中的位置
                             int startIndex = findBytes(inputStream, boundaryBytes);
                             if (startIndex == -1) {
-                                break; // 沒有找到邊界，退出循環
+                                // 沒有找到邊界，退出循環
+                                break;
                             }
 
+                            // 創建字節數組輸出流以存儲圖像數據
                             ByteArrayOutputStream imageBuffer = new ByteArrayOutputStream();
+                            // 從輸入流讀取數據到緩衝區
                             while ((bytesRead = inputStream.read(buffer)) != -1) {
+                                // 檢查是否到達圖像的結尾
                                 if (isEndOfImage(buffer, bytesRead, boundaryBytes)) {
+                                    // 將圖像數據寫入輸出流，減去邊界字符串的長度
                                     imageBuffer.write(buffer, 0, bytesRead - boundaryBytes.length);
                                     break;
                                 } else {
+                                    // 將緩衝區數據寫入輸出流
                                     imageBuffer.write(buffer, 0, bytesRead);
                                 }
                             }
@@ -189,12 +197,18 @@ public class VideoFragment extends Fragment {
                             byte[] imageBytes = imageBuffer.toByteArray();
                             Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
+                            // 在UI線程上運行代碼
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    // 檢查webView是否為空
                                     if (webView != null) {
+                                        // 將圖像字節數組編碼為Base64字符串
                                         String base64Image = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-                                        String imageHtml = "<html><body><img src=\"data:image/jpeg;base64," + base64Image + "\" width=\"100%\"/></body></html>";
+                                        // 構建HTML字符串以顯示圖像
+                                        String imageHtml = "<html><body><img src=\"data:image/jpeg;base64,"
+                                                + base64Image + "\" width=\"100%\"/></body></html>";
+                                        // 在webView中加載HTML數據
                                         webView.loadData(imageHtml, "image/jpeg", "utf-8");
                                     }
                                 }

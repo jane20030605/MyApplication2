@@ -15,24 +15,47 @@
 	</string>
 
 	<string name="guided_4">
-		個人藥物資料庫，就是個人藥盒的介面，可以找到自己常吃的藥物簡介
+		這就是註冊介面，在註冊介面中輸入資料就可以傳送到資料庫，建立個人檔案資訊
 	</string>
 
 	<string name="guided_5">
-		藥物查詢介面，可以從藥物總覽介面跳轉進入
+		此為行事曆紀錄介面，可以在此進行事件查看
 	</string>
 
 	<string name="guided_6">
+		這就是行事曆事件新增的介面，在此輸入行事曆資訊
+	</string>
+
+	<string name="guided_7">
+		藥物查詢介面，可以從主畫面或者菜單選項進入
+		選擇藥物外觀或者是輸入標記/字號就可以查詢到藥物詳情
+	</string>
+
+	<string name="guided_8">
+		這就是藥物總攬介面，如果不知道藥物外觀與名字，可以利用這個直接查看藥物資料
+	</string>
+	<string name="guided_9">
+		個人藥物資料庫，就是個人藥盒的介面，可以找到自己常吃的藥物簡介
+	</string>
+
+	<string name="guided_10">
+		此為忘記密碼介面，寄送註冊時的郵箱給後端進行重製密碼發送
+	</string>
+	<string name="guided_11">
+		此為系統設定介面，可以進行用戶回饋與日夜模式轉換
+	</string>
+	<string name="guided_12">
+		此為修改密碼介面，當使用者想要修改密碼時，就可以在此介面中執行
+	</string>
+	<string name="guided_13">
+		此為意見回饋介面，可以利用此發送郵件給開發者
+	</string>
+
+	<string name="guided_14">
 		藉由跌倒辨識的攝影機記錄，若是拍攝到跌倒畫面即傳輸至此，
 		使用者可以在此找到跌倒瞬間的影片
 	</string>
 
-	<string name="guided_7">
-		行事曆資料，可以在此介面中儲存事件輸入，並到點提醒
-	</string>
 
-	<string name="guided_8">
-		使用者資料，可以修改帳號密碼等基礎資料，與設置緊急連絡人
-	</string>
 
 </resources>

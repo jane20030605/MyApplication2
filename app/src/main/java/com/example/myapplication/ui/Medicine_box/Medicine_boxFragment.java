@@ -36,7 +36,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
@@ -71,14 +70,22 @@ public class Medicine_boxFragment extends Fragment {
 
         // 初始化空的藥品列表
         medicineList = new ArrayList<>();
-        // 配置Picasso快取
-        OkHttpClient client = new OkHttpClient.Builder()
-                .cache(new Cache(Objects.requireNonNull(getContext()).getCacheDir(), 1024)) //1KB快取
-                .build();
 
+        // 配置Picasso快取
+        @SuppressLint("UseRequireInsteadOfGet")
+        OkHttpClient client = new OkHttpClient.Builder()
+                // 設置1KB快取，快取目錄為應用的快取目錄
+                .cache(new Cache(requireContext().getCacheDir(), 1024)) //1KB快取
+                .build();
+        // 創建Picasso的Builder實例
         Picasso.Builder builder = new Picasso.Builder(getContext());
+        // 配置Picasso使用OkHttp3作為下載器，傳入已配置的OkHttpClient
         builder.downloader(new OkHttp3Downloader(client));
+        // 構建Picasso實例
         Picasso builtPicasso = builder.build();
+        // 加載藥品數據
+        loadMedicineData();
+
 
         // 加載藥品數據
         loadMedicineData();
